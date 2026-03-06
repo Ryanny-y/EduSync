@@ -1,7 +1,7 @@
 import { API_URL } from 'config/constant';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { CreateUserForm, IUser } from 'types/User';
+import { CreateUserForm, IUser, UserRole } from 'types/User';
 
 type AuthResponseType = {
   message: string;
@@ -12,7 +12,7 @@ type AuthContextType = {
   user: IUser | null;
   authResponse: AuthResponseType | null;
   signup: (user: CreateUserForm) => Promise<boolean>;
-  login: (username: string, password: string) => Promise<IUser>;
+  login: (username: string, password: string, role: UserRole) => Promise<IUser>;
   refreshToken: () => Promise<AuthResponseType | null>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -71,15 +71,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<IUser> => {
+  const login = async (email: string, password: string, role: UserRole): Promise<IUser> => {
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role }),
       });
+
+      console.log(response);
+      
 
       const data: AuthResponseType = await response.json();
 

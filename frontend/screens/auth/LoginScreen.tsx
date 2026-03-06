@@ -69,7 +69,7 @@ const LoginScreen = () => {
 
     setIsLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, role);
       setLoginError(null);
     } catch (error: any) {
       setLoginError(error.message);
