@@ -1,15 +1,22 @@
+import { useNavigation } from "@react-navigation/native"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { Text } from "components/ui/Text"
 import { ChevronRight, CircleAlert, Clock } from "lucide-react-native"
 import { TouchableOpacity, View } from "react-native"
+import { StudentStackParamList } from "types/navigation"
+
+type PendingWorksNavigationProps = NativeStackNavigationProp<StudentStackParamList, "StudentWorksScreen">;
 
 const PendingWorks = () => {
+  const navigation = useNavigation<PendingWorksNavigationProps>();
+
   return (
     <View className="gap-5">
       {/* Title */}
       <View className="flex-row items-center justify-between">
         <Text className="text-xl font-bold">Pending Works</Text>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("StudentWorksScreen")}>
           <Text className="font-bold text-green-600">View All</Text>
         </TouchableOpacity>
       </View>

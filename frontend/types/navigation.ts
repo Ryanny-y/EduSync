@@ -7,3 +7,7 @@ export type AuthStackParamList = {
   TeacherDashboardScreen: undefined;
   StudentDashboardScreen: undefined;
 };
+
+export type StudentStackParamList = {
+  StudentWorksScreen: undefined
+}
