@@ -9,6 +9,7 @@ type AuthResponseType = {
 };
 
 type AuthContextType = {
+  user: IUser | null;
   authResponse: AuthResponseType | null;
   signup: (user: CreateUserForm) => Promise<boolean>;
   login: (username: string, password: string) => Promise<IUser>;
@@ -20,6 +21,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<IUser | null>(null);
   const [authResponse, setAuthResponse] = useState<AuthResponseType | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await SecureStore.setItemAsync('accessToken', data.data.accessToken!);
 
       setAuthResponse(data);
+      setUser(data.data.userData);
       return data.data.userData;
     } catch (error) {
       setAuthResponse(null);
@@ -109,6 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setAuthResponse(data);
+      setUser(data.data.userData);
       return data;
     } catch (error) {
       return null;
@@ -117,11 +121,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await fetch(`${API_URL}/auth/logout`, {
+      const response = await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
       });
+      
     } finally {
       await SecureStore.deleteItemAsync('accessToken');
+      setUser(null);
       setAuthResponse(null);
     }
   };
@@ -129,6 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider
       value={{
+        user,
         authResponse,
         signup,
         login,
