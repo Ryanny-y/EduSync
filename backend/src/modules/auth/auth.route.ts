@@ -4,15 +4,15 @@ import { validate } from "../../common/middlewares/validate";
 import {
   createUserBodySchema,
   loginUserBodySchema,
-  // loginUserBodySchema,
-  // refreshTokenCookieSchema,
+  refreshTokenCookieSchema,
 } from "./auth.schema";
+import { logout, refreshToken } from "./auth.service";
 
 const router = Router();
 
 router.post("/signup", validate(createUserBodySchema), createUser);
 router.post("/login", validate(loginUserBodySchema), login);
-// router.post("/refresh-token", refreshToken);
-// router.post("/logout", logout)
+router.post("/refresh-token", validate(refreshTokenCookieSchema), refreshToken);
+router.post("/logout", logout)
 
 export default router;

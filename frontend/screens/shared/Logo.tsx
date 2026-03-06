@@ -31,7 +31,7 @@ const Logo = ({ size = 64 }: Props) => {
 
       <View style={styles.card}>
         <View style={styles.iconWrapper}>
-          <GraduationCap size={size * 0.6} color="#4f46e5" />
+          <GraduationCap size={size * 0.6} color="#90CF8E" />
 
           <Animated.View
             style={[
@@ -39,7 +39,7 @@ const Logo = ({ size = 64 }: Props) => {
               { transform: [{ rotate: spin }] },
             ]}
           >
-            <RefreshCw size={12} color="#818cf8" />
+            <RefreshCw size={12} color="#90CF8E"/>
           </Animated.View>
         </View>
       </View>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '110%',
     height: '110%',
-    backgroundColor: '#6366f1a4',
+    backgroundColor: '#C6EDC3',
     borderRadius: 20,
     opacity: 0.2,
     transform: [{ rotate: '12deg' }],
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e0e7ff',
+    borderColor: '#90CF8E',
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 6,

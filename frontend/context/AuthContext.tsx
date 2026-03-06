@@ -121,6 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: 'POST',
       });
     } finally {
+      await SecureStore.deleteItemAsync('accessToken');
       setAuthResponse(null);
     }
   };

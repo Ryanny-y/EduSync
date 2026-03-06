@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import * as authService from "./auth.service";
-import { AuthResponseDto, CreateUserDto, CreateUserResponse, LoginResponse, LoginUserDto } from "./auth.types";
+import { AuthResponseDto, CreateUserDto, CreateUserResponse, LoginResponse, LoginUserDto, LogoutResponse, RefreshTokenResponse } from "./auth.types";
+import { refreshTokenCookieSchema } from "./auth.schema";
+import { ZodError } from "zod";
+import { CustomError } from "../../common/utils/Errors";
 // import { CustomError } from "../../common/utils/Errors";
 // import { refreshTokenCookieSchema } from "./auth.schema";
 // import { ZodError } from "zod";
@@ -54,55 +57,55 @@ export const login = async (
   }
 };
 
-// export const refreshToken = async (
-//   req: Request,
-//   res: Response<RefreshTokenResponse>,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const { cookies } = refreshTokenCookieSchema.parse({
-//       cookies: req.cookies,
-//     });
-//     const { refresh_token } = cookies;
+export const refreshToken = async (
+  req: Request,
+  res: Response<RefreshTokenResponse>,
+  next: NextFunction,
+) => {
+  try {
+    const { cookies } = refreshTokenCookieSchema.parse({
+      cookies: req.cookies,
+    });
+    const { refresh_token } = cookies;
 
-//     const refreshResponse = await authService.refreshToken(refresh_token);
+    const refreshResponse = await authService.refreshToken(refresh_token);
 
-//     return res.json({
-//       success: true,
-//       message: "Access Token Refreshed",
-//       data: refreshResponse,
-//     });
-//   } catch (error) {
-//     if (error instanceof ZodError) {
-//       return next(new CustomError(401, "Unauthorized"));
-//     }
-//     next(error);
-//   }
-// };
+    return res.json({
+      success: true,
+      message: "Access Token Refreshed",
+      data: refreshResponse,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return next(new CustomError(401, "Unauthorized"));
+    }
+    next(error);
+  }
+};
 
-// export const logout = async (
-//   req: Request,
-//   res: Response<LogoutResponse>,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const parsed = refreshTokenCookieSchema.safeParse({
-//       cookies: req.cookies,
-//     });
+export const logout = async (
+  req: Request,
+  res: Response<LogoutResponse>,
+  next: NextFunction,
+) => {
+  try {
+    const parsed = refreshTokenCookieSchema.safeParse({
+      cookies: req.cookies,
+    });
 
-//     if (parsed.success) {
-//       const { refresh_token } = parsed.data.cookies;
-//       await authService.logout(refresh_token);
-//     }
+    if (parsed.success) {
+      const { refresh_token } = parsed.data.cookies;
+      await authService.logout(refresh_token);
+    }
 
-//     res.clearCookie("refresh_token", {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: "none",
-//       path: "/api/v1/auth",
-//     });
-//     res.sendStatus(204);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.clearCookie("refresh_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      path: "/api/v1/auth",
+    });
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};

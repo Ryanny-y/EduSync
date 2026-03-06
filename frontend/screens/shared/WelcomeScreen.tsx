@@ -2,14 +2,14 @@ import { Text } from 'components/ui/Text';
 import { BookOpen, ChevronRight, GraduationCap } from 'lucide-react-native';
 import { TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from 'types/navigation';
+import { AuthStackParamList } from 'types/navigation';
 
 const WelcomeScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
 
   return (
     <View className="flex-1 items-center justify-center bg-white px-5">
-      <View className='border rounded-lg border-blue-200 h-60 w-10/12 mb-10'/>
+      <View className='border rounded-lg border-green-200 h-60 w-10/12 mb-10'/>
 
       <View className="items-center">
         <View className="items-center">
@@ -28,7 +28,7 @@ const WelcomeScreen = () => {
       <View className="w-full">
         <TouchableOpacity
           onPress={() => navigation.navigate('LoginScreen', { role: 'STUDENT' })}
-          className="mt-5 rounded-xl bg-indigo-500 px-6 py-[14px]"
+          className="mt-5 rounded-xl bg-green-500 px-6 py-[14px]"
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-[14px]">
@@ -43,16 +43,16 @@ const WelcomeScreen = () => {
 
         <TouchableOpacity
           onPress={() => navigation.navigate('LoginScreen', { role: 'TEACHER' })}
-          className="mt-5 rounded-xl border-2 border-indigo-200 px-6 py-[14px]"
+          className="mt-5 rounded-xl border-2 border-green-200 px-6 py-[14px]"
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-[14px]">
-              <GraduationCap color="#6366f1" />
-              <Text className="text-[16px] font-bold text-indigo-500">
+              <GraduationCap color="#90CF8E" />
+              <Text className="text-[16px] font-bold text-green-500">
                 Continue as Teacher
               </Text>
             </View>
-            <ChevronRight color="#a5b4fc" />
+            <ChevronRight color="#90CF8E" />
           </View>
         </TouchableOpacity>
       </View>

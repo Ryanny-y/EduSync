@@ -220,7 +220,7 @@ const SignUpScreen = () => {
           )}
           <TouchableOpacity
             onPress={handleSignup}
-            className={`items-center rounded-xl ${isLoading ? 'bg-indigo-300' : 'bg-indigo-500'} py-4`}
+            className={`items-center rounded-xl ${isLoading ? 'bg-green-300' : 'bg-green-500'} py-4`}
             disabled={isLoading}>
             {isLoading ? (
               <ActivityIndicator color="white" />
@@ -234,7 +234,7 @@ const SignUpScreen = () => {
             <TouchableOpacity
               className="mt-2"
               onPress={() => navigation.replace('LoginScreen', { role })}>
-              <Text className="text-lg font-semibold text-indigo-500">Login</Text>
+              <Text className="text-lg font-semibold text-green-500">Login</Text>
             </TouchableOpacity>
           </View>
         </View>

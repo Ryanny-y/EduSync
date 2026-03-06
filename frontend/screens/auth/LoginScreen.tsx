@@ -138,7 +138,7 @@ const LoginScreen = () => {
 
         {/* Login Button */}
         <TouchableOpacity
-          className="mt-[10px] items-center rounded-[14px] bg-indigo-500 py-4"
+          className="mt-[10px] items-center rounded-[14px] bg-green-500 py-4"
           onPress={handleLogin}
           disabled={isLoading}>
           {isLoading ? (
@@ -154,7 +154,7 @@ const LoginScreen = () => {
           <TouchableOpacity
             className="mt-2"
             onPress={() => navigation.navigate('SignupScreen', { role })}>
-            <Text className="font-semibold text-indigo-500">Signup</Text>
+            <Text className="font-semibold text-green-500">Signup</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -18,8 +18,9 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
     lastName,
     email,
     password,
+    confirmPassword,
     role,
-    department,
+    department: departmentName,
   } = data;
 
   const normalizedEmail = email.toLowerCase();
@@ -33,24 +34,26 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
     throw new CustomError(409, "User already exists");
   }
 
-  if (data.password !== data.confirmPassword) {
-    throw new CustomError(400, "Password do not match.");
+  if (password !== confirmPassword) {
+    throw new CustomError(400, "Passwords do not match.");
   }
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const dept = await prismaClient.department.findFirst({
-    where: {
-      name: "Alice",
-    },
-    select: {
-      id: true
-    }
-  });
+  let departmentId: string | null = null;
 
-  if(!dept) {
-    throw new CustomError(404, "Department not found.")
+  if (departmentName) {
+    const dept = await prismaClient.department.findFirst({
+      where: { name: departmentName },
+      select: { id: true },
+    });
+
+    if (!dept) {
+      throw new CustomError(404, "Department not found.");
+    }
+
+    departmentId = dept.id;
   }
 
   // Create user
@@ -62,7 +65,7 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
       email: normalizedEmail,
       passwordHash: hashedPassword,
       role: role as Role,
-      departmentId: dept.id ?? null,
+      departmentId,
     },
     include: {
       department: true,
@@ -136,4 +139,96 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
     accessToken,
     refreshToken,
   };
+};
+
+export const refreshToken = async (
+  refreshToken: string,
+): Promise<AuthResponseDto> => {
+  let payload: any;
+
+  try {
+    payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+  } catch {
+    throw new CustomError(401, "Unauthorized");
+  }
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: payload.sub,
+    },
+  });
+
+  if (!user || !user?.refreshTokenHash)
+    throw new CustomError(401, "Unauthorized");
+
+  const isSameToken = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+
+  if (
+    !user.refreshTokenExpiresAt ||
+    !isSameToken ||
+    user.refreshTokenExpiresAt.getTime() < Date.now()
+  ) {
+    throw new CustomError(401, "Unauthorized");
+  }
+
+  const newAccessToken = jwt.sign(
+    {
+      sub: user.id,
+      role: user.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET!,
+    { expiresIn: "15m" },
+  );
+
+  return {
+    userData: {
+      id: user.id,
+      firstName: user.firstName,
+      middleName: user.middleName || "",
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+    },
+    accessToken: newAccessToken,
+  };
+};
+
+
+export const logout = async (refreshToken: string): Promise<void> => {
+  let payload: any;
+
+  try {
+    payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+  } catch {
+    return;
+  }
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: payload.sub,
+    },
+    select: {
+      refreshTokenHash: true,
+    },
+  });
+
+  if (!user || !user.refreshTokenHash) {
+    return;
+  }
+
+  const isValid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+
+  if (!isValid) {
+    return;
+  }
+
+  await prismaClient.user.update({
+    where: {
+      id: payload.sub,
+    },
+    data: {
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null,
+    },
+  });
 };
