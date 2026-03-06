@@ -1,0 +1,151 @@
+import { API_URL } from 'config/constant';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import * as SecureStore from 'expo-secure-store';
+import { CreateUserForm, IUser } from 'types/User';
+
+type AuthResponseType = {
+  message: string;
+  data: { userData: IUser; accessToken: string };
+};
+
+type AuthContextType = {
+  authResponse: AuthResponseType | null;
+  signup: (user: CreateUserForm) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<IUser>;
+  refreshToken: () => Promise<AuthResponseType | null>;
+  logout: () => Promise<void>;
+  loading: boolean;
+};
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [authResponse, setAuthResponse] = useState<AuthResponseType | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const initializeAuth = async () => {
+  //     const data = await refreshToken();
+
+  //     if (data) {
+  //       if (["ADMIN", "SUPER_ADMIN"].includes(data.data.role)) {
+  //         setAuthResponse(data);
+  //       } else {
+  //         setAuthResponse(null);
+  //         await logout();
+  //       }
+  //     } else {
+  //       await logout();
+  //     }
+
+  //     setLoading(false);
+  //   };
+
+  //   initializeAuth();
+  // }, []);
+
+  const signup = async (user: CreateUserForm): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      return true;
+    } catch (error) {
+      setAuthResponse(null);
+      throw error;
+    }
+  };
+
+  const login = async (email: string, password: string): Promise<IUser> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data: AuthResponseType = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+
+      await SecureStore.setItemAsync('accessToken', data.data.accessToken!);
+
+      setAuthResponse(data);
+      return data.data.userData;
+    } catch (error) {
+      setAuthResponse(null);
+      throw error;
+    }
+  };
+
+  const refreshToken = async (): Promise<AuthResponseType | null> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh-token`, {
+        method: 'POST',
+      });
+
+      const data: AuthResponseType = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      setAuthResponse(data);
+      return data;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: 'POST',
+      });
+    } finally {
+      setAuthResponse(null);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        authResponse,
+        signup,
+        login,
+        refreshToken,
+        logout,
+        loading,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+
+  return context;
+};

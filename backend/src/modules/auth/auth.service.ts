@@ -1,0 +1,139 @@
+import prismaClient from "../../config/client";
+import bcrypt from "bcrypt";
+import {
+  AuthResponseDto,
+  CreateUserDto,
+  LoginUserDto,
+  UserDto,
+} from "./auth.types";
+import { Role } from "../../generated/prisma";
+import { CustomError } from "../../common/utils/Errors";
+import jwt from "jsonwebtoken";
+import { addDays } from "date-fns";
+
+export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
+  const {
+    firstName,
+    middleName = "",
+    lastName,
+    email,
+    password,
+    role,
+    department,
+  } = data;
+
+  const normalizedEmail = email.toLowerCase();
+
+  // Check if user exists
+  const existingUser = await prismaClient.user.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (existingUser) {
+    throw new CustomError(409, "User already exists");
+  }
+
+  if (data.password !== data.confirmPassword) {
+    throw new CustomError(400, "Password do not match.");
+  }
+
+  // Hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const dept = await prismaClient.department.findFirst({
+    where: {
+      name: "Alice",
+    },
+    select: {
+      id: true
+    }
+  });
+
+  if(!dept) {
+    throw new CustomError(404, "Department not found.")
+  }
+
+  // Create user
+  const createdUser = await prismaClient.user.create({
+    data: {
+      firstName,
+      middleName,
+      lastName,
+      email: normalizedEmail,
+      passwordHash: hashedPassword,
+      role: role as Role,
+      departmentId: dept.id ?? null,
+    },
+    include: {
+      department: true,
+    },
+  });
+
+  return {
+    id: createdUser.id,
+    firstName: createdUser.firstName,
+    middleName: createdUser.middleName || "",
+    lastName: createdUser.lastName,
+    email: createdUser.email,
+    role: createdUser.role,
+    department: createdUser.department?.name ?? undefined,
+  };
+};
+
+export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
+  const { email, password } = data;
+
+  const foundUser = await prismaClient.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (!foundUser) throw new CustomError(401, "Email or password is incorrect.");
+
+  const match = await bcrypt.compare(password, foundUser.passwordHash);
+  if (!match) throw new CustomError(401, "Email or password is incorrect.");
+
+  // CREATE JWTS
+  const accessToken = jwt.sign(
+    {
+      sub: foundUser.id,
+      role: foundUser.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET!,
+    { expiresIn: "15m" },
+  );
+
+  const refreshToken = jwt.sign(
+    {
+      sub: foundUser.id,
+      role: foundUser.role,
+    },
+    process.env.REFRESH_TOKEN_SECRET!,
+    { expiresIn: "7d" },
+  );
+
+  // HASH PASSWORD BEFORE STORING IN THE DATABASE
+  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
+  await prismaClient.user.update({
+    where: {
+      id: foundUser.id,
+    },
+    data: {
+      refreshTokenHash: hashedRefreshToken,
+      refreshTokenExpiresAt: addDays(new Date(), 7),
+    },
+  });
+
+  return {
+    userData: {
+      id: foundUser.id,
+      firstName: foundUser.firstName,
+      middleName: foundUser.middleName || "",
+      lastName: foundUser.lastName,
+      email: foundUser.email,
+      role: foundUser.role,
+    },
+    accessToken,
+    refreshToken,
+  };
+};
