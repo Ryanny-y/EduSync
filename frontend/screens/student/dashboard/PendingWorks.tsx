@@ -4,13 +4,13 @@ import { TouchableOpacity, View } from "react-native"
 
 const PendingWorks = () => {
   return (
-    <View className="gap-6">
+    <View className="gap-5">
       {/* Title */}
       <View className="flex-row items-center justify-between">
         <Text className="text-xl font-bold">Pending Works</Text>
 
         <TouchableOpacity>
-          <Text className="font-bold text-green-700">View All</Text>
+          <Text className="font-bold text-green-600">View All</Text>
         </TouchableOpacity>
       </View>
 

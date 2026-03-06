@@ -140,9 +140,9 @@ const SignUpScreen = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-background">
       <KeyboardAwareScrollView
-        className="flex-1 bg-white"
+        className="flex-1"
         contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 100, paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}

@@ -79,7 +79,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center bg-white px-6">
+    <View className="flex-1 justify-center bg-background px-6">
       {/* Back Button */}
       <TouchableOpacity className="absolute left-5 top-16" onPress={() => navigation.goBack()}>
         <ArrowLeft size={20} color="#334155" />

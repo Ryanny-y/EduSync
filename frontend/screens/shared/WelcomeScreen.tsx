@@ -8,8 +8,8 @@ const WelcomeScreen = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
 
   return (
-    <View className="flex-1 items-center justify-center bg-white px-5">
-      <View className='border rounded-lg border-green-200 h-60 w-10/12 mb-10'/>
+    <View className="flex-1 items-center justify-center bg-background px-5">
+      <View className='border rounded-lg border-green-400 h-60 w-10/12 mb-10'/>
 
       <View className="items-center">
         <View className="items-center">
@@ -43,7 +43,7 @@ const WelcomeScreen = () => {
 
         <TouchableOpacity
           onPress={() => navigation.navigate('LoginScreen', { role: 'TEACHER' })}
-          className="mt-5 rounded-xl border-2 border-green-200 px-6 py-[14px]"
+          className="mt-5 rounded-xl border-2 border-green-400 px-6 py-[14px]"
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-[14px]">
