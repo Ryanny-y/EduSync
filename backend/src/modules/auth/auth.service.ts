@@ -95,6 +95,10 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
   const match = await bcrypt.compare(password, foundUser.passwordHash);
   if (!match) throw new CustomError(401, "Email or password is incorrect.");
 
+  if (foundUser.role !== data.role) {
+    throw new CustomError(403, `You are not registered as ${data.role.toLowerCase()}`);
+  }
+
   // CREATE JWTS
   const accessToken = jwt.sign(
     {

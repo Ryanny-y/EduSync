@@ -40,7 +40,8 @@ export const createUserBodySchema = z.object({
 export const loginUserBodySchema = z.object({
   body: z.object({
     email: z.email().min(1, "Email is required."),
-    password: z.string().min(1, "Password is required.")
+    password: z.string().min(1, "Password is required."),
+    role: z.enum(Role)
   })
 })
 
