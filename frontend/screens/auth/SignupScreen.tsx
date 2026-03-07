@@ -8,10 +8,12 @@ import Logo from 'screens/shared/Logo';
 import { Text } from 'components/ui/Text';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { validateEmail, validatePassword } from 'utils/validators';
+import { validateEmail, validateSignup } from 'utils/validators';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Picker } from '@react-native-picker/picker';
 import { useAuth } from 'context/AuthContext';
+import FormInput from './signup/FormInput';
+import DepartmentPicker from './signup/DepartmentPicker';
+import { useSignupForm } from './signup/useSignupForm';
 
 type SignupRouteProp = RouteProp<AuthStackParamList, 'SignupScreen'>;
 
@@ -20,88 +22,49 @@ type SignupScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 
 const SignUpScreen = () => {
   const route = useRoute<SignupRouteProp>();
   const navigation = useNavigation<SignupScreenNavigationProp>();
-
-  const { role } = route.params;
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [formData, setFormData] = useState<CreateUserForm>({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: role,
-    department: '',
-  });
-
-  // New: inline error state
-  const [formErrors, setFormErrors] = useState<Partial<Record<keyof CreateUserForm, string>>>({});
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signup } = useAuth();
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const { role } = route.params;
+  const {
+    formData,
+    formErrors,
+    message,
+    isLoading,
+    setIsLoading,
+    setMessage,
+    handleChange,
+    validateForm,
+    resetMessage,
+  } = useSignupForm(role);
 
   const handleSignup = async () => {
     if (isLoading) return;
 
-    const errors: Partial<Record<keyof CreateUserForm, string>> = {};
-
-    // Field validation
-    if (!formData.firstName) errors.firstName = 'First name is required.';
-    if (!formData.middleName) errors.middleName = 'Middle name is required.';
-    if (!formData.lastName) errors.lastName = 'Last name is required.';
-    if (!formData.email) errors.email = 'Email is required.';
-    if (!validateEmail(formData.email)) errors.email = 'Please enter a valid email address.';
-    if (!formData.password) errors.password = 'Password is required.';
-    if (!formData.confirmPassword) errors.confirmPassword = 'Confirm your password.';
-    if (role === 'TEACHER' && !formData.department) errors.department = 'Department is required.';
-
-    // Password match
-    if (
-      formData.password &&
-      formData.confirmPassword &&
-      formData.password !== formData.confirmPassword
-    ) {
-      errors.confirmPassword = 'Passwords do not match.';
-    }
-
-    // Password strength
-    if (formData.password) {
-      const pass = validatePassword(formData.password);
-      if (!pass.hasNumber || !pass.hasUpper || !pass.isLongEnough) {
-        errors.password =
-          'Password must be at least 8 characters, 1 uppercase letter, and 1 number.';
-      }
-    }
-
-    setFormErrors(errors);
-
-    if (Object.keys(errors).length > 0) return;
+    if (!validateForm()) return;
 
     setIsLoading(true);
-    setMessage(null);
+    resetMessage();
+
     try {
       await signup(formData);
-      setMessage({ type: 'success', text: 'Signup successful! Redirecting to login...' });
+
+      setMessage({
+        type: 'success',
+        text: 'Signup successful! Redirecting to login...',
+      });
 
       setTimeout(() => {
         navigation.replace('LoginScreen', { role });
       }, 2000);
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Signup failed. Please try again.' });
+      setMessage({
+        type: 'error',
+        text: error.message || 'Signup failed. Please try again.',
+      });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleChange = (field: keyof CreateUserForm, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setFormErrors((prev) => ({ ...prev, [field]: '' }));
-
-    if (field === 'email' && value.length > 0 && !validateEmail(value)) {
-      setFormErrors((prev) => ({ ...prev, email: 'Invalid email address' }));
     }
   };
 
@@ -165,50 +128,61 @@ const SignUpScreen = () => {
 
         {/* Form Inputs */}
         <View className="w-full">
-          {renderInput('First Name', 'firstName', 'Enter your first name')}
-          {renderInput('Middle Name', 'middleName', 'Enter your middle name')}
-          {renderInput('Last Name', 'lastName', 'Enter your last name')}
-          {renderInput(
-            'Email',
-            'email',
-            'Enter your email',
-            false,
-            false,
-            undefined,
-            'email-address'
-          )}
-          {renderInput('Password', 'password', 'Enter your password', true, showPassword, () =>
-            setShowPassword(!showPassword)
-          )}
-          {renderInput(
-            'Confirm Password',
-            'confirmPassword',
-            'Confirm your password',
-            true,
-            showConfirmPassword,
-            () => setShowConfirmPassword(!showConfirmPassword)
-          )}
+          <FormInput
+            label="First Name"
+            value={formData.firstName}
+            placeholder="Enter your first name"
+            error={formErrors.firstName}
+            onChange={(value) => handleChange('firstName', value)}
+          />
+          <FormInput
+            label="Middle Name"
+            value={formData.middleName}
+            placeholder="Enter your middle name"
+            error={formErrors.middleName}
+            onChange={(value) => handleChange('middleName', value)}
+          />
+          <FormInput
+            label="Last Name"
+            value={formData.lastName}
+            placeholder="Enter your last name"
+            error={formErrors.lastName}
+            onChange={(value) => handleChange('lastName', value)}
+          />
+          <FormInput
+            label="Email"
+            value={formData.email}
+            placeholder="Enter your email"
+            error={formErrors.email}
+            keyboardType="email-address"
+            onChange={(value) => handleChange('email', value)}
+          />
+          <FormInput
+            label="Password"
+            value={formData.password}
+            placeholder="Enter your password"
+            secure
+            show={showPassword}
+            toggleShow={() => setShowPassword(!showPassword)}
+            error={formErrors.password}
+            onChange={(value) => handleChange('password', value)}
+          />
+          <FormInput
+            label="Confirm Password"
+            value={formData.confirmPassword}
+            placeholder="Confirm your password"
+            secure
+            show={showConfirmPassword}
+            toggleShow={() => setShowConfirmPassword(!showConfirmPassword)}
+            error={formErrors.confirmPassword}
+            onChange={(value) => handleChange('confirmPassword', value)}
+          />
           {role === 'TEACHER' && (
-            <View className="mb-3 gap-[6px]">
-              <Text className="font-semibold text-slate-500">Department</Text>
-
-              <View className="rounded-xl border border-slate-200">
-                <Picker
-                  selectedValue={formData.department}
-                  onValueChange={(itemValue) => handleChange('department', itemValue)}>
-                  <Picker.Item label="Select Department" value="" />
-                  <Picker.Item label="SOCSCI" value="SOCSCI" />
-                  <Picker.Item label="NATSCI" value="NATSCI" />
-                  <Picker.Item label="ENGSOC" value="ENGSOC" />
-                  <Picker.Item label="MAPS" value="MAPS" />
-                  <Picker.Item label="ICT" value="ICT" />
-                </Picker>
-              </View>
-
-              {formErrors.department && (
-                <Text className="text-sm text-red-500">{formErrors.department}</Text>
-              )}
-            </View>
+            <DepartmentPicker
+              value={formData.department}
+              error={formErrors.department}
+              onChange={(value) => handleChange('department', value)}
+            />
           )}
 
           {/* Signup Button */}

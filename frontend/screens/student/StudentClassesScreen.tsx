@@ -8,7 +8,10 @@ const StudentClassesScreen = () => {
     <View className="flex-1 bg-slate-50">
       <Header title="My Classes" />
 
-      <ScrollView className="mt-6 px-4">
+      <ScrollView
+        className="px-4 pt-6"
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}>
         {/* Class Container */}
         <View className="mb-5 rounded-2xl bg-white shadow-lg">
           {/* TOP */}
