@@ -12,7 +12,7 @@ const Header = ({ title }: { title: string }) => {
         <ArrowLeft className='bg-slate-500' size={24} color="#64748b"/>
       </TouchableOpacity>
 
-      <Text className="text-xl font-semibold">{title}</Text>
+      <Text className="text-2xl font-semibold">{title}</Text>
     </View>
   );
 };

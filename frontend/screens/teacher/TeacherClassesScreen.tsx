@@ -1,7 +1,12 @@
-import ClassCard from "components/ClassCard"
-import Header from "components/Header"
-import TeacherClassCard from "components/TeacherClassCard";
-import { ScrollView, View } from "react-native"
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Header from 'components/Header';
+import TeacherClassCard from 'components/TeacherClassCard';
+import { Text } from 'components/ui/Text';
+import { Plus } from 'lucide-react-native';
+import { useState } from 'react';
+import { Pressable, ScrollView, View } from 'react-native';
+import { TeacherStackParamList } from 'types/navigation';
 
 const classes = [
   {
@@ -12,7 +17,7 @@ const classes = [
     time: '8:00 - 9:00 AM',
     room: '203',
     color: 'bg-indigo-500',
-    students: 35
+    students: 35,
   },
   {
     id: 2,
@@ -22,7 +27,7 @@ const classes = [
     time: '8:00 - 9:00 AM',
     room: '203',
     color: 'bg-orange-300',
-    students: 35
+    students: 35,
   },
   {
     id: 3,
@@ -32,11 +37,15 @@ const classes = [
     time: '8:00 - 9:00 AM',
     room: '203',
     color: 'bg-yellow-400',
-    students: 35
+    students: 35,
   },
 ];
 
+type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'CreateClassScreen'>;
+
 const TeacherClassesScreen = () => {
+  const navigation = useNavigation<NavigationProps>();
+
   return (
     <View className="flex-1 bg-slate-50">
       <Header title="My Classes" />
@@ -49,8 +58,16 @@ const TeacherClassesScreen = () => {
           <TeacherClassCard key={item.id} item={item} />
         ))}
       </ScrollView>
-    </View>
-  )
-}
 
-export default TeacherClassesScreen
+      {/* Create Class Button */}
+      <Pressable
+        onPress={() => navigation.navigate('CreateClassScreen')}
+        className="absolute bottom-7 right-7 flex-row items-center gap-3 rounded-2xl bg-green-500 px-5 py-4 active:opacity-90">
+        <Plus color="#ffffff" />
+        <Text className="text-xl font-bold text-white">Create Class</Text>
+      </Pressable>
+    </View>
+  );
+};
+
+export default TeacherClassesScreen;
