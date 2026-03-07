@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authRoute from "./auth/auth.route";
+import departmentRoute from "./department/department.route";
 
 const router = Router();
 
@@ -7,7 +8,7 @@ const router = Router();
 router.use("/auth", authRoute);
 
 // PUBLIC
-// router.use("/health", healthRoute);
+router.use("/department", departmentRoute);
 // router.use("/booking", bookingRoute);
 
 // PROTECTED
