@@ -21,6 +21,7 @@ export const createClass = async (
 
     const created = await classService.createClass(
       teacherId,
+      req.role,
       req.body
     );
 
@@ -41,7 +42,7 @@ export const getClasses = async (
   next: NextFunction
 ) => {
   try {
-    const classes = await classService.getClasses(req.userId!);
+    const classes = await classService.getClasses(req.userId!, req.role!);
 
     return res.json({
       success: true,
@@ -61,7 +62,15 @@ export const getClassById = async (
 ) => {
   try {
 
-    const cls = await classService.getClassById(req.params.id);
+    if (!req.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const cls = await classService.getClassById(
+      req.userId,
+      req.role,
+      req.params.id
+    );
 
     return res.json({
       success: true,
@@ -73,6 +82,7 @@ export const getClassById = async (
     next(error);
   }
 };
+
 
 export const updateClass = async (
   req: Request<{ id: string }, {}, UpdateClassDto>,

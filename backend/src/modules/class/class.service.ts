@@ -16,63 +16,47 @@ const generateClassCode = (): string => {
   return code;
 };
 
-const generateUniqueCode = async (): Promise<string> => {
-  let code = generateClassCode();
-
-  while (
-    await prismaClient.class.findUnique({
-      where: { code },
-    })
-  ) {
-    code = generateClassCode();
-  }
-
-  return code;
-};
-
 export const createClass = async (
   teacherId: string,
-  data: CreateClassDto
+  role: Role,
+  data: CreateClassDto,
 ): Promise<ClassDto> => {
-  const teacher = await prismaClient.user.findUnique({
-    where: { id: teacherId },
-  });
-
-  if (!teacher) {
-    throw new CustomError(404, "Teacher not found");
-  }
-
-  if (teacher.role !== Role.TEACHER) {
+  if (role !== Role.TEACHER) {
     throw new CustomError(403, "Only teachers can create classes");
   }
 
-  const code = await generateUniqueCode();
+  for (let i = 0; i < 5; i++) {
+    const code = generateClassCode();
+    try {
+      const created = await prismaClient.class.create({
+        data: {
+          ...data,
+          code,
+          teacherId,
+          gmeetLink: data.gmeetLink ?? null
+        },
+      });
 
-  const created = await prismaClient.class.create({
-    data: {
-      ...data,
-      code,
-      teacherId,
-      gmeetLink: data.gmeetLink ?? null
-    },
-  });
+      return created;
 
-  return created;
+    } catch (error: any) {
+
+      if (error.code === "P2002") {
+        continue; // duplicate code → retry
+      }
+
+      throw error;
+    }
+  }
+
+  throw new CustomError(500, "Failed to generate class code");
 };
 
 export const getClasses = async (
-  userId: string
+  userId: string,
+  role: Role,
 ): Promise<ClassDto[]> => {
-
-  const user = await prismaClient.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!user) {
-    throw new CustomError(404, "User not found");
-  }
-
-  if (user.role === "TEACHER") {
+  if (role === "TEACHER") {
     return prismaClient.class.findMany({
       where: {
         teacherId: userId,
@@ -81,7 +65,7 @@ export const getClasses = async (
     });
   }
 
-  if (user.role === "STUDENT") {
+  if (role === "STUDENT") {
     return prismaClient.class.findMany({
       where: {
         students: {
@@ -100,24 +84,42 @@ export const getClasses = async (
   });
 };
 
-export const getClassById = async (id: string): Promise<ClassDto> => {
-  const found = await prismaClient.class.findUnique({
-    where: { id },
+export const getClassById = async (
+  userId: string,
+  role: Role,
+  classId: string,
+): Promise<ClassDto> => {
+  if (role === "ADMIN") {
+    const cls = await prismaClient.class.findUnique({
+      where: { id: classId }
+    });
+
+    if (!cls) {
+      throw new CustomError(404, "Class not found");
+    }
+
+    return cls;
+  }
+
+  const cls = await prismaClient.class.findFirst({
+    where: {
+      id: classId,
+      OR: [{ teacherId: userId }, { students: { some: { id: userId } } }],
+    },
   });
 
-  if (!found) {
+  if (!cls) {
     throw new CustomError(404, "Class not found");
   }
 
-  return found;
+  return cls;
 };
 
 export const updateClass = async (
   teacherId: string,
   id: string,
-  data: UpdateClassDto
+  data: UpdateClassDto,
 ): Promise<ClassDto> => {
-
   const existing = await prismaClient.class.findUnique({
     where: { id },
   });
@@ -131,7 +133,7 @@ export const updateClass = async (
   }
 
   const cleanData = Object.fromEntries(
-    Object.entries(data).filter(([, v]) => v !== undefined)
+    Object.entries(data).filter(([, v]) => v !== undefined),
   ) as Prisma.ClassUpdateInput;
 
   const updated = await prismaClient.class.update({
@@ -144,7 +146,7 @@ export const updateClass = async (
 
 export const deleteClass = async (
   teacherId: string,
-  id: string
+  id: string,
 ): Promise<void> => {
   const existing = await prismaClient.class.findUnique({
     where: { id },
