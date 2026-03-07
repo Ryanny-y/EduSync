@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authRoute from "./auth/auth.route";
 import departmentRoute from "./department/department.route";
+import classRoute from "./class/class.route";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.use("/department", departmentRoute);
 // router.use("/booking", bookingRoute);
 
 // PROTECTED
-// router.use("/resort", resortRoute);
+router.use("/class", classRoute);
 // router.use("/pricing-rules", pricingRoute);
 // router.use("/holidays", holidayRoute);
 // router.use("/peak-seasons", peakSeasonRoute);
