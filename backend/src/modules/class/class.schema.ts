@@ -40,7 +40,8 @@ export const classDtoSchema = z.object({
   room: z.string(),
   gmeetLink: z.string().nullable(),
   code: z.string(),
-  teacherId: z.string(),
+  teacher: z.string(),
+  studentCount: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

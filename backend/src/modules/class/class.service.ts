@@ -2,6 +2,7 @@ import prismaClient from "../../config/client";
 import { CustomError } from "../../common/utils/Errors";
 import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
 import { Prisma, Role } from "../../generated/prisma";
+import { mapClassToDto } from "./class.mapper";
 
 const generateClassCode = (): string => {
   const chars =
@@ -37,7 +38,7 @@ export const createClass = async (
         },
       });
 
-      return created;
+      return mapClassToDto(created);
 
     } catch (error: any) {
 
@@ -54,34 +55,42 @@ export const createClass = async (
 
 export const getClasses = async (
   userId: string,
-  role: Role,
+  role: Role
 ): Promise<ClassDto[]> => {
+
+  let where: Prisma.ClassWhereInput;
+
   if (role === "TEACHER") {
-    return prismaClient.class.findMany({
-      where: {
-        teacherId: userId,
+    where = { teacherId: userId };
+  } else if (role === "STUDENT") {
+    where = {
+      students: {
+        some: { id: userId },
       },
-      orderBy: { createdAt: "desc" },
-    });
+    };
+  } else {
+    where = {};
   }
 
-  if (role === "STUDENT") {
-    return prismaClient.class.findMany({
-      where: {
-        students: {
-          some: {
-            id: userId,
-          },
+  const classes = await prismaClient.class.findMany({
+    where,
+    include: {
+      teacher: {
+        select: {
+          firstName: true,
+          lastName: true,
         },
       },
-      orderBy: { createdAt: "desc" },
-    });
-  }
-
-  // Admin fallback (optional)
-  return prismaClient.class.findMany({
+      _count: {
+        select: {
+          students: true,
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
+
+  return classes.map(mapClassToDto);
 };
 
 export const getClassById = async (
@@ -98,7 +107,7 @@ export const getClassById = async (
       throw new CustomError(404, "Class not found");
     }
 
-    return cls;
+    return mapClassToDto(cls);
   }
 
   const cls = await prismaClient.class.findFirst({
@@ -112,7 +121,7 @@ export const getClassById = async (
     throw new CustomError(404, "Class not found");
   }
 
-  return cls;
+  return mapClassToDto(cls);
 };
 
 export const updateClass = async (
@@ -141,7 +150,7 @@ export const updateClass = async (
     data: cleanData,
   });
 
-  return updated;
+  return mapClassToDto(updated);
 };
 
 export const deleteClass = async (
