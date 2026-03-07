@@ -9,5 +9,6 @@ export type AuthStackParamList = {
 };
 
 export type StudentStackParamList = {
-  StudentWorksScreen: undefined
+  StudentWorksScreen: undefined;
+  StudentClassesScreen: undefined;
 }
