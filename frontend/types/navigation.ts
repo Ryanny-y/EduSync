@@ -12,3 +12,7 @@ export type StudentStackParamList = {
   StudentWorksScreen: undefined;
   StudentClassesScreen: undefined;
 }
+
+export type TeacherStackParamList = {
+  TeacherClassesScreen: undefined;
+}

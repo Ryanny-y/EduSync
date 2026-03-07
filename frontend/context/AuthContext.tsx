@@ -1,5 +1,5 @@
 import { API_URL } from 'config/constant';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { CreateUserForm, IUser, UserRole } from 'types/User';
 
@@ -25,26 +25,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authResponse, setAuthResponse] = useState<AuthResponseType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const initializeAuth = async () => {
-  //     const data = await refreshToken();
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const data = await refreshToken();
 
-  //     if (data) {
-  //       if (["ADMIN", "SUPER_ADMIN"].includes(data.data.role)) {
-  //         setAuthResponse(data);
-  //       } else {
-  //         setAuthResponse(null);
-  //         await logout();
-  //       }
-  //     } else {
-  //       await logout();
-  //     }
+      if (data) {
+        setAuthResponse(data);
+        setUser(data.data.userData);
+      }
 
-  //     setLoading(false);
-  //   };
+      setLoading(false);
+    };
 
-  //   initializeAuth();
-  // }, []);
+    initializeAuth();
+  }, []);
 
   const signup = async (user: CreateUserForm): Promise<boolean> => {
     try {
@@ -121,7 +115,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
       });
-      
     } finally {
       await SecureStore.deleteItemAsync('accessToken');
       setUser(null);
