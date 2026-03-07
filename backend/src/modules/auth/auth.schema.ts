@@ -22,11 +22,11 @@ export const createUserBodySchema = z.object({
 
     role: z.enum(Role),
 
-    department: z.string().optional(),
+    departmentId: z.uuid().optional(),
   }).refine(
       (data) => {
         if (data.role === "TEACHER") {
-          return !!data.department;
+          return !!data.departmentId;
         }
         return true;
       },

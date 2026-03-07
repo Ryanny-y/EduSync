@@ -20,7 +20,7 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
     password,
     confirmPassword,
     role,
-    department: departmentName,
+    departmentId,
   } = data;
 
   const normalizedEmail = email.toLowerCase();
@@ -41,21 +41,6 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  let departmentId: string | null = null;
-
-  if (departmentName) {
-    const dept = await prismaClient.department.findFirst({
-      where: { name: departmentName },
-      select: { id: true },
-    });
-
-    if (!dept) {
-      throw new CustomError(404, "Department not found.");
-    }
-
-    departmentId = dept.id;
-  }
-
   // Create user
   const createdUser = await prismaClient.user.create({
     data: {
@@ -65,7 +50,7 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
       email: normalizedEmail,
       passwordHash: hashedPassword,
       role: role as Role,
-      departmentId,
+      ...(departmentId ? { departmentId } : {}),
     },
     include: {
       department: true,
