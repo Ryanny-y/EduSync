@@ -4,60 +4,55 @@ import Header from 'components/Header';
 import TeacherClassCard from 'components/TeacherClassCard';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
-import { Plus } from 'lucide-react-native';
+import { useAuth } from 'context/AuthContext';
+import useFetchData from 'hooks/useFetchData';
+import { BookOpen, Plus } from 'lucide-react-native';
+import { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
+import { IClass } from 'types/class';
+import { ApiResponse } from 'types/common';
 import { TeacherStackParamList } from 'types/navigation';
-
-const classes = [
-  {
-    id: 1,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-indigo-500',
-    students: 35,
-  },
-  {
-    id: 2,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-orange-300',
-    students: 35,
-  },
-  {
-    id: 3,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-yellow-400',
-    students: 35,
-  },
-];
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'CreateClassScreen'>;
 
 const TeacherClassesScreen = () => {
+  const { user } = useAuth();
   const navigation = useNavigation<NavigationProps>();
+
+
+  // TODO: Handle Error and Refetch Data
+  const { data, loading, error, refetchData } = useFetchData<ApiResponse<IClass[]>>('class');
+
+  const classes = useMemo(() => {
+    return data?.data ?? [];
+  }, [data]);
 
   return (
     <View className="flex-1 bg-slate-50">
       <Header title="My Classes" />
 
-      <ScrollView
-        className="px-4 pt-6"
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}>
-        {classes.map((item) => (
-          <TeacherClassCard key={item.id} item={item} />
-        ))}
-      </ScrollView>
+      {!loading && classes.length === 0 ? (
+        <View className="items-center px-10 py-24">
+          <BookOpen size={48} color="#cbd5f5" />
+
+          <Text className="mt-6 text-lg font-bold text-slate-700">No Classes Yet</Text>
+
+          <Text className="mt-2 text-center text-sm text-slate-500">
+            {user?.role === 'TEACHER'
+              ? "You haven't created any classes yet. Start by creating your first class and invite students to join."
+              : "You're not enrolled in any classes yet. Join a class to start learning with your teacher."}
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          className="px-4 pt-6"
+          contentContainerStyle={{ paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}>
+          {classes.map((item) => (
+            <TeacherClassCard key={item.id} item={item} />
+          ))}
+        </ScrollView>
+      )}
 
       {/* Create Class Button */}
       <Pressable

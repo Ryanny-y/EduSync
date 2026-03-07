@@ -4,6 +4,8 @@ import { ChevronRight, Clock, EllipsisVertical, MapPin, Users, Video } from 'luc
 import React from 'react';
 import Pressable from './ui/Pressable';
 
+
+
 const TeacherClassCard = ({ item }: any) => {
   return (
     <View className="mb-5 rounded-2xl bg-white shadow-lg">
@@ -11,7 +13,7 @@ const TeacherClassCard = ({ item }: any) => {
       <View
         className={`flex-row items-start justify-between rounded-t-2xl px-5 py-7 ${item.color}`}>
         <View className="flex-1 gap-1 pr-3">
-          <Text className="text-2xl font-bold text-white">{item.title}</Text>
+          <Text className="text-2xl font-bold text-white">{item.name}</Text>
           <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
         </View>
 

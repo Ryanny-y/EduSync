@@ -9,7 +9,7 @@ export interface IClass extends HasId {
   gmeetLink?: string | null
   code: string
 
-  teacherId: string
+  teacher: string
 
   createdAt: string
   updatedAt: string
