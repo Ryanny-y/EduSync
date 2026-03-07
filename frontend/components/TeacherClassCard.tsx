@@ -1,7 +1,8 @@
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { Text } from './ui/Text';
 import { ChevronRight, Clock, EllipsisVertical, MapPin, Users, Video } from 'lucide-react-native';
 import React from 'react';
+import Pressable from './ui/Pressable';
 
 const TeacherClassCard = ({ item }: any) => {
   return (
@@ -14,9 +15,9 @@ const TeacherClassCard = ({ item }: any) => {
           <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
         </View>
 
-        <TouchableOpacity onPress={() => alert('show Settings')}>
+        <Pressable onPress={() => alert('show Settings')}>
           <EllipsisVertical color="#ffffff" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* BOTTOM */}
@@ -37,15 +38,15 @@ const TeacherClassCard = ({ item }: any) => {
         </View>
 
         <View className="flex-row items-center gap-3">
-          <TouchableOpacity
+          <Pressable
             className={`flex-1 flex-row items-center justify-center gap-2 rounded-2xl p-4 ${item.color}`}>
             <Text className="text-white">Open Class</Text>
             <ChevronRight size={20} color="#ffffff" />
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity className="rounded-2xl bg-green-200 p-4">
+          <Pressable className="rounded-2xl bg-green-200 p-4">
             <Video size={20} color="#90CF8E" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>

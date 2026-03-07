@@ -2,10 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Header from 'components/Header';
 import TeacherClassCard from 'components/TeacherClassCard';
+import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { Plus } from 'lucide-react-native';
-import { useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { TeacherStackParamList } from 'types/navigation';
 
 const classes = [
@@ -62,7 +62,7 @@ const TeacherClassesScreen = () => {
       {/* Create Class Button */}
       <Pressable
         onPress={() => navigation.navigate('CreateClassScreen')}
-        className="absolute bottom-7 right-7 flex-row items-center gap-3 rounded-2xl bg-green-500 px-5 py-4 active:opacity-90">
+        className="absolute bottom-7 right-7 flex-row items-center gap-3 rounded-2xl bg-green-500 px-5 py-4 ">
         <Plus color="#ffffff" />
         <Text className="text-xl font-bold text-white">Create Class</Text>
       </Pressable>

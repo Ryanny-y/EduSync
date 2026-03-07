@@ -1,7 +1,8 @@
+import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { useAuth } from 'context/AuthContext';
 import { Bell, LogOut, MessageSquare, Upload, Wifi } from 'lucide-react-native';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 const StudentDashboardHeader = () => {
   const { user, logout } = useAuth();
@@ -14,9 +15,9 @@ const StudentDashboardHeader = () => {
           <Text className="text-xl font-semibold">{`${user?.lastName}, ${user?.firstName}`}</Text>
         </View>
 
-        <TouchableOpacity className="rounded-lg bg-white p-2 shadow-lg" onPress={logout}>
+        <Pressable className="rounded-lg bg-white p-2 shadow-lg" onPress={logout}>
           <LogOut />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View className="mt-8 flex-row items-start justify-between rounded-lg bg-white p-2 shadow-lg">
@@ -26,15 +27,15 @@ const StudentDashboardHeader = () => {
         </View>
 
         <View className="flex-row gap-3 pr-2">
-          <TouchableOpacity>
+          <Pressable>
             <Bell size={20} color="#475569"/>
-          </TouchableOpacity>
-          <TouchableOpacity>
+          </Pressable>
+          <Pressable>
             <Upload size={20} color="#475569"/>
-          </TouchableOpacity>
-          <TouchableOpacity>
+          </Pressable>
+          <Pressable>
             <MessageSquare size={20} color="#475569"/>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>

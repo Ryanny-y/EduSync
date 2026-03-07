@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text } from 'components/ui/Text';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { TeacherStackParamList } from 'types/navigation';
 import ClassCard from './ClassCard';
+import Pressable from 'components/ui/Pressable';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'TeacherClassesScreen'>;
 
@@ -49,9 +50,9 @@ const MyClasses = () => {
       <View className="flex-row items-center justify-between">
         <Text className="text-xl font-bold">My Classes</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate('TeacherClassesScreen')}>
+        <Pressable onPress={() => navigation.navigate('TeacherClassesScreen')}>
           <Text className="font-bold text-green-600">Manage All</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Classes Container */}

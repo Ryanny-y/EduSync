@@ -1,8 +1,9 @@
 import Header from 'components/Header';
 import FloatingInput from 'components/ui/FloatingInput';
+import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import React, { useState } from 'react';
-import { Keyboard, Pressable, View } from 'react-native';
+import { Keyboard, View } from 'react-native';
 
 type CreateClassType = {
   name: string;
@@ -66,7 +67,7 @@ const CreateClassScreen = () => {
       </View>
 
       <View className="flex-row gap-3 px-4">
-        <Pressable className="flex-1 items-center justify-center rounded-xl bg-green-600/80 p-3 active:opacity-80">
+        <Pressable className="flex-1 items-center justify-center rounded-xl bg-green-600/80 p-3">
           <Text className="text-lg font-medium text-white">Create Class</Text>
         </Pressable>
       </View>

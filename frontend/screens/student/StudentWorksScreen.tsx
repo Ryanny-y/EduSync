@@ -1,6 +1,6 @@
 import Header from 'components/Header';
 import { Text } from 'components/ui/Text';
-import { ScrollView, View, TouchableOpacity } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useState } from 'react';
 import {
   Calendar,
@@ -11,6 +11,7 @@ import {
   Plus,
 } from 'lucide-react-native';
 import StatusBadge from 'components/ui/StatusBadge';
+import Pressable from 'components/ui/Pressable';
 
 type WorkItem = {
   id: string;
@@ -95,7 +96,7 @@ const StudentWorksScreen = () => {
           const active = subject === selectedSubject;
 
           return (
-            <TouchableOpacity
+            <Pressable
               key={subject}
               onPress={() => setSelectedSubject(subject)}
               className={`mr-2 rounded-full px-5 py-2 ${
@@ -104,7 +105,7 @@ const StudentWorksScreen = () => {
               <Text className={`text-sm font-semibold ${active ? 'text-white' : 'text-slate-500'}`}>
                 {subject}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </ScrollView>
@@ -115,9 +116,8 @@ const StudentWorksScreen = () => {
           const badge = STATUS_CONFIG[work.status];
 
           return (
-            <TouchableOpacity
+            <Pressable
               key={work.id}
-              activeOpacity={0.8}
               className="mb-4 rounded-2xl border border-slate-100 bg-white p-5">
               {/* Top Row */}
               <View className="mb-3 flex-row items-start justify-between">
@@ -155,7 +155,7 @@ const StudentWorksScreen = () => {
 
                 <ChevronRight size={18} color="#cbd5f5" />
               </View>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
         {filteredWorks.length === 0 && (
@@ -170,11 +170,10 @@ const StudentWorksScreen = () => {
       </ScrollView>
 
       {/* Floating Add Button */}
-      <TouchableOpacity
-        activeOpacity={0.8}
+      <Pressable
         className="absolute bottom-8 right-6 h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg">
         <Plus color="white" size={26} />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

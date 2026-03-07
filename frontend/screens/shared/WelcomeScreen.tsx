@@ -1,8 +1,9 @@
 import { Text } from 'components/ui/Text';
 import { BookOpen, ChevronRight, GraduationCap } from 'lucide-react-native';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from 'types/navigation';
+import Pressable from 'components/ui/Pressable';
 
 const WelcomeScreen = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
@@ -26,7 +27,7 @@ const WelcomeScreen = () => {
       </View>
 
       <View className="w-full">
-        <TouchableOpacity
+        <Pressable
           onPress={() => navigation.navigate('LoginScreen', { role: 'STUDENT' })}
           className="mt-5 rounded-xl bg-green-500 px-6 py-[14px]"
         >
@@ -39,9 +40,9 @@ const WelcomeScreen = () => {
             </View>
             <ChevronRight color="#ffffff" />
           </View>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => navigation.navigate('LoginScreen', { role: 'TEACHER' })}
           className="mt-5 rounded-xl border-2 border-green-400 px-6 py-[14px]"
         >
@@ -54,7 +55,7 @@ const WelcomeScreen = () => {
             </View>
             <ChevronRight color="#90CF8E" />
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

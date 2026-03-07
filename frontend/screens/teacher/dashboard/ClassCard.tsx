@@ -1,6 +1,7 @@
+import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { ChevronRight, Clock, Users } from 'lucide-react-native';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 type Props = {
   subject: string;
@@ -11,7 +12,7 @@ type Props = {
 
 const ClassCard = ({ subject, section, time, students }: Props) => {
   return (
-    <TouchableOpacity className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+    <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
       {/* subtle background accent */}
       <View className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-green-200 opacity-60" />
       <View className="absolute -bottom-16 -left-2 h-32 w-32 rounded-full bg-green-200 opacity-60" />
@@ -50,7 +51,7 @@ const ClassCard = ({ subject, section, time, students }: Props) => {
       <View className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-slate-50">
         <ChevronRight size={18} color="#16a34a" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

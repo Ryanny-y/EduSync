@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TextInput, ActivityIndicator } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { CreateUserForm } from 'types/User';
 import { AuthStackParamList } from 'types/navigation';
@@ -13,6 +13,7 @@ import { useAuth } from 'context/AuthContext';
 import FormInput from './signup/FormInput';
 import DepartmentPicker from './signup/DepartmentPicker';
 import { useSignupForm } from './signup/useSignupForm';
+import Pressable from 'components/ui/Pressable';
 
 type SignupRouteProp = RouteProp<AuthStackParamList, 'SignupScreen'>;
 
@@ -92,9 +93,9 @@ const SignUpScreen = () => {
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'sentences'}
         />
         {toggleShow && (
-          <TouchableOpacity onPress={toggleShow}>
+          <Pressable onPress={toggleShow}>
             {show ? <EyeOff size={18} color="#64748b" /> : <Eye size={18} color="#64748b" />}
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
       {formErrors[field] && <Text className="text-sm text-red-500">{formErrors[field]}</Text>}
@@ -110,11 +111,11 @@ const SignUpScreen = () => {
         showsVerticalScrollIndicator={false}
         enableOnAndroid>
         {/* Back Button */}
-        <TouchableOpacity
+        <Pressable
           className="absolute left-5 top-6 z-10"
           onPress={() => navigation.goBack()}>
           <ArrowLeft size={20} color="#334155" />
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Logo & Heading */}
         <View className="mb-10 items-center">
@@ -191,7 +192,7 @@ const SignUpScreen = () => {
               {message.text}
             </Text>
           )}
-          <TouchableOpacity
+          <Pressable
             onPress={handleSignup}
             className={`items-center rounded-xl ${isLoading ? 'bg-green-300' : 'bg-green-500'} py-4`}
             disabled={isLoading}>
@@ -200,15 +201,15 @@ const SignUpScreen = () => {
             ) : (
               <Text className="font-semibold text-white">Create Account</Text>
             )}
-          </TouchableOpacity>
+          </Pressable>
 
           <View className="mt-5 items-center">
             <Text>Already have an account?</Text>
-            <TouchableOpacity
+            <Pressable
               className="mt-2"
               onPress={() => navigation.replace('LoginScreen', { role })}>
               <Text className="text-lg font-semibold text-green-500">Login</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </KeyboardAwareScrollView>

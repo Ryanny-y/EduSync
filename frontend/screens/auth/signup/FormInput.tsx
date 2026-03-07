@@ -1,6 +1,7 @@
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput} from 'react-native';
 import { Text } from 'components/ui/Text';
 import { Eye, EyeOff, Lock } from 'lucide-react-native';
+import Pressable from 'components/ui/Pressable';
 
 type Props = {
   label: string;
@@ -48,9 +49,9 @@ export default function FormInput({
         />
 
         {toggleShow && (
-          <TouchableOpacity onPress={toggleShow}>
+          <Pressable onPress={toggleShow}>
             {show ? <EyeOff size={18} color="#64748b" /> : <Eye size={18} color="#64748b" />}
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
 

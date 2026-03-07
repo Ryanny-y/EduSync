@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AuthStackParamList } from 'types/navigation';
-import { View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TextInput, ActivityIndicator } from 'react-native';
 import { Text } from 'components/ui/Text';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react-native';
 import Logo from 'screens/shared/Logo';
 import { useAuth } from 'context/AuthContext';
 import { validateEmail } from 'utils/validators';
-import { IUser } from 'types/User';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Pressable from 'components/ui/Pressable';
 
 type LoginRouteProp = RouteProp<AuthStackParamList, 'LoginScreen'>;
 
@@ -81,9 +81,9 @@ const LoginScreen = () => {
   return (
     <View className="flex-1 justify-center bg-background px-6">
       {/* Back Button */}
-      <TouchableOpacity className="absolute left-5 top-16" onPress={() => navigation.goBack()}>
+      <Pressable className="absolute left-5 top-16" onPress={() => navigation.goBack()}>
         <ArrowLeft size={20} color="#334155" />
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Header */}
       <View className="mb-10 items-center">
@@ -118,13 +118,13 @@ const LoginScreen = () => {
             secureTextEntry={!showPassword}
             className="flex-1"
           />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Pressable onPress={() => setShowPassword(!showPassword)}>
             {showPassword ? (
               <EyeOff size={20} color="#94a3b8" />
             ) : (
               <Eye size={20} color="#94a3b8" />
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
         {passwordError && <Text className="text-sm text-red-500">{passwordError}</Text>}
 
@@ -137,7 +137,7 @@ const LoginScreen = () => {
         )}
 
         {/* Login Button */}
-        <TouchableOpacity
+        <Pressable
           className="mt-[10px] items-center rounded-[14px] bg-green-500 py-4"
           onPress={handleLogin}
           disabled={isLoading}>
@@ -146,16 +146,16 @@ const LoginScreen = () => {
           ) : (
             <Text className="font-bold text-white">Log In</Text>
           )}
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Signup */}
         <View className="mt-5 items-center">
           <Text>Don't have an account?</Text>
-          <TouchableOpacity
+          <Pressable
             className="mt-2"
             onPress={() => navigation.navigate('SignupScreen', { role })}>
             <Text className="font-semibold text-green-500">Signup</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>
