@@ -6,7 +6,7 @@ const useAuthFetch = () => {
   const { authResponse, refreshToken, logout } = useAuth();
 
   const authFetch = useCallback(
-    async <T = any>(url: string, options: RequestInit & { raw?: boolean } = {}) => {
+    async <T = any>(url: string, options: RequestInit & { raw?: boolean } = {}): Promise<T> => {
       let token = authResponse?.data.accessToken;
       const isFormData = options.body instanceof FormData;
 

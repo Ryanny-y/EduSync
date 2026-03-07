@@ -1,3 +1,4 @@
+import { CreateClassType } from "types/class";
 import { CreateUserForm, UserRole } from "types/User";
 
 export const validateEmail = (email: string) => {
@@ -12,7 +13,7 @@ export const validatePassword = (pass: string) => {
   return { hasNumber, hasUpper, isLongEnough };
 };
 
-export function validateSignup(role: UserRole ,data: CreateUserForm) {
+export function validateSignup(role: UserRole, data: CreateUserForm) {
   const errors: Partial<Record<keyof CreateUserForm, string>> = {};
 
   if (!data.firstName) errors.firstName = 'First name is required.';
@@ -38,4 +39,14 @@ export function validateSignup(role: UserRole ,data: CreateUserForm) {
   }
 
   return errors;
+}
+
+export const validateCreateClass = (data: CreateClassType): string | null => {
+  if(!data.name) return "Class name is required.";
+  if(!data.room) return "Class name is required.";
+  if(!data.section) return "Class name is required.";
+  if(!data.subject) return "Class name is required.";
+  if(!data.time) return "Class name is required.";
+
+  return null;
 }

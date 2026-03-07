@@ -14,3 +14,12 @@ export interface IClass extends HasId {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateClassType {
+  name: string;
+  subject: string;
+  section: string;
+  time: string;
+  room: string;
+  gmeetLink?: string;
+};
