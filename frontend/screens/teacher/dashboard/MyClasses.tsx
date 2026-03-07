@@ -9,48 +9,37 @@ type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'Teacher
 
 const classes = [
   {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
+    id: 1,
+    subject: 'Algebra & Trigonometry',
+    teacher: 'Mr. Cruz',
+    section: '10-Section A',
+    time: '8:00 - 9:00 AM',
+    room: '203',
+    color: 'bg-indigo-500',
+    students: 35
   },
   {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
+    id: 2,
+    subject: 'Algebra & Trigonometry',
+    teacher: 'Mr. Cruz',
+    section: '10-Section A',
+    time: '8:00 - 9:00 AM',
+    room: '203',
+    color: 'bg-orange-300',
+    students: 35
   },
   {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
-  },
-  {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
-  },
-  {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
-  },
-  {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
-  },
-  {
-    subject: 'Mathematics 101',
-    title: 'Grade 10 - Newton',
-    time: '11:00 AM - 12:00 PM',
-    students: 35,
+    id: 3,
+    subject: 'Algebra & Trigonometry',
+    teacher: 'Mr. Cruz',
+    section: '10-Section A',
+    time: '8:00 - 9:00 AM',
+    room: '203',
+    color: 'bg-yellow-400',
+    students: 35
   },
 ];
+
 
 const MyClasses = () => {
   const navigation = useNavigation<NavigationProps>();

@@ -1,4 +1,3 @@
-import { Text } from 'components/ui/Text';
 import { ScrollView, View } from 'react-native';
 import TeacherDashboardHeader from './dashboard/TeacherDashboardHeader';
 import MyClasses from './dashboard/MyClasses';

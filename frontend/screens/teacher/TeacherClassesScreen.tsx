@@ -1,6 +1,7 @@
-import ClassCard from 'components/ClassCard';
-import Header from 'components/Header';
-import { ScrollView,View } from 'react-native';
+import ClassCard from "components/ClassCard"
+import Header from "components/Header"
+import TeacherClassCard from "components/TeacherClassCard";
+import { ScrollView, View } from "react-native"
 
 const classes = [
   {
@@ -35,7 +36,7 @@ const classes = [
   },
 ];
 
-const StudentClassesScreen = () => {
+const TeacherClassesScreen = () => {
   return (
     <View className="flex-1 bg-slate-50">
       <Header title="My Classes" />
@@ -45,11 +46,11 @@ const StudentClassesScreen = () => {
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
         {classes.map((item) => (
-          <ClassCard key={item.id} item={item} />
+          <TeacherClassCard key={item.id} item={item} />
         ))}
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default StudentClassesScreen;
+export default TeacherClassesScreen

@@ -1,0 +1,55 @@
+import { TouchableOpacity, View } from 'react-native';
+import { Text } from './ui/Text';
+import { ChevronRight, Clock, EllipsisVertical, MapPin, Users, Video } from 'lucide-react-native';
+import React from 'react';
+
+const TeacherClassCard = ({ item }: any) => {
+  return (
+    <View className="mb-5 rounded-2xl bg-white shadow-lg">
+      {/* TOP */}
+      <View
+        className={`flex-row items-start justify-between rounded-t-2xl px-5 py-7 ${item.color}`}>
+        <View className="flex-1 gap-1 pr-3">
+          <Text className="text-2xl font-bold text-white">{item.title}</Text>
+          <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
+        </View>
+
+        <TouchableOpacity onPress={() => alert('show Settings')}>
+          <EllipsisVertical color="#ffffff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* BOTTOM */}
+      <View className="gap-5 px-5 py-6">
+        <View className="gap-1.5">
+          <View className="flex-row items-center gap-2">
+            <Clock size={16} color="#64748b" />
+            <Text className="font-semibold text-slate-500">{item.time}</Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <MapPin size={16} color="#64748b" />
+            <Text className="font-semibold text-slate-500">Room {item.room}</Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Users size={16} color="#64748b" />
+            <Text className="font-semibold text-slate-500">{item.students} students</Text>
+          </View>
+        </View>
+
+        <View className="flex-row items-center gap-3">
+          <TouchableOpacity
+            className={`flex-1 flex-row items-center justify-center gap-2 rounded-2xl p-4 ${item.color}`}>
+            <Text className="text-white">Open Class</Text>
+            <ChevronRight size={20} color="#ffffff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity className="rounded-2xl bg-green-200 p-4">
+            <Video size={20} color="#90CF8E" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default TeacherClassCard;
