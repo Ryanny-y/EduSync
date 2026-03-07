@@ -10,7 +10,7 @@ export interface CreateUserForm {
   role: UserRole,
   password: string;
   confirmPassword: string;
-  department?: string;
+  departmentId?: string;
 }
 
 export interface IUser extends HasId {

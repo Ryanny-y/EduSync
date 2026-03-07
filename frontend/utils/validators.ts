@@ -1,4 +1,4 @@
-import { CreateUserForm } from "types/User";
+import { CreateUserForm, UserRole } from "types/User";
 
 export const validateEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,7 +12,7 @@ export const validatePassword = (pass: string) => {
   return { hasNumber, hasUpper, isLongEnough };
 };
 
-export function validateSignup(data: CreateUserForm) {
+export function validateSignup(role: UserRole ,data: CreateUserForm) {
   const errors: Partial<Record<keyof CreateUserForm, string>> = {};
 
   if (!data.firstName) errors.firstName = 'First name is required.';
@@ -31,6 +31,10 @@ export function validateSignup(data: CreateUserForm) {
   if (!pass.hasNumber || !pass.hasUpper || !pass.isLongEnough) {
     errors.password =
       'Password must be at least 8 characters, 1 uppercase letter, and 1 number.';
+  }
+
+  if(role === "TEACHER" && !data.departmentId) {
+    errors.departmentId = "Department is required.";
   }
 
   return errors;

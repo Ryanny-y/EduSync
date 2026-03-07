@@ -18,7 +18,7 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
     password: '',
     confirmPassword: '',
     role,
-    department: '',
+    departmentId: '',
   });
 
   const [formErrors, setFormErrors] =
@@ -43,7 +43,7 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
   };
 
   const validateForm = () => {
-    const errors = validateSignup(formData);
+    const errors = validateSignup(role, formData);
     setFormErrors(errors);
 
     return Object.keys(errors).length === 0;

@@ -58,8 +58,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data);
-
       if (!response.ok) {
         throw new Error(data.message || response.statusText);
       }
@@ -81,15 +79,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ email, password, role }),
       });
 
-      console.log(response);
-      
-
       const data: AuthResponseType = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || response.statusText);
       }
-
 
       await SecureStore.setItemAsync('accessToken', data.data.accessToken!);
 

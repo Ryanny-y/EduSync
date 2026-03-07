@@ -8,7 +8,6 @@ import Logo from 'screens/shared/Logo';
 import { Text } from 'components/ui/Text';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { validateEmail, validateSignup } from 'utils/validators';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from 'context/AuthContext';
 import FormInput from './signup/FormInput';
@@ -179,9 +178,9 @@ const SignUpScreen = () => {
           />
           {role === 'TEACHER' && (
             <DepartmentPicker
-              value={formData.department}
-              error={formErrors.department}
-              onChange={(value) => handleChange('department', value)}
+              value={formData.departmentId}
+              error={formErrors.departmentId}
+              onChange={(value) => handleChange('departmentId', value)}
             />
           )}
 
