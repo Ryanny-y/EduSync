@@ -1,12 +1,13 @@
-import { Text } from "components/ui/Text"
-import { View } from "react-native"
+import { Text } from 'components/ui/Text';
+import { View } from 'react-native';
+import TeacherDashboardHeader from './dashboard/TeacherDashboardHeader';
 
 const TeacherDashboardScreen = () => {
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-3xl">Teacher Dashboard</Text>
+    <View className="w-full flex-1 items-center justify-start bg-background px-4 py-14">
+      <TeacherDashboardHeader />
     </View>
-  )
-}
+  );
+};
 
-export default TeacherDashboardScreen
+export default TeacherDashboardScreen;
