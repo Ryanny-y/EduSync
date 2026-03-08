@@ -8,7 +8,8 @@ import useMutation from 'hooks/useMutation';
 import { AlertTriangle, CheckCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { CreateClassType } from 'types/class';
+import { CreateClassType, IClass } from 'types/class';
+import { ApiResponse } from 'types/common';
 import { validateCreateClass } from 'utils/validators';
 
 const CreateClassScreen = () => {
@@ -40,12 +41,12 @@ const CreateClassScreen = () => {
     }
 
     try {
-      const response = await execute('class', {
+      const response: ApiResponse<IClass> = await execute('class', {
         method: 'POST',
         body: JSON.stringify(formData),
       });
 
-      setMessage({ status: 'success', message: 'Class Created.' });
+      setMessage({ status: 'success', message: response.message });
       setFormData({
         name: '',
         subject: '',

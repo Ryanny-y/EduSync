@@ -7,10 +7,10 @@ type Props = {
   subject: string;
   section: string;
   time: string;
-  students: number;
+  studentCount: number;
 };
 
-const ClassCard = ({ subject, section, time, students }: Props) => {
+const ClassCard = ({ subject, section, time, studentCount }: Props) => {
   return (
     <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
       {/* subtle background accent */}
@@ -41,7 +41,7 @@ const ClassCard = ({ subject, section, time, students }: Props) => {
 
             <View className="flex-row items-center gap-1">
               <Users size={15} color="#64748b" />
-              <Text className="text-sm font-semibold text-slate-500">{students} Students</Text>
+              <Text className="text-sm font-semibold text-slate-500">{studentCount} studentCount</Text>
             </View>
           </View>
         </View>

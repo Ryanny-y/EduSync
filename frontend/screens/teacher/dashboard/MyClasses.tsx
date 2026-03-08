@@ -5,45 +5,18 @@ import { View } from 'react-native';
 import { TeacherStackParamList } from 'types/navigation';
 import ClassCard from './ClassCard';
 import Pressable from 'components/ui/Pressable';
+import { useClassContext } from 'context/ClassContext';
+import { useMemo } from 'react';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'TeacherClassesScreen'>;
 
-const classes = [
-  {
-    id: 1,
-    subject: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-indigo-500',
-    students: 35
-  },
-  {
-    id: 2,
-    subject: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-orange-300',
-    students: 35
-  },
-  {
-    id: 3,
-    subject: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-yellow-400',
-    students: 35
-  },
-];
-
-
 const MyClasses = () => {
   const navigation = useNavigation<NavigationProps>();
+  const { data, loading, refetchData } = useClassContext();
+
+  const classes = useMemo(() => {
+    return data?.data ?? [];
+  }, [data]);
 
   return (
     <View className="gap-4">

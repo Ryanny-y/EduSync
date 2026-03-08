@@ -5,6 +5,7 @@ import { useAuth } from 'context/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import StudentNavigator from './StudentNavigator';
 import TeacherNavigator from './TeacherNavigator';
+import { ClassProvider } from 'context/ClassContext';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -19,19 +20,12 @@ export default function RootNavigator() {
     );
   }
 
-  if (authResponse && authResponse.data.userData.role === 'STUDENT') {
-    return (
-      <NavigationContainer>
-        <StudentNavigator />
-      </NavigationContainer>
-    );
-  }
-
-  if (authResponse && authResponse.data.userData.role === 'TEACHER') {
-    return (
-      <NavigationContainer>
-        <TeacherNavigator />
-      </NavigationContainer>
-    );
-  }
+  return (
+    <NavigationContainer>
+      <ClassProvider>
+        {authResponse.data.userData.role === 'STUDENT' && <StudentNavigator />}
+        {authResponse.data.userData.role === 'TEACHER' && <TeacherNavigator />}
+      </ClassProvider>
+    </NavigationContainer>
+  );
 }

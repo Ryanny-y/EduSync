@@ -5,22 +5,18 @@ import TeacherClassCard from 'components/TeacherClassCard';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { useAuth } from 'context/AuthContext';
-import useFetchData from 'hooks/useFetchData';
+import { useClassContext } from 'context/ClassContext';
 import { BookOpen, Plus } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
-import { IClass } from 'types/class';
-import { ApiResponse } from 'types/common';
 import { TeacherStackParamList } from 'types/navigation';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'CreateClassScreen'>;
 
 const TeacherClassesScreen = () => {
+  const { data, loading, refetchData } = useClassContext();
   const { user } = useAuth();
   const navigation = useNavigation<NavigationProps>();
-
-  // TODO: Handle Error and Refetch Data
-  const { data, loading, error, refetchData } = useFetchData<ApiResponse<IClass[]>>('class');
 
   useFocusEffect(
     useCallback(() => {
