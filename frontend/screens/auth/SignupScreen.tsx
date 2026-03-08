@@ -88,7 +88,7 @@ const SignUpScreen = () => {
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-          <Pressable className="absolute left-5 top-6 z-10" onPress={() => navigation.goBack()}>
+          <Pressable className="absolute top-16 z-10" onPress={() => navigation.goBack()}>
             <ArrowLeft size={20} color="#334155" />
           </Pressable>
 
