@@ -15,7 +15,6 @@ type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'CreateC
 
 const TeacherClassesScreen = () => {
   const { data, loading, refetchData } = useClassContext();
-  const { user } = useAuth();
   const navigation = useNavigation<NavigationProps>();
 
   useFocusEffect(
@@ -39,9 +38,8 @@ const TeacherClassesScreen = () => {
           <Text className="mt-6 text-lg font-bold text-slate-700">No Classes Yet</Text>
 
           <Text className="mt-2 text-center text-sm text-slate-500">
-            {user?.role === 'TEACHER'
-              ? "You haven't created any classes yet. Start by creating your first class and invite students to join."
-              : "You're not enrolled in any classes yet. Join a class to start learning with your teacher."}
+            You haven't created any classes yet. Start by creating your first class and invite
+            students to join.
           </Text>
         </View>
       ) : (

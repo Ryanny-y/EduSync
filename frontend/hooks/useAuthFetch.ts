@@ -54,7 +54,12 @@ const useAuthFetch = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data?.message || response.statusText);
+          const err: any = new Error(data?.message || response.statusText);
+          err.errors = data?.errors;
+          err.status = response.status;
+          err.response = data;
+
+          throw err;
         }
 
         return data;

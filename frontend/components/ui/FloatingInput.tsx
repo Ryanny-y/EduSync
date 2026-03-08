@@ -6,9 +6,10 @@ type FloatingInputProps = {
   value: string;
   onChangeText: (text: string) => void;
   inputProps?: React.ComponentProps<typeof TextInput>;
+  maxLength?: number
 };
 
-const FloatingInput = ({ label, value, onChangeText, inputProps }: FloatingInputProps) => {
+const FloatingInput = ({ label, value, onChangeText, inputProps, maxLength }: FloatingInputProps) => {
   const [focused, setFocused] = useState(false);
   const animated = useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -56,6 +57,7 @@ const FloatingInput = ({ label, value, onChangeText, inputProps }: FloatingInput
         onChangeText={onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        maxLength={maxLength}
         className="h-[40px] text-base"
         {...inputProps}
       />
