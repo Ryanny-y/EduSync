@@ -18,7 +18,7 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
     password: '',
     confirmPassword: '',
     role,
-    departmentId: '',
+    departmentId: undefined,
   });
 
   const [formErrors, setFormErrors] =

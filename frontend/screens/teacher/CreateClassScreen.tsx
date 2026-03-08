@@ -111,38 +111,38 @@ const CreateClassScreen = () => {
               inputProps={{ keyboardType: 'url' }}
             />
           </View>
-        </ScrollView>
 
-        {message && (
-          <View
-            className={`mx-4 mb-3 flex-row items-center gap-2 rounded-lg p-3 ${
-              message.status === 'error' ? 'bg-red-100' : 'bg-green-100'
-            }`}>
-            {message.status === 'error' ? (
-              <AlertTriangle size={20} color="#dc2626" />
-            ) : (
-              <CheckCircle size={20} color="#16a34a" />
-            )}
-
-            <Text
-              className={`flex-1 text-sm font-medium ${
-                message.status === 'error' ? 'text-red-600' : 'text-green-600'
+          {message && (
+            <View
+              className={`mx-4 mb-3 flex-row items-center gap-2 rounded-lg p-3 ${
+                message.status === 'error' ? 'bg-red-100' : 'bg-green-100'
               }`}>
-              {message.message}
-            </Text>
-          </View>
-        )}
+              {message.status === 'error' ? (
+                <AlertTriangle size={20} color="#dc2626" />
+              ) : (
+                <CheckCircle size={20} color="#16a34a" />
+              )}
 
-        <View className="flex-row gap-3 px-4 pb-4">
-          <Pressable
-            onPress={handleCreateClass}
-            disabled={isCreating}
-            className={`flex-1 items-center justify-center rounded-xl p-3 ${
-              isCreating ? 'bg-green-400' : 'bg-green-600/80'
-            }`}>
-            <Text className="text-lg font-medium text-white">Create Class</Text>
-          </Pressable>
-        </View>
+              <Text
+                className={`flex-1 text-sm font-medium ${
+                  message.status === 'error' ? 'text-red-600' : 'text-green-600'
+                }`}>
+                {message.message}
+              </Text>
+            </View>
+          )}
+
+          <View className="flex-row gap-3 px-4 pb-4">
+            <Pressable
+              onPress={handleCreateClass}
+              disabled={isCreating}
+              className={`flex-1 items-center justify-center rounded-xl p-3 ${
+                isCreating ? 'bg-green-400' : 'bg-green-600/80'
+              }`}>
+              <Text className="text-lg font-medium text-white">Create Class</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
       </Pressable>
     </KeyboardAvoidingView>
   );

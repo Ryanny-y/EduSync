@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import JoinClassScreen from 'screens/student/JoinClassScreen';
 import StudentClassesScreen from 'screens/student/StudentClassesScreen';
 import StudentDashboardScreen from 'screens/student/StudentDashboardScreen';
 import StudentWorksScreen from 'screens/student/StudentWorksScreen';
@@ -21,6 +22,11 @@ export default function StudentNavigator() {
       <Stack.Screen 
         name="StudentClassesScreen"
         component={StudentClassesScreen}
+      />
+
+      <Stack.Screen 
+        name="JoinClassScreen"
+        component={JoinClassScreen}
       />
     </Stack.Navigator>
   );

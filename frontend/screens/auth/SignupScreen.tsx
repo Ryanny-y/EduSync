@@ -74,40 +74,6 @@ const SignUpScreen = () => {
     }
   };
 
-  const renderInput = (
-    label: string,
-    field: keyof CreateUserForm,
-    placeholder: string,
-    secure = false,
-    show = false,
-    toggleShow?: () => void,
-    keyboardType?: 'default' | 'email-address'
-  ) => (
-    <View className="mb-3 gap-[6px]">
-      <Text className="font-semibold text-slate-500">{label}</Text>
-      <View
-        className={`rounded-xl border px-3 py-2 ${formErrors[field] ? 'border-red-500' : 'border-slate-200'} flex-row items-center`}>
-        {secure && <Lock size={16} color="#94a3b8" />}
-        <TextInput
-          placeholder={placeholder}
-          value={formData[field]}
-          onChangeText={(text) => handleChange(field, text)}
-          className="ml-2 flex-1 text-base"
-          secureTextEntry={secure && !show}
-          placeholderTextColor="#94a3b8"
-          keyboardType={keyboardType}
-          autoCapitalize={keyboardType === 'email-address' ? 'none' : 'sentences'}
-        />
-        {toggleShow && (
-          <Pressable onPress={toggleShow}>
-            {show ? <EyeOff size={18} color="#64748b" /> : <Eye size={18} color="#64748b" />}
-          </Pressable>
-        )}
-      </View>
-      {formErrors[field] && <Text className="text-sm text-red-500">{formErrors[field]}</Text>}
-    </View>
-  );
-
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-background"

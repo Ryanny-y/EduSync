@@ -11,6 +11,7 @@ export type AuthStackParamList = {
 export type StudentStackParamList = {
   StudentWorksScreen: undefined;
   StudentClassesScreen: undefined;
+  JoinClassScreen: undefined;
 }
 
 export type TeacherStackParamList = {
