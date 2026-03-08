@@ -12,6 +12,7 @@ export const mapClassToDto = (cls: any): ClassDto => ({
   teacher: cls.teacher
     ? `${cls.teacher.lastName}, ${cls.teacher.firstName}`
     : '',
+  bgColor: cls.bgColor,
   studentCount: cls._count?.students ?? 0,
   createdAt: cls.createdAt,
   updatedAt: cls.updatedAt,

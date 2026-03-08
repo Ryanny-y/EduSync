@@ -82,6 +82,7 @@ model Class {
   room      String
   gmeetLink String?
   code      String  @unique // student join code
+  bgColor   String?
 
   teacher   User   @relation("TeacherClasses", fields: [teacherId], references: [id])
   teacherId String

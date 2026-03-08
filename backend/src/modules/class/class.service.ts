@@ -8,13 +8,16 @@ const generateClassCode = (): string => {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  let code = "";
+  return Array.from({ length: 8 }, () =>
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(
+      Math.floor(Math.random() * chars.length)
+    )
+  ).join("");
+};
 
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  return code;
+const generateBgColor = (): string => {
+  const colors = ["#0891b2", "#059669", "#0d9488", "#3730a3", "#ca8a04", "#7f1d1d"];
+  return colors[Math.floor(Math.random() * colors.length)]!;
 };
 
 export const createClass = async (
@@ -34,8 +37,9 @@ export const createClass = async (
           ...data,
           code,
           teacherId,
+          bgColor: generateBgColor(),
           gmeetLink: data.gmeetLink ?? null
-        },
+        }
       });
 
       return mapClassToDto(created);

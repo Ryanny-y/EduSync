@@ -7,7 +7,7 @@ export const createClassBodySchema = z.object({
     section: z.string().min(1),
     time: z.string().min(1),
     room: z.string().min(1),
-    gmeetLink: z.string().url().optional(),
+    gmeetLink: z.string().optional(),
   }),
 });
 
@@ -42,6 +42,7 @@ export const classDtoSchema = z.object({
   code: z.string(),
   teacher: z.string(),
   studentCount: z.number(),
+  bgColor: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
