@@ -4,7 +4,6 @@ import Header from 'components/Header';
 import TeacherClassCard from 'components/TeacherClassCard';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
-import { useAuth } from 'context/AuthContext';
 import { useClassContext } from 'context/ClassContext';
 import { BookOpen, Plus } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';

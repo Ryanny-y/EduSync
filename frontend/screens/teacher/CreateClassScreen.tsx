@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { CreateClassType, IClass } from 'types/class';
 import { ApiResponse } from 'types/common';
+import { getErrorMessage } from 'utils/errorHandler';
 import { validateCreateClass } from 'utils/validators';
 
 const CreateClassScreen = () => {
@@ -60,7 +61,8 @@ const CreateClassScreen = () => {
         navigation.goBack();
       }, 1000);
     } catch (error: any) {
-      setMessage({ status: 'error', message: error.message });
+      const msg = getErrorMessage(error);
+      setMessage({ status: 'error', message: msg });
     } finally {
       setIsCreating(false);
     }
