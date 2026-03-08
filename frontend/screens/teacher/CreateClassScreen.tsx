@@ -18,7 +18,7 @@ const CreateClassScreen = () => {
   const [isCreating, setIsCreating] = useState(false);
   const navigation = useNavigation();
   const { execute } = useMutation();
-  const { message, showError, showSuccess, clearMessage } = useMessage();
+  const { message, showError, showSuccess } = useMessage();
 
   const [formData, setFormData] = useState<CreateClassType>({
     name: '',
@@ -57,7 +57,6 @@ const CreateClassScreen = () => {
         gmeetLink: undefined,
       });
       setTimeout(() => {
-        clearMessage();
         navigation.goBack();
       }, 1000);
     } catch (error: any) {

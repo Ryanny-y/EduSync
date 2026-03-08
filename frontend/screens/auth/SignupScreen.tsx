@@ -32,7 +32,7 @@ const SignUpScreen = () => {
   const navigation = useNavigation<SignupScreenNavigationProp>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { message, showError, showSuccess, clearMessage } = useMessage();
+  const { message, showError, showSuccess } = useMessage();
   const { signup } = useAuth();
 
   const { role } = route.params;
@@ -51,8 +51,6 @@ const SignUpScreen = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    clearMessage();
-
     try {
       await signup(formData);
 

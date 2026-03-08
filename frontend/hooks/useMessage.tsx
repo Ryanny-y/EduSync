@@ -10,6 +10,10 @@ export const useMessage = () => {
 
   const showSuccess = (text: string) => {
     setMessage({ type: 'success', message: text });
+    
+    setTimeout(() => {
+      setMessage(null);
+    }, 3000);
   };
 
   const showError = (text: string) => {

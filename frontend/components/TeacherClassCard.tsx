@@ -17,13 +17,16 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import useMutation from 'hooks/useMutation';
 import { getErrorMessage } from 'utils/errorHandler';
-import { useMessage } from 'hooks/useMessage';
+import { ApiResponse } from 'types/common';
+import Toast from 'react-native-toast-message';
 
-const TeacherClassCard = ({ item }: { item: IClass }) => {
+const TeacherClassCard = ({
+  item,
+  refetchData,
+}: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const { showError, showSuccess } = useMessage();
 
   const handleDeletePress = () => {
     setDeleteModalVisible(true);
@@ -33,18 +36,30 @@ const TeacherClassCard = ({ item }: { item: IClass }) => {
     setDeleteModalVisible(false);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (isDeleting) return;
     setIsDeleting(true);
 
     try {
-      setDeleteModalVisible(false);
+      const response: ApiResponse<void> = await execute(`class/${item.id}`, {
+        method: 'DELETE',
+      });
 
-      showSuccess('Class deleted successfully');
+      setDeleteModalVisible(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+      refetchData();
     } catch (error) {
-      showError(getErrorMessage(error));
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getErrorMessage(error),
+      });
     } finally {
-      setIsDeleting(true);
+      setIsDeleting(false);
     }
   };
 
@@ -56,7 +71,7 @@ const TeacherClassCard = ({ item }: { item: IClass }) => {
           className="relative flex-row items-start justify-between rounded-t-2xl px-5 py-7"
           style={{ backgroundColor: item.bgColor || '#22c55e' }}>
           <View className="flex-1 gap-1 pr-3">
-            <Text className="text-2xl font-bold text-white">{item.name}</Text>
+            <Text className="text-2xl font-bold text-white">{item.name} - {item.subject}</Text>
             <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
           </View>
 

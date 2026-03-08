@@ -47,7 +47,7 @@ const TeacherClassesScreen = () => {
           contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}>
           {classes.map((item) => (
-            <TeacherClassCard key={item.id} item={item} />
+            <TeacherClassCard key={item.id} item={item} refetchData={refetchData}/>
           ))}
         </ScrollView>
       )}

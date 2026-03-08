@@ -11,7 +11,7 @@ const ClassCard = ({ item }: { item: IClass }) => {
         className="flex-row items-start justify-between rounded-t-2xl px-5 py-7"
         style={{ backgroundColor: item.bgColor || '#22c55e' }}>
         <View className="flex-1 gap-1 pr-3">
-          <Text className="text-2xl font-bold text-white">{item.name}</Text>
+          <Text className="text-2xl font-bold text-white">{item.name} - {item.subject}</Text>
           <Text className="font-semibold text-white">Teacher: {item.teacher}</Text>
         </View>
 

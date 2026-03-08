@@ -3,14 +3,19 @@ import { MenuProvider } from 'react-native-popup-menu';
 import './global.css';
 import RootNavigator from 'navigation/RootNavigator';
 import { AuthProvider } from 'context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   return (
-    <MenuProvider>
-      <AuthProvider>
-        <RootNavigator />
-        <StatusBar style="auto" />
-      </AuthProvider>
-    </MenuProvider>
+    <>
+      <MenuProvider>
+        <AuthProvider>
+          <RootNavigator />
+          <StatusBar style="auto" />
+        </AuthProvider>
+      </MenuProvider>
+
+      <Toast />
+    </>
   );
 }

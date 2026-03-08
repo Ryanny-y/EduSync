@@ -17,7 +17,7 @@ const JoinClassScreen = () => {
   const [isJoining, setIsJoining] = useState(false);
   const { execute } = useMutation();
   const navigation = useNavigation();
-  const { message, showError, showSuccess, clearMessage } = useMessage();
+  const { message, showError, showSuccess } = useMessage();
 
   const handleJoinClass = async () => {
     if (isJoining) return;
@@ -42,7 +42,6 @@ const JoinClassScreen = () => {
       showSuccess(response.message);
       setClassCode('');
       setTimeout(() => {
-        clearMessage();
         navigation.goBack();
       }, 1000);
     } catch (error) {
