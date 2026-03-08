@@ -1,4 +1,5 @@
 import { UserRole } from "types/User";
+import { IClass } from "./class";
 
 export type AuthStackParamList = {
   WelcomeScreen: undefined;
@@ -17,4 +18,5 @@ export type StudentStackParamList = {
 export type TeacherStackParamList = {
   TeacherClassesScreen: undefined;
   CreateClassScreen: undefined;
+  EditClassScreen: { classData: IClass };
 }

@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CreateClassScreen from 'screens/teacher/CreateClassScreen';
+import EditClassScreen from 'screens/teacher/EditClassScreen';
 import TeacherClassesScreen from 'screens/teacher/TeacherClassesScreen';
 import TeacherDashboardScreen from 'screens/teacher/TeacherDashboardScreen';
 
@@ -24,10 +25,10 @@ export default function TeacherNavigator() {
         component={CreateClassScreen}
       />
 
-      {/* <Stack.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-      /> */}
+      <Stack.Screen
+        name="EditClassScreen"
+        component={EditClassScreen}
+      />
     </Stack.Navigator>
   );
 }

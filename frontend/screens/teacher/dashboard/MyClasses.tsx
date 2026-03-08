@@ -12,6 +12,7 @@ type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'Teacher
 
 const MyClasses = () => {
   const navigation = useNavigation<NavigationProps>();
+  // TODO: Handle Loading and Error
   const { data, loading, refetchData } = useClassContext();
 
   const classes = useMemo(() => {

@@ -19,12 +19,18 @@ import useMutation from 'hooks/useMutation';
 import { getErrorMessage } from 'utils/errorHandler';
 import { ApiResponse } from 'types/common';
 import Toast from 'react-native-toast-message';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { TeacherStackParamList } from 'types/navigation';
+import { useNavigation } from '@react-navigation/native';
+
+type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'EditClassScreen'>;
 
 const TeacherClassCard = ({
   item,
   refetchData,
 }: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
+  const navigation = useNavigation<NavigationProps>();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
@@ -71,7 +77,9 @@ const TeacherClassCard = ({
           className="relative flex-row items-start justify-between rounded-t-2xl px-5 py-7"
           style={{ backgroundColor: item.bgColor || '#22c55e' }}>
           <View className="flex-1 gap-1 pr-3">
-            <Text className="text-2xl font-bold text-white">{item.name} - {item.subject}</Text>
+            <Text className="text-2xl font-bold text-white">
+              {item.name} - {item.subject}
+            </Text>
             <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
           </View>
 
@@ -95,7 +103,7 @@ const TeacherClassCard = ({
                     activeOpacity: 0.6,
                   },
                 }}
-                onSelect={() => console.log('Edit')}>
+                onSelect={() => navigation.navigate('EditClassScreen', { classData: item })}>
                 <View className="flex-row items-center gap-2 p-2">
                   <Edit size={16} />
                   <Text>Edit</Text>

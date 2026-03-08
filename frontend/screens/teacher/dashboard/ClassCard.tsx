@@ -4,13 +4,14 @@ import { ChevronRight, Clock, Users } from 'lucide-react-native';
 import { View } from 'react-native';
 
 type Props = {
+  name: string,
   subject: string;
   section: string;
   time: string;
   studentCount: number;
 };
 
-const ClassCard = ({ subject, section, time, studentCount }: Props) => {
+const ClassCard = ({ name, subject, section, time, studentCount }: Props) => {
   return (
     <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
       {/* subtle background accent */}
@@ -29,7 +30,7 @@ const ClassCard = ({ subject, section, time, studentCount }: Props) => {
           <Text className="font-semibold text-slate-500">{section}</Text>
 
           <Text className="text-xl font-bold text-slate-900" numberOfLines={1}>
-            {subject}
+            {name} - {subject}
           </Text>
 
           {/* Responsive metadata */}
