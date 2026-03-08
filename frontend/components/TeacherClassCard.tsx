@@ -1,9 +1,19 @@
 import { View } from 'react-native';
 import { Text } from './ui/Text';
-import { ChevronRight, Clock, EllipsisVertical, MapPin, Users, Video } from 'lucide-react-native';
+import {
+  ChevronRight,
+  Clock,
+  Edit,
+  EllipsisVertical,
+  MapPin,
+  Trash2,
+  Users,
+  Video,
+} from 'lucide-react-native';
 import React from 'react';
 import Pressable from './ui/Pressable';
 import { IClass } from 'types/class';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 const TeacherClassCard = ({ item }: { item: IClass }) => {
   return (
@@ -17,9 +27,47 @@ const TeacherClassCard = ({ item }: { item: IClass }) => {
           <Text className="text-xl font-bold text-white">Section: {item.section}</Text>
         </View>
 
-        <Pressable onPress={() => alert('show Settings')}>
-          <EllipsisVertical color="#ffffff" size={20} />
-        </Pressable>
+        <Menu>
+          <MenuTrigger>
+            <EllipsisVertical color="#ffffff" size={20} />
+          </MenuTrigger>
+
+          <MenuOptions
+            customStyles={{
+              optionsContainer: {
+                width: 140,
+                borderRadius: 10,
+                paddingVertical: 2,
+                backgroundColor: "white"
+              },
+            }}>
+            <MenuOption
+              customStyles={{
+                optionTouchable: {
+                  activeOpacity: 0.6,
+                },
+              }}
+              onSelect={() => console.log('Edit')}>
+              <View className="flex-row items-center gap-2 p-2">
+                <Edit size={16} />
+                <Text>Edit</Text>
+              </View>
+            </MenuOption>
+
+            <MenuOption
+              customStyles={{
+                optionTouchable: {
+                  activeOpacity: 0.6,
+                },
+              }}
+              onSelect={() => console.log('Delete')}>
+              <View className="flex-row items-center gap-2 p-2 ">
+                <Trash2 size={16} color={"#ef4444"}/>
+                <Text className='text-red-500'>Delete</Text>
+              </View>
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
 
         <View className="absolute bottom-3 right-3 rounded-xl bg-white p-2">
           <Text className="text-sm font-semibold text-slate-900">Code: {item.code}</Text>
