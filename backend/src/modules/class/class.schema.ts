@@ -46,3 +46,9 @@ export const classDtoSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+export const joinClassBodySchema = z.object({
+  body: z.object({
+    code: z.string().min(8),
+  }),
+});

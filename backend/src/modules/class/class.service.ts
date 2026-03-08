@@ -10,13 +10,20 @@ const generateClassCode = (): string => {
 
   return Array.from({ length: 8 }, () =>
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(
-      Math.floor(Math.random() * chars.length)
-    )
+      Math.floor(Math.random() * chars.length),
+    ),
   ).join("");
 };
 
 const generateBgColor = (): string => {
-  const colors = ["#0891b2", "#059669", "#0d9488", "#3730a3", "#ca8a04", "#7f1d1d"];
+  const colors = [
+    "#0891b2",
+    "#059669",
+    "#0d9488",
+    "#3730a3",
+    "#ca8a04",
+    "#7f1d1d",
+  ];
   return colors[Math.floor(Math.random() * colors.length)]!;
 };
 
@@ -38,14 +45,12 @@ export const createClass = async (
           code,
           teacherId,
           bgColor: generateBgColor(),
-          gmeetLink: data.gmeetLink ?? null
-        }
+          gmeetLink: data.gmeetLink ?? null,
+        },
       });
 
       return mapClassToDto(created);
-
     } catch (error: any) {
-
       if (error.code === "P2002") {
         continue; // duplicate code → retry
       }
@@ -59,9 +64,8 @@ export const createClass = async (
 
 export const getClasses = async (
   userId: string,
-  role: Role
+  role: Role,
 ): Promise<ClassDto[]> => {
-
   let where: Prisma.ClassWhereInput;
 
   if (role === "TEACHER") {
@@ -104,7 +108,7 @@ export const getClassById = async (
 ): Promise<ClassDto> => {
   if (role === "ADMIN") {
     const cls = await prismaClient.class.findUnique({
-      where: { id: classId }
+      where: { id: classId },
     });
 
     if (!cls) {
@@ -176,4 +180,41 @@ export const deleteClass = async (
   await prismaClient.class.delete({
     where: { id },
   });
+};
+
+// OTHER SERVICES
+export const joinClassService = async (
+  userId: string,
+  classCode: string,
+): Promise<ClassDto> => {
+  // Find class by code
+  const classData = await prismaClient.class.findUnique({
+    where: { code: classCode },
+    include: { students: true },
+  });
+
+  if (!classData) {
+    throw new CustomError(404, "Class not found");
+  }
+
+  // Check if already enrolled
+  const alreadyJoined = classData.students.some(
+    (student) => student.id === userId,
+  );
+
+  if (alreadyJoined) {
+    throw new CustomError(400, "You already joined this class");
+  }
+
+  // Join class
+  const updatedClass = await prismaClient.class.update({
+    where: { id: classData.id },
+    data: {
+      students: {
+        connect: { id: userId },
+      },
+    },
+  });
+
+  return mapClassToDto(updatedClass);
 };

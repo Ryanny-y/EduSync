@@ -5,6 +5,7 @@ import {
   createClassBodySchema,
   updateClassBodySchema,
   classParamsSchema,
+  joinClassBodySchema,
 } from "./class.schema";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 
@@ -42,6 +43,13 @@ router.delete(
   verifyJwt,
   validate(classParamsSchema),
   classController.deleteClass
+);
+
+router.post(
+  "/join",
+  verifyJwt,
+  validate(joinClassBodySchema),
+  classController.joinClass
 );
 
 export default router;
