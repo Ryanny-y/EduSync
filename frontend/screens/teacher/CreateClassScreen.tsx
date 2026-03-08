@@ -4,6 +4,7 @@ import FloatingInput from 'components/ui/FloatingInput';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import useFormHandlers from 'hooks/useFormHandlers';
+import { useMessage } from 'hooks/useMessage';
 import useMutation from 'hooks/useMutation';
 import { AlertTriangle, CheckCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -17,9 +18,8 @@ const CreateClassScreen = () => {
   const [isCreating, setIsCreating] = useState(false);
   const navigation = useNavigation();
   const { execute } = useMutation();
-  const [message, setMessage] = useState<{ status: 'error' | 'success'; message: string } | null>(
-    null
-  );
+  const { message, showError, showSuccess, clearMessage } = useMessage();
+
   const [formData, setFormData] = useState<CreateClassType>({
     name: '',
     subject: '',
@@ -37,7 +37,7 @@ const CreateClassScreen = () => {
 
     const error = validateCreateClass(formData);
     if (error) {
-      setMessage({ status: 'error', message: error });
+      showError(error);
       return;
     }
 
@@ -47,7 +47,7 @@ const CreateClassScreen = () => {
         body: JSON.stringify(formData),
       });
 
-      setMessage({ status: 'success', message: response.message });
+      showSuccess(response.message);
       setFormData({
         name: '',
         subject: '',
@@ -57,12 +57,11 @@ const CreateClassScreen = () => {
         gmeetLink: undefined,
       });
       setTimeout(() => {
-        setMessage(null);
+        clearMessage();
         navigation.goBack();
       }, 1000);
     } catch (error: any) {
-      const msg = getErrorMessage(error);
-      setMessage({ status: 'error', message: msg });
+      showError(getErrorMessage(error));
     } finally {
       setIsCreating(false);
     }
@@ -117,9 +116,9 @@ const CreateClassScreen = () => {
           {message && (
             <View
               className={`mx-4 mb-3 flex-row items-center gap-2 rounded-lg p-3 ${
-                message.status === 'error' ? 'bg-red-100' : 'bg-green-100'
+                message.type === 'error' ? 'bg-red-100' : 'bg-green-100'
               }`}>
-              {message.status === 'error' ? (
+              {message.type === 'error' ? (
                 <AlertTriangle size={20} color="#dc2626" />
               ) : (
                 <CheckCircle size={20} color="#16a34a" />
@@ -127,7 +126,7 @@ const CreateClassScreen = () => {
 
               <Text
                 className={`flex-1 text-sm font-medium ${
-                  message.status === 'error' ? 'text-red-600' : 'text-green-600'
+                  message.type === 'error' ? 'text-red-600' : 'text-green-600'
                 }`}>
                 {message.message}
               </Text>

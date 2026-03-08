@@ -2,10 +2,6 @@ import { useState } from 'react';
 import { CreateUserForm } from 'types/User';
 import { validateEmail, validateSignup } from 'utils/validators';
 
-type Message = {
-  type: 'success' | 'error';
-  text: string;
-};
 
 export const useSignupForm = (role: CreateUserForm['role']) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +17,7 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
     departmentId: undefined,
   });
 
-  const [formErrors, setFormErrors] =
-    useState<Partial<Record<keyof CreateUserForm, string>>>({});
-
-  const [message, setMessage] = useState<Message | null>(null);
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof CreateUserForm, string>>>({});
 
   const handleChange = (field: keyof CreateUserForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -49,17 +42,12 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
     return Object.keys(errors).length === 0;
   };
 
-  const resetMessage = () => setMessage(null);
-
   return {
     formData,
     formErrors,
-    message,
     isLoading,
     setIsLoading,
-    setMessage,
     handleChange,
     validateForm,
-    resetMessage,
   };
 };

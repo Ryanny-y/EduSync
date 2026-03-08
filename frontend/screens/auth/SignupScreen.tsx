@@ -20,6 +20,8 @@ import FormInput from './signup/FormInput';
 import DepartmentPicker from './signup/DepartmentPicker';
 import { useSignupForm } from './signup/useSignupForm';
 import Pressable from 'components/ui/Pressable';
+import { useMessage } from 'hooks/useMessage';
+import { getErrorMessage } from 'utils/errorHandler';
 
 type SignupRouteProp = RouteProp<AuthStackParamList, 'SignupScreen'>;
 
@@ -30,19 +32,17 @@ const SignUpScreen = () => {
   const navigation = useNavigation<SignupScreenNavigationProp>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { message, showError, showSuccess, clearMessage } = useMessage();
   const { signup } = useAuth();
 
   const { role } = route.params;
   const {
     formData,
     formErrors,
-    message,
     isLoading,
     setIsLoading,
-    setMessage,
     handleChange,
     validateForm,
-    resetMessage,
   } = useSignupForm(role);
 
   const handleSignup = async () => {
@@ -51,24 +51,18 @@ const SignUpScreen = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    resetMessage();
+    clearMessage();
 
     try {
       await signup(formData);
 
-      setMessage({
-        type: 'success',
-        text: 'Signup successful! Redirecting to login...',
-      });
+      showSuccess('Signup successful! Redirecting to login...');
 
       setTimeout(() => {
         navigation.replace('LoginScreen', { role });
       }, 2000);
     } catch (error: any) {
-      setMessage({
-        type: 'error',
-        text: error.message || 'Signup failed. Please try again.',
-      });
+      showError(getErrorMessage(error))
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +158,7 @@ const SignUpScreen = () => {
             {message && (
               <Text
                 className={`mb-3 text-center ${message.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
-                {message.text}
+                {message.message}
               </Text>
             )}
             <Pressable
