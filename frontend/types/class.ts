@@ -1,18 +1,20 @@
-import { HasId } from "./common"
+import { HasId } from './common';
 
 export interface IClass extends HasId {
-  name: string
-  subject: string
-  section: string
-  time: string
-  room: string
-  gmeetLink?: string | null
-  code: string
+  name: string;
+  subject: string;
+  section: string;
+  time: string;
+  room: string;
+  gmeetLink?: string | null;
+  code: string;
+  bgColor: string;
 
-  teacher: string
+  teacher: string;
+  studentCount: number;
 
-  createdAt: string
-  updatedAt: string
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateClassType {
@@ -22,4 +24,4 @@ export interface CreateClassType {
   time: string;
   room: string;
   gmeetLink?: string;
-};
+}

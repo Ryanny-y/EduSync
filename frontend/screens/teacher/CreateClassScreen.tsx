@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import Header from 'components/Header';
 import FloatingInput from 'components/ui/FloatingInput';
 import Pressable from 'components/ui/Pressable';
@@ -12,6 +13,7 @@ import { validateCreateClass } from 'utils/validators';
 
 const CreateClassScreen = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const navigation = useNavigation();
   const { execute } = useMutation();
   const [message, setMessage] = useState<{ status: 'error' | 'success'; message: string } | null>(
     null
@@ -22,7 +24,7 @@ const CreateClassScreen = () => {
     section: '',
     time: '',
     room: '',
-    gmeetLink: '',
+    gmeetLink: undefined,
   });
 
   const { handleChange } = useFormHandlers<CreateClassType>(setFormData);
@@ -43,8 +45,6 @@ const CreateClassScreen = () => {
         body: JSON.stringify(formData),
       });
 
-      console.log(response);
-
       setMessage({ status: 'success', message: 'Class Created.' });
       setFormData({
         name: '',
@@ -52,11 +52,12 @@ const CreateClassScreen = () => {
         section: '',
         time: '',
         room: '',
-        gmeetLink: '',
+        gmeetLink: undefined,
       });
       setTimeout(() => {
         setMessage(null);
-      }, 2000);
+        navigation.goBack();
+      }, 1000);
     } catch (error: any) {
       setMessage({ status: 'error', message: error.message });
     } finally {
@@ -68,7 +69,7 @@ const CreateClassScreen = () => {
     <KeyboardAvoidingView
       className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={80}>
+      keyboardVerticalOffset={50}>
       <Pressable className="flex-1 bg-slate-50" onPress={() => Keyboard.dismiss()}>
         <Header title="Create Class" />
 
