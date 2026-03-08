@@ -118,7 +118,7 @@ export const deleteClass = async (
 
     return res.json({
       success: true,
-      message: "Class deleted",
+      message: "Class deleted successfully.",
       data: undefined,
     });
   } catch (error) {

@@ -6,10 +6,10 @@ import { mapClassToDto } from "./class.mapper";
 
 const generateClassCode = (): string => {
   const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
   return Array.from({ length: 8 }, () =>
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(
+    chars.charAt(
       Math.floor(Math.random() * chars.length),
     ),
   ).join("");
