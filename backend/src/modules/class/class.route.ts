@@ -6,6 +6,7 @@ import {
   updateClassBodySchema,
   classParamsSchema,
   joinClassBodySchema,
+  unenrollClassParamsSchema,
 } from "./class.schema";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 
@@ -50,6 +51,13 @@ router.post(
   verifyJwt,
   validate(joinClassBodySchema),
   classController.joinClass
+);
+
+router.post(
+  "/:id/unenroll",
+  verifyJwt,
+  validate(unenrollClassParamsSchema),
+  classController.unenrollClass
 );
 
 export default router;

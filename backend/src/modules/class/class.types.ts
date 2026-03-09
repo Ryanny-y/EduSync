@@ -19,3 +19,4 @@ export type GetClassResponse = ApiResponse<ClassDto>;
 export type UpdateClassResponse = ApiResponse<ClassDto>;
 export type DeleteClassResponse = ApiResponse<void>;
 export type JoinClassResponse = ApiResponse<ClassDto>;
+export type UnenrollClassResponse = ApiResponse<void>;

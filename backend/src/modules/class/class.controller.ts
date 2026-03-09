@@ -12,7 +12,6 @@ import {
   JoinClassDto,
 } from "./class.types";
 import { ApiResponse } from "../../common/types/api";
-import { mapClassToDto } from "./class.mapper";
 
 export const createClass = async (
   req: Request<{}, {}, CreateClassDto>,
@@ -143,6 +142,27 @@ export const joinClass = async (
       success: true,
       message: "Successfully joined class",
       data: joinedClass,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const unenrollClass = async (
+  req: Request<{ id: string }>,
+  res: Response<DeleteClassResponse>,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.userId!;
+
+    await classService.unenroll(userId, req.params.id);
+
+    return res.json({
+      success: true,
+      message: "Successfully unenrolled from class",
+      data: undefined,
     });
   } catch (error) {
     next(error);

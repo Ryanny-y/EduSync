@@ -21,13 +21,13 @@ export const updateClassBodySchema = z.object({
     gmeetLink: z.string().url().optional(),
   }),
   params: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
   }),
 });
 
 export const classParamsSchema = z.object({
   params: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
   }),
 });
 
@@ -50,5 +50,11 @@ export const classDtoSchema = z.object({
 export const joinClassBodySchema = z.object({
   body: z.object({
     code: z.string().min(8),
+  }),
+});
+
+export const unenrollClassParamsSchema = z.object({
+  params: z.object({
+    id: z.uuid(),
   }),
 });

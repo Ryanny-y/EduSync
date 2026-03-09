@@ -218,3 +218,38 @@ export const joinClassService = async (
 
   return mapClassToDto(updatedClass);
 };
+
+
+export const unenroll = async (
+  userId: string,
+  classId: string,
+): Promise<void> => {
+  // Find class and check if student is enrolled
+  const classData = await prismaClient.class.findUnique({
+    where: { id: classId },
+    include: { students: true },
+  });
+
+  if (!classData) {
+    throw new CustomError(404, "Class not found");
+  }
+
+  // Check if user is actually enrolled
+  const isEnrolled = classData.students.some(
+    (student) => student.id === userId,
+  );
+
+  if (!isEnrolled) {
+    throw new CustomError(400, "You are not enrolled in this class");
+  }
+
+  // Unenroll student
+  await prismaClient.class.update({
+    where: { id: classId },
+    data: {
+      students: {
+        disconnect: { id: userId },
+      },
+    },
+  });
+};
