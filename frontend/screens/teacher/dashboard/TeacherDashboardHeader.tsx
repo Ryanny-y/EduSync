@@ -1,7 +1,7 @@
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { useAuth } from 'context/AuthContext';
-import { Bell, LogOut, MessageSquare, Upload, Wifi } from 'lucide-react-native';
+import { LogOut, MessageSquare, Upload, Wifi } from 'lucide-react-native';
 import { View } from 'react-native';
 
 const StudentDashboardHeader = () => {
@@ -27,9 +27,6 @@ const StudentDashboardHeader = () => {
         </View>
 
         <View className="flex-row gap-3 pr-2">
-          <Pressable>
-            <Bell size={20} color="#475569"/>
-          </Pressable>
           <Pressable>
             <Upload size={20} color="#475569"/>
           </Pressable>

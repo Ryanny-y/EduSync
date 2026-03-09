@@ -1,47 +1,13 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import ClassCard from 'components/ClassCard';
 import Header from 'components/Header';
 import { Text } from 'components/ui/Text';
-import { useAuth } from 'context/AuthContext';
 import { useClassContext } from 'context/ClassContext';
 import { BookOpen, Plus } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { StudentStackParamList } from 'types/navigation';
-
-const classes = [
-  {
-    id: 1,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-indigo-500',
-    students: 35,
-  },
-  {
-    id: 2,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-orange-300',
-    students: 35,
-  },
-  {
-    id: 3,
-    title: 'Algebra & Trigonometry',
-    teacher: 'Mr. Cruz',
-    section: '10-Section A',
-    time: '8:00 - 9:00 AM',
-    room: '203',
-    color: 'bg-yellow-400',
-    students: 35,
-  },
-];
+import StudentClassCard from 'components/StudentClassCard';
 
 type NavigationProps = NativeStackNavigationProp<StudentStackParamList, 'JoinClassScreen'>;
 
@@ -80,7 +46,7 @@ const StudentClassesScreen = () => {
           contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}>
           {classes.map((item) => (
-            <ClassCard key={item.id} item={item} />
+            <StudentClassCard key={item.id} item={item} refetchData={refetchData} />
           ))}
         </ScrollView>
       )}
