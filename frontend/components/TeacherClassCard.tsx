@@ -149,6 +149,7 @@ const TeacherClassCard = ({
 
           <View className="flex-row items-center gap-3">
             <Pressable
+              onPress={() => navigation.navigate("ClassDetailsScreen", { classId: item.id })}
               className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl p-4"
               style={{ backgroundColor: item.bgColor || '#22c55e' }}>
               <Text className="font-bold text-white">Open Class</Text>

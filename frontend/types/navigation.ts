@@ -19,4 +19,5 @@ export type TeacherStackParamList = {
   TeacherClassesScreen: undefined;
   CreateClassScreen: undefined;
   EditClassScreen: { classData: IClass };
+  ClassDetailsScreen: { classId: string };
 }
