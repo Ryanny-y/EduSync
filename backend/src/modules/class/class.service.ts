@@ -290,4 +290,63 @@ export const getClassStream = async (
   };
 };
 
+export const getClassStudents = async (
+  userId: string,
+  role: Role,
+  classId: string,
+) => {
+  await verifyClassAccess(userId, role, classId);
 
+  const cls = await prismaClient.class.findUnique({
+    where: { id: classId },
+    include: {
+      students: {
+        select: {
+          id: true,
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          email: true,
+        },
+        orderBy: { lastName: "asc" },
+      }
+    },
+  });
+
+  return {
+    students: cls?.students || [],
+    totalStudents: cls?.students.length || 0,
+  };
+};
+
+export const getClassLessons = async (
+  userId: string,
+  role: Role,
+  classId: string,
+) => {
+  await verifyClassAccess(userId, role, classId);
+
+  return prismaClient.lesson.findMany({
+    where: { classId },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+export const getClassWorks = async (
+  userId: string,
+  role: Role,
+  classId: string,
+) => {
+  await verifyClassAccess(userId, role, classId);
+
+  return prismaClient.work.findMany({
+    where: { classId },
+    orderBy: { dueDate: "asc" },
+    include: {
+      submissions: role === "STUDENT" ? {
+        where: { studentId: userId },
+        select: { id: true, status: true, grade: true },
+      } : false,
+    },
+  });
+};

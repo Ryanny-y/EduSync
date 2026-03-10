@@ -38,6 +38,13 @@ enum WorkType {
   PROJECT
 }
 
+enum SubmissionStatus {
+  SUBMITTED
+  LATE
+  MISSING
+  GRADED
+}
+
 //////////////////////
 // MODELS
 //////////////////////
@@ -204,6 +211,8 @@ model Submission {
 
   work   Work   @relation(fields: [workId], references: [id])
   workId String
+
+  status SubmissionStatus @default(SUBMITTED)
 
   files SubmissionFile[]
 

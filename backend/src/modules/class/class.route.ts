@@ -65,8 +65,9 @@ router.get(
   validate(classParamsSchema),
   classController.getClassStream,
 );
-// router.get("/:id/students", verifyJwt, validate(classParamsSchema), classController.getClassStudents);
-// router.get("/:id/lessons", verifyJwt, validate(classParamsSchema), classController.getClassLessons);
-// router.get("/:id/works", verifyJwt, validate(classParamsSchema), classController.getClassWorks);
+router.get("/:id/students", verifyJwt, validate(classParamsSchema), classController.getClassStudents);
+router.get("/:id/lessons", verifyJwt, validate(classParamsSchema), classController.getClassLessons);
+router.get("/:id/works", verifyJwt, validate(classParamsSchema), classController.getClassWorks);
 
+  
 export default router;
