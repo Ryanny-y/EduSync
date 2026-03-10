@@ -3,6 +3,7 @@ import { CustomError } from "../../common/utils/Errors";
 import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
 import { Prisma, Role } from "../../generated/prisma";
 import { mapClassToDto } from "./class.mapper";
+import { verifyClassAccess } from "./class.helpers";
 
 const generateClassCode = (): string => {
   const chars =
@@ -253,3 +254,40 @@ export const unenroll = async (
     },
   });
 };
+
+
+// Tab-Specific Routes
+export const getClassStream = async (
+  userId: string,
+  role: Role,
+  classId: string,
+) => {
+  // Verify access first
+  await verifyClassAccess(userId, role, classId);
+
+  const [announcements, recentLessons, recentWorks] = await Promise.all([
+    prismaClient.announcement.findMany({
+      where: { classId },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    prismaClient.lesson.findMany({
+      where: { classId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+    prismaClient.work.findMany({
+      where: { classId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+  ]);
+
+  return {
+    announcements,
+    lessons: recentLessons,
+    works: recentWorks,
+  };
+};
+
+

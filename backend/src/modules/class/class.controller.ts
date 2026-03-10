@@ -168,3 +168,22 @@ export const unenrollClass = async (
     next(error);
   }
 };
+
+
+// Tab-Specific Endpoint
+export const getClassStream = async (
+  req: Request<{ id: string }>,
+  res: Response<ApiResponse<any>>,
+  next: NextFunction,
+) => {
+  try {
+    const stream = await classService.getClassStream(
+      req.userId!,
+      req.role!,
+      req.params.id,
+    );
+    res.json({ success: true, message: "Stream fetched", data: stream });
+  } catch (error) {
+    next(error);
+  }
+};

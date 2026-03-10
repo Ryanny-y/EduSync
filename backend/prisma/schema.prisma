@@ -31,11 +31,18 @@ enum NotificationType {
   SYSTEM
 }
 
+enum WorkType {
+  ASSIGNMENT
+  QUIZ
+  TASK
+  PROJECT
+}
+
 //////////////////////
 // MODELS
 //////////////////////
 
-// 1️⃣ Department
+// Department
 model Department {
   id        String   @id @default(uuid())
   name      String   @unique
@@ -43,7 +50,7 @@ model Department {
   createdAt DateTime @default(now())
 }
 
-// 2️⃣ User
+// User
 model User {
   id           String  @id @default(uuid())
   firstName    String
@@ -62,9 +69,8 @@ model User {
   classesTeaching Class[] @relation("TeacherClasses") // Teacher
   joinedClasses   Class[] @relation("StudentClasses") // Student
 
-  recitations   Recitation[]
+  announcements Announcement[]
   submissions   Submission[]
-  notifications NotificationRecipient[]
   activityLogs  ActivityLog[]
   syncLogs      SyncLog[]
 
@@ -72,7 +78,7 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-// 3️⃣ Class
+// Class
 model Class {
   id        String  @id @default(uuid())
   name      String
@@ -87,28 +93,56 @@ model Class {
   teacher   User   @relation("TeacherClasses", fields: [teacherId], references: [id])
   teacherId String
 
+  announcements Announcement[]
   students      User[]         @relation("StudentClasses")
   lessons       Lesson[]
-  recitations   Recitation[]
-  notifications Notification[]
+  works         Work[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// 4️⃣ Lesson
-model Lesson {
-  id          String           @id @default(uuid())
+// Work
+model Work {
+  id          String    @id @default(uuid())
   title       String
-  class       Class            @relation(fields: [classId], references: [id])
-  classId     String
-  materials   LessonMaterial[]
+  description String?
+  type        WorkType
+  dueDate     DateTime?
+
+  class   Class  @relation(fields: [classId], references: [id])
+  classId String
+
+  materials   WorkMaterial[]
   submissions Submission[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// 5️⃣ Lesson Material
+model WorkMaterial {
+  id        String   @id @default(uuid())
+  work      Work     @relation(fields: [workId], references: [id])
+  workId    String
+  file      File     @relation(fields: [fileId], references: [id])
+  fileId    String
+  createdAt DateTime @default(now())
+}
+
+// Lesson
+model Lesson {
+  id      String @id @default(uuid())
+  title   String
+  class   Class  @relation(fields: [classId], references: [id])
+  classId String
+
+  materials LessonMaterial[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Lesson Material  
 model LessonMaterial {
   id        String   @id @default(uuid())
   lesson    Lesson   @relation(fields: [lessonId], references: [id])
@@ -118,27 +152,67 @@ model LessonMaterial {
   createdAt DateTime @default(now())
 }
 
-// 6️⃣ File
-model File {
-  id              String           @id @default(uuid())
-  fileName        String
-  fileType        FileType
-  path            String
-  size            Int
-  lessonMaterials LessonMaterial[]
-  submissions     SubmissionFile[]
-  createdAt       DateTime         @default(now())
+// Announcement
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   String
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+
+  files     AnnouncementFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+// Announcement file
+model AnnouncementFile {
+  id             String       @id @default(uuid())
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  announcementId String
+  file           File         @relation(fields: [fileId], references: [id])
+  fileId         String
+
+  createdAt DateTime @default(now())
 }
 
-// 7️⃣ Submission
+// File
+model File {
+  id       String   @id @default(uuid())
+  fileName String
+  fileType FileType
+  path     String
+  size     Int
+
+  workMaterials   WorkMaterial[]
+  lessonMaterials LessonMaterial[]
+  submissions     SubmissionFile[]
+
+  createdAt         DateTime           @default(now())
+  announcementFiles AnnouncementFile[]
+}
+
+// Submission
 model Submission {
-  id        String           @id @default(uuid())
-  student   User             @relation(fields: [studentId], references: [id])
+  id        String @id @default(uuid())
+  student   User   @relation(fields: [studentId], references: [id])
   studentId String
-  lesson    Lesson           @relation(fields: [lessonId], references: [id])
-  lessonId  String
-  files     SubmissionFile[]
-  createdAt DateTime         @default(now())
+
+  work   Work   @relation(fields: [workId], references: [id])
+  workId String
+
+  files SubmissionFile[]
+
+  grade    Float?
+  feedBack String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, workId])
 }
 
 // Join table Submission ↔ File
@@ -150,48 +224,7 @@ model SubmissionFile {
   fileId       String
 }
 
-// 8️⃣ Recitation
-model Recitation {
-  id        String   @id @default(uuid())
-  question  String
-  student   User     @relation(fields: [studentId], references: [id])
-  studentId String
-  class     Class    @relation(fields: [classId], references: [id])
-  classId   String
-  answer    String?
-  score     Float?
-  feedback  String?
-  createdAt DateTime @default(now())
-
-  @@unique([studentId, classId, question])
-}
-
-// 10️⃣ Notification
-model Notification {
-  id         String                  @id @default(uuid())
-  title      String
-  message    String
-  type       NotificationType
-  class      Class?                  @relation(fields: [classId], references: [id])
-  classId    String?
-  recipients NotificationRecipient[]
-  createdAt  DateTime                @default(now())
-}
-
-// Join table Notification ↔ User
-model NotificationRecipient {
-  id             String       @id @default(uuid())
-  notification   Notification @relation(fields: [notificationId], references: [id])
-  notificationId String
-  user           User         @relation(fields: [userId], references: [id])
-  userId         String
-  read           Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-
-  @@unique([notificationId, userId])
-}
-
-// 11️⃣ ActivityLog
+// ActivityLog
 model ActivityLog {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])
@@ -200,7 +233,7 @@ model ActivityLog {
   createdAt DateTime @default(now())
 }
 
-// 12️⃣ SyncLog
+// SyncLog
 model SyncLog {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])

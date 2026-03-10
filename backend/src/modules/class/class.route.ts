@@ -12,52 +12,61 @@ import verifyJwt from "../../common/middlewares/verifyJwt";
 
 const router = Router();
 
+// CRUD
 router.post(
   "/",
   verifyJwt,
   validate(createClassBodySchema),
-  classController.createClass
+  classController.createClass,
 );
 
-router.get(
-  "/",
-  verifyJwt,
-  classController.getClasses
-);
+router.get("/", verifyJwt, classController.getClasses);
 
 router.get(
   "/:id",
   verifyJwt,
   validate(classParamsSchema),
-  classController.getClassById
+  classController.getClassById,
 );
 
 router.put(
   "/:id",
   verifyJwt,
   validate(updateClassBodySchema),
-  classController.updateClass
+  classController.updateClass,
 );
 
 router.delete(
   "/:id",
   verifyJwt,
   validate(classParamsSchema),
-  classController.deleteClass
+  classController.deleteClass,
 );
 
+// ----------- OTHER ENDPOINTS --------------------------
 router.post(
   "/join",
   verifyJwt,
   validate(joinClassBodySchema),
-  classController.joinClass
+  classController.joinClass,
 );
 
 router.post(
   "/:id/unenroll",
   verifyJwt,
   validate(unenrollClassParamsSchema),
-  classController.unenrollClass
+  classController.unenrollClass,
 );
+
+// Tab-Specific Routes
+router.get(
+  "/:id/stream",
+  verifyJwt,
+  validate(classParamsSchema),
+  classController.getClassStream,
+);
+// router.get("/:id/students", verifyJwt, validate(classParamsSchema), classController.getClassStudents);
+// router.get("/:id/lessons", verifyJwt, validate(classParamsSchema), classController.getClassLessons);
+// router.get("/:id/works", verifyJwt, validate(classParamsSchema), classController.getClassWorks);
 
 export default router;
