@@ -25,3 +25,7 @@ export interface CreateClassType {
   room: string;
   gmeetLink?: string;
 }
+
+export interface ClassStudents {
+  
+}

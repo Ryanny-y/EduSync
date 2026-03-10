@@ -1,5 +1,5 @@
 import { CreateClassType } from "types/class";
-import { CreateUserForm, UserRole } from "types/User";
+import { CreateUserForm, UserRole } from "types/user";
 
 export const validateEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

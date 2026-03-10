@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { CreateUserForm } from 'types/User';
+import { CreateUserForm } from 'types/user';
 import { AuthStackParamList } from 'types/navigation';
 import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react-native';
 import Logo from 'screens/shared/Logo';

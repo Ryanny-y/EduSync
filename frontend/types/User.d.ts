@@ -20,3 +20,8 @@ export interface IUser extends HasId {
   email: string,
   role: UserRole,
 }
+
+export interface ClassStudentsDto {
+  students: Pick<UserDto, "id" | "firstName" | "middleName" | "lastName" | "email">[];
+  totalStudents: number;
+}

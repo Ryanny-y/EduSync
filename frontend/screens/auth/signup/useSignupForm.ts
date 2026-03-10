@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreateUserForm } from 'types/User';
+import { CreateUserForm } from 'types/user';
 import { validateEmail, validateSignup } from 'utils/validators';
 
 

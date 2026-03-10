@@ -1,4 +1,4 @@
-import { UserRole } from "types/User";
+import { UserRole } from "types/user";
 import { IClass } from "./class";
 
 export type AuthStackParamList = {

@@ -1,7 +1,7 @@
 import { API_URL } from 'config/constant';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { CreateUserForm, IUser, UserRole } from 'types/User';
+import { CreateUserForm, IUser, UserRole } from 'types/user';
 
 type AuthResponseType = {
   message: string;
