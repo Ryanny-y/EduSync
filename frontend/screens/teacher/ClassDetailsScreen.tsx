@@ -70,7 +70,7 @@ const ClassDetailsScreen = () => {
 
         {/* Students */}
         <View key="1" className="w-full flex-1 px-4 py-10">
-          <StudentTab classId={classId} isActive={selectedTab === 'Students'}/>
+          {selectedTab === 'Students' && <StudentTab classId={classId} />}
         </View>
 
         {/* Lessons */}
