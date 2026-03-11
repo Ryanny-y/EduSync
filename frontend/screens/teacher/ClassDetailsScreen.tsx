@@ -11,6 +11,7 @@ import { TeacherStackParamList } from 'types/navigation';
 import useFetchData from 'hooks/useFetchData';
 import { ApiResponse } from 'types/common';
 import { IClass } from 'types/class';
+import LessonTab from './class-details/LessonTab';
 
 const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
@@ -73,22 +74,22 @@ const ClassDetailsScreen = () => {
         ref={pagerRef}
         onPageSelected={onPageSelected}>
         {/* Stream */}
-        <View key="0" className="w-full flex-1 px-4 py-10">
+        <View key="0" className="w-full flex-1 px-4 py-5">
           <StreamTab />
         </View>
 
         {/* Students */}
-        <View key="1" className="w-full flex-1 px-4 py-10">
+        <View key="1" className="w-full flex-1 px-4 py-5">
           {selectedTab === 'Students' && <StudentTab classId={classId} />}
         </View>
 
         {/* Lessons */}
-        <View key="2" className="w-full flex-1 px-4 py-10">
-          <Text className="text-lg font-bold">Lessons Content</Text>
+        <View key="2" className="w-full flex-1 px-4 py-5">
+          {selectedTab === "Lessons" && <LessonTab classId={classId}/>}
         </View>
 
         {/* Works */}
-        <View key="3" className="w-full flex-1 px-4 py-10">
+        <View key="3" className="w-full flex-1 px-4 py-5">
           <Text className="text-lg font-bold">Works Content</Text>
         </View>
       </PagerView>
