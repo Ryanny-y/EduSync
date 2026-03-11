@@ -12,6 +12,7 @@ import {
   JoinClassDto,
 } from "./class.types";
 import { ApiResponse } from "../../common/types/api";
+import { ClassStudentsDto, UserDto } from "../user/user.types";
 
 export const createClass = async (
   req: Request<{}, {}, CreateClassDto>,
@@ -125,7 +126,6 @@ export const deleteClass = async (
   }
 };
 
-
 // Other Controller
 export const joinClass = async (
   req: Request<{}, {}, JoinClassDto>,
@@ -148,7 +148,6 @@ export const joinClass = async (
   }
 };
 
-
 export const unenrollClass = async (
   req: Request<{ id: string }>,
   res: Response<DeleteClassResponse>,
@@ -168,7 +167,6 @@ export const unenrollClass = async (
     next(error);
   }
 };
-
 
 // Tab-Specific Endpoint
 export const getClassStream = async (
@@ -190,7 +188,7 @@ export const getClassStream = async (
 
 export const getClassStudents = async (
   req: Request<{ id: string }>,
-  res: Response<ApiResponse<any>>,
+  res: Response<ApiResponse<ClassStudentsDto>>,
   next: NextFunction,
 ) => {
   try {

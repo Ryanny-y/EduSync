@@ -4,6 +4,7 @@ import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
 import { Prisma, Role } from "../../generated/prisma";
 import { mapClassToDto } from "./class.mapper";
 import { verifyClassAccess } from "./class.helpers";
+import { ClassStudentsDto, UserDto } from "../user/user.types";
 
 const generateClassCode = (): string => {
   const chars =
@@ -294,7 +295,7 @@ export const getClassStudents = async (
   userId: string,
   role: Role,
   classId: string,
-) => {
+): Promise<ClassStudentsDto> => {
   await verifyClassAccess(userId, role, classId);
 
   const cls = await prismaClient.class.findUnique({
