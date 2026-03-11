@@ -12,6 +12,7 @@ type Props = {
   show?: boolean;
   toggleShow?: () => void;
   keyboardType?: 'default' | 'email-address';
+  maxLength?: number;
   onChange: (value: string) => void;
 };
 
@@ -24,6 +25,7 @@ export default function FormInput({
   show,
   toggleShow,
   keyboardType = 'default',
+  maxLength,
   onChange,
 }: Props) {
   return (
@@ -44,6 +46,7 @@ export default function FormInput({
           className="ml-2 flex-1 text-base"
           secureTextEntry={secure && !show}
           keyboardType={keyboardType}
+          maxLength={maxLength}
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'sentences'}
           placeholderTextColor="#94a3b8"
         />

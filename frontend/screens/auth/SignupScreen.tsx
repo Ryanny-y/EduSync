@@ -9,7 +9,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { CreateUserForm } from 'types/user';
 import { AuthStackParamList } from 'types/navigation';
 import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react-native';
 import Logo from 'screens/shared/Logo';
@@ -36,14 +35,8 @@ const SignUpScreen = () => {
   const { signup } = useAuth();
 
   const { role } = route.params;
-  const {
-    formData,
-    formErrors,
-    isLoading,
-    setIsLoading,
-    handleChange,
-    validateForm,
-  } = useSignupForm(role);
+  const { formData, formErrors, isLoading, setIsLoading, handleChange, validateForm } =
+    useSignupForm(role);
 
   const handleSignup = async () => {
     if (isLoading) return;
@@ -60,7 +53,7 @@ const SignUpScreen = () => {
         navigation.replace('LoginScreen', { role });
       }, 2000);
     } catch (error: any) {
-      showError(getErrorMessage(error))
+      showError(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +88,17 @@ const SignUpScreen = () => {
 
           {/* Form Inputs */}
           <View className="w-full">
+            {role === 'STUDENT' && (
+              <FormInput
+                label="Student Number"
+                value={formData.id ?? ''}
+                placeholder="Enter your student number"
+                error={formErrors.id}
+                maxLength={11}
+                onChange={(value) => handleChange('id', value)}
+              />
+            )}
+
             <FormInput
               label="First Name"
               value={formData.firstName}
