@@ -3,31 +3,8 @@ import { CustomError } from "../../common/utils/Errors";
 import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
 import { Prisma, Role } from "../../generated/prisma";
 import { mapClassToDto } from "./class.mapper";
-import { verifyClassAccess } from "./class.helpers";
-import { ClassStudentsDto, UserDto } from "../user/user.types";
-
-const generateClassCode = (): string => {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-  return Array.from({ length: 8 }, () =>
-    chars.charAt(
-      Math.floor(Math.random() * chars.length),
-    ),
-  ).join("");
-};
-
-const generateBgColor = (): string => {
-  const colors = [
-    "#0891b2",
-    "#059669",
-    "#0d9488",
-    "#3730a3",
-    "#ca8a04",
-    "#7f1d1d",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)]!;
-};
+import { generateBgColor, generateClassCode, verifyClassAccess } from "./class.helpers";
+import { ClassStudentsDto } from "../user/user.types";
 
 export const createClass = async (
   teacherId: string,
