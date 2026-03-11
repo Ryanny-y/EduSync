@@ -6,15 +6,14 @@ import { generateGradient } from 'utils/colors';
 import { useNavigation } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
+import { IClass } from 'types/class';
 
-const Header = () => {
+const Header = ({ item }: { item: IClass }) => {
   const navigation = useNavigation();
-  const gradient = generateGradient('#4338ca');
-
-  const classCode = 'ABCD1234';
+  const gradient = generateGradient(item.bgColor);
 
   const copyCode = async () => {
-    await Clipboard.setStringAsync(classCode);
+    await Clipboard.setStringAsync(item.code);
 
     Toast.show({
       type: 'success',
@@ -54,18 +53,22 @@ const Header = () => {
         {/* Class Info */}
         <View className="flex-1 gap-1 pr-3">
           <Text numberOfLines={2} className="text-3xl font-bold text-white">
-            Mathematics
+            {item.name}
+          </Text>
+          
+          <Text numberOfLines={2} className="text-2xl font-bold text-slate-100">
+            {item.subject}
           </Text>
 
           <Text className="text-base font-semibold text-slate-100">
-            Grade 10 - Section A
+            Section: {item.section}
           </Text>
 
           <Text className="text-sm font-semibold text-slate-200">
-            Time: 10:00 - 11:00 AM
+            Time: {item.time}
           </Text>
           <Text className="text-sm font-semibold text-slate-200">
-            Room: IL504
+            Room: {item.room}
           </Text>
         </View>
 
@@ -80,7 +83,7 @@ const Header = () => {
             className="flex-row items-center gap-2"
           >
             <Text className="text-lg font-black tracking-wider text-white">
-              {classCode}
+              {item.code}
             </Text>
 
             <Copy size={16} color="#ffffff" />

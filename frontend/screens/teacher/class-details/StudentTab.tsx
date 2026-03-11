@@ -24,10 +24,6 @@ const StudentTab = ({ classId }: { classId: string }) => {
         <Text className="text-lg font-bold uppercase">
           Enrolled Students ({students.length})
         </Text>
-
-        <Pressable>
-          <Text className="font-semibold text-green-500">Add Student</Text>
-        </Pressable>
       </View>
 
       {/* Empty State */}
@@ -40,7 +36,7 @@ const StudentTab = ({ classId }: { classId: string }) => {
           </Text>
 
           <Text className="mt-2 text-center text-sm text-slate-500">
-            There are no students enrolled in this class yet. Add students to
+            There are no students enrolled in this class yet. Invite students with class code to
             start managing your class.
           </Text>
         </View>

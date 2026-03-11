@@ -3,6 +3,7 @@ import { HasId } from "./common";
 export type UserRole = "TEACHER" | "STUDENT";
 
 export interface CreateUserForm {
+  id?: string;
   firstName: string,
   middleName: string,
   lastName: string,

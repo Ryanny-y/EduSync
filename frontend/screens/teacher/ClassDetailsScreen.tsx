@@ -8,6 +8,9 @@ import StreamTab from './class-details/StreamTab';
 import StudentTab from './class-details/StudentTab';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { TeacherStackParamList } from 'types/navigation';
+import useFetchData from 'hooks/useFetchData';
+import { ApiResponse } from 'types/common';
+import { IClass } from 'types/class';
 
 const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
@@ -18,7 +21,11 @@ const ClassDetailsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<Tab>('Stream');
   const route = useRoute<EditClassProp>();
   const { classId } = route.params;
-
+  
+  // TODO: Handle Loading and Error
+  const { data, loading, error } = useFetchData<ApiResponse<IClass>>(
+    `class/${classId}`
+  );
   const pagerRef = useRef<PagerView>(null);
 
   const onPageSelected = (e: any) => {
@@ -26,9 +33,11 @@ const ClassDetailsScreen = () => {
     setSelectedTab(TABS[index]);
   };
 
+  if(!data || !data.data) return;
+
   return (
     <View className="w-full flex-1 items-center justify-start bg-background">
-      <Header />
+      <Header item={data.data}/>
 
       {/* Tabs */}
       <ScrollView
