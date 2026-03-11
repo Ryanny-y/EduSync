@@ -15,8 +15,5 @@ router.use("/department", departmentRoute);
 
 // PROTECTED
 router.use("/class", classRoute);
-router.use("/lessons", lessonRoute);
-// router.use("/holidays", holidayRoute);
-// router.use("/peak-seasons", peakSeasonRoute);
 
 export default router;

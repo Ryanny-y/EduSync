@@ -9,6 +9,7 @@ import {
   unenrollClassParamsSchema,
 } from "./class.schema";
 import verifyJwt from "../../common/middlewares/verifyJwt";
+import lessonRoute from '../lesson/lesson.route';
 
 const router = Router();
 
@@ -58,7 +59,9 @@ router.post(
   classController.unenrollClass,
 );
 
-// Tab-Specific Routes
+// Nested Routes
+router.use("/:classId/lessons", lessonRoute)
+
 router.get(
   "/:id/stream",
   verifyJwt,

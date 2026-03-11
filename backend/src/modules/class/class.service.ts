@@ -320,19 +320,6 @@ export const getClassStudents = async (
   };
 };
 
-export const getClassLessons = async (
-  userId: string,
-  role: Role,
-  classId: string,
-) => {
-  await verifyClassAccess(userId, role, classId);
-
-  return prismaClient.lesson.findMany({
-    where: { classId },
-    orderBy: { createdAt: "desc" },
-  });
-};
-
 export const getClassWorks = async (
   userId: string,
   role: Role,
