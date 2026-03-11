@@ -1,6 +1,6 @@
 import prismaClient from "../../config/client";
 import { CustomError } from "../../common/utils/Errors";
-import * as googleDrive from "../../infra/storage/googleDrive.service";
+import * as s3Service from "../../infra/storage/s3.service";
 import { CreateLessonDto, LessonDto } from "./lesson.types";
 import { mapLessonToDto, mapMimeTypeToFileType } from "./lesson.mapper";
 import { verifyClassAccess } from "../class/class.helpers";
@@ -61,22 +61,23 @@ export const createLesson = async (
     // Upload files and create materials
     for (const file of files) {
       // Upload to Google Drive
-      const driveResult = await googleDrive.uploadFileToDrive(
+      const s3Result = await s3Service.uploadFile(
         file.buffer,
         file.originalname,
         file.mimetype,
+        `classes/${classId}/lessons`, // Organized folder structure
       );
 
       // Create file record
       const fileRecord = await tx.file.create({
         data: {
           fileName: file.originalname,
-          mimeType: file.mimetype,
           fileType: mapMimeTypeToFileType(file.mimetype),
+          path: s3Result.key, // S3 Key
+          bucket: s3Result.bucket, // Bucket name
+          url: s3Result.url, // Presigned URL
+          urlExpiresAt: new Date(Date.now() + 3600 * 1000), // 1 hour
           size: file.size,
-          driveFileId: driveResult.fileId,
-          webViewLink: driveResult.webViewLink,
-          webContentLink: driveResult.webContentLink,
         },
       });
 
@@ -123,13 +124,12 @@ export const deleteLesson = async (
 
   // Delete files from Google Drive and database
   await prismaClient.$transaction(async (tx) => {
-    // Delete from Drive
+    // Delete from S3
     for (const material of lesson.materials) {
-      await googleDrive.deleteFileFromDrive(material.file.driveFileId);
+      await s3Service.deleteFile(material.file.path);
       await tx.file.delete({ where: { id: material.file.id } });
     }
 
-    // Delete lesson (cascades to lessonMaterials)
     await tx.lesson.delete({ where: { id: lessonId } });
   });
 };

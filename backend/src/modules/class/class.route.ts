@@ -77,13 +77,6 @@ router.get(
 );
 
 router.get(
-  "/:id/lessons",
-  verifyJwt,
-  validate(classParamsSchema),
-  classController.getClassLessons,
-);
-
-router.get(
   "/:id/works",
   verifyJwt,
   validate(classParamsSchema),

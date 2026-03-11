@@ -203,23 +203,6 @@ export const getClassStudents = async (
   }
 };
 
-export const getClassLessons = async (
-  req: Request<{ id: string }>,
-  res: Response<ApiResponse<any>>,
-  next: NextFunction,
-) => {
-  try {
-    const lessons = await classService.getClassLessons(
-      req.userId!,
-      req.role!,
-      req.params.id,
-    );
-    res.json({ success: true, message: "Lessons fetched", data: lessons });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getClassWorks = async (
   req: Request<{ id: string }>,
   res: Response<ApiResponse<any>>,
