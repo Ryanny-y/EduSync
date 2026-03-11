@@ -1,9 +1,9 @@
 import { Router } from "express";
 import * as lessonController from "./lesson.controller";
 import { validate } from "../../common/middlewares/validate";
-import { createLessonSchema, lessonParamsSchema } from "./lesson.types";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 import { upload } from "../../common/middlewares/upload";
+import { createLessonSchema, lessonParamsSchema } from "./lesson.schema";
 
 const router = Router({ mergeParams: true });
 

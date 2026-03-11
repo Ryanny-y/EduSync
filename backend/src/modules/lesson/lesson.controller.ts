@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import * as lessonService from './lesson.service';
 import { ApiResponse } from "../../common/types/api";
+import { CreateLessonResponse, GetLessonsResponse } from "./lesson.types";
 
 export const getLessons = async (
   req: Request<{ classId: string }>,
-  res: Response<ApiResponse<any>>,
+  res: Response<GetLessonsResponse>,
   next: NextFunction,
 ) => {
   try {
@@ -26,7 +27,7 @@ export const getLessons = async (
 
 export const createLesson = async (
   req: Request<{ classId: string }>,
-  res: Response<ApiResponse<any>>,
+  res: Response<CreateLessonResponse>,
   next: NextFunction,
 ) => {
   try {
