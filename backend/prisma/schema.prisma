@@ -161,21 +161,22 @@ model LessonMaterial {
 
 // Announcement
 model Announcement {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
+  id      String @id @default(uuid())
+  title   String
+  content String
 
-  class     Class    @relation(fields: [classId], references: [id])
-  classId   String
+  class   Class  @relation(fields: [classId], references: [id])
+  classId String
 
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
 
-  files     AnnouncementFile[]
+  files AnnouncementFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 // Announcement file
 model AnnouncementFile {
   id             String       @id @default(uuid())
@@ -189,24 +190,24 @@ model AnnouncementFile {
 
 // File
 model File {
-  id             String   @id @default(uuid())
-  fileName       String
-  mimeType       String
-  fileType       FileType
-  size           Int
+  id       String   @id @default(uuid())
+  fileName String
+  fileType FileType
+  path     String
+  size     Int
 
-  driveFileId    String   @unique
-  webViewLink    String
-  webContentLink String
+  // S3-specific fields
+  bucket       String?
+  url          String?
+  urlExpiresAt DateTime?
+
+  workMaterials     WorkMaterial[]
+  lessonMaterials   LessonMaterial[]
+  submissions       SubmissionFile[]
+  announcementFiles AnnouncementFile[]
 
   createdAt DateTime @default(now())
-
-  workMaterials        WorkMaterial[]
-  lessonMaterials      LessonMaterial[]
-  submissions          SubmissionFile[]
-  announcementFiles    AnnouncementFile[]
 }
-
 
 // Submission
 model Submission {
