@@ -152,7 +152,7 @@ const EditClassScreen = () => {
             <Pressable
               onPress={() => navigation.goBack()}
               disabled={isUpdating}
-              className="flex-1 items-center justify-center rounded-xl bg-slate-200 p-3 active:bg-slate-300">
+              className="flex-1 items-center justify-center rounded-xl bg-slate-100 p-3 active:bg-slate-200">
               <Text className="text-lg font-medium text-slate-700">Cancel</Text>
             </Pressable>
 

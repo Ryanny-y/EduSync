@@ -8,7 +8,7 @@ import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
 import { IClass } from 'types/class';
 
-const Header = ({ item }: { item: IClass }) => {
+const ClassDetailHeader = ({ item }: { item: IClass }) => {
   const navigation = useNavigation();
   const gradient = generateGradient(item.bgColor);
 
@@ -94,4 +94,4 @@ const Header = ({ item }: { item: IClass }) => {
   );
 };
 
-export default Header;
+export default ClassDetailHeader;

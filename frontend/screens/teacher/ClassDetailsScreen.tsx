@@ -1,5 +1,4 @@
 import { ScrollView, View } from 'react-native';
-import Header from './class-details/Header';
 import { useState, useRef } from 'react';
 import { Text } from 'components/ui/Text';
 import Pressable from 'components/ui/Pressable';
@@ -12,6 +11,7 @@ import useFetchData from 'hooks/useFetchData';
 import { ApiResponse } from 'types/common';
 import { IClass } from 'types/class';
 import LessonTab from './class-details/LessonTab';
+import ClassDetailHeader from './class-details/ClassDetailHeader';
 
 const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
@@ -38,7 +38,7 @@ const ClassDetailsScreen = () => {
 
   return (
     <View className="w-full flex-1 items-center justify-start bg-background">
-      <Header item={data.data}/>
+      <ClassDetailHeader item={data.data}/>
 
       {/* Tabs */}
       <ScrollView

@@ -1,14 +1,14 @@
 export interface HasId {
-  id: string
+  id: string;
 }
 
 export interface ApiResponse<T> {
-  data: T,
+  data: T;
   message: string;
   success: boolean;
 }
 
-export interface FileDto {
+export interface IFile {
   id: string;
   fileName: string;
   fileType: FileType;
@@ -19,3 +19,11 @@ export interface FileDto {
   urlExpiresAt?: Date | null;
   createdAt: Date;
 }
+
+export interface IUploadFile {
+  uri: string;
+  name: string;
+  type: string;
+}
+
+export type FileType = "PDF" | "PPT" | "DOC" | "VIDEO" | "IMAGE";

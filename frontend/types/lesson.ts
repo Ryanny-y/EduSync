@@ -1,15 +1,20 @@
-import { FileDto } from "./common";
+import { IFile, IUploadFile } from "./common";
 
-export interface LessonDto {
+export interface ILesson {
   id: string;
   title: string;
   classId: string;
   createdAt: Date;
 
-  materials: LessonMaterialDto[];
+  materials: ILessonMaterial[];
 }
 
-export interface LessonMaterialDto {
+export interface ILessonMaterial {
   id: string;
-  file: FileDto;
+  file: IFile;
+}
+
+export interface ICreateLesson {
+  title: string;
+  materials?: IUploadFile[];
 }

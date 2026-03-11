@@ -3,13 +3,19 @@ import useFetchData from 'hooks/useFetchData';
 import { BookOpen, Pencil, Plus, Trash2 } from 'lucide-react-native';
 import { View } from 'react-native';
 import { ApiResponse } from 'types/common';
-import { LessonDto } from 'types/lesson';
+import { ILesson } from 'types/lesson';
 import dayjs from 'dayjs';
 import Pressable from 'components/ui/Pressable';
 import React, { useMemo } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { TeacherStackParamList } from 'types/navigation';
+
+type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'AddLessonScreen'>;
 
 const LessonTab = ({ classId }: { classId: string }) => {
-  const { data, loading, error, refetchData } = useFetchData<ApiResponse<LessonDto[]>>(
+  const navigation = useNavigation<NavigationProps>();
+  const { data, loading, error, refetchData } = useFetchData<ApiResponse<ILesson[]>>(
     `class/${classId}/lessons`
   );
 
@@ -17,18 +23,18 @@ const LessonTab = ({ classId }: { classId: string }) => {
     return data?.data ?? [];
   }, [data]);
 
-  if(!data || !data.data) return null;
+  if (!data || !data.data) return null;
 
   return (
     <View className="gap-7">
       {/* Header */}
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-bold uppercase">
-          Lessons ({lessons.length})
-        </Text>
+        <Text className="text-lg font-bold uppercase">Lessons ({lessons.length})</Text>
 
-        <Pressable className='bg-green-500 p-2.5 rounded-xl'>
-          <Plus size={20} color="#ffffff"/>
+        <Pressable
+          className="rounded-xl bg-green-500 p-2.5"
+          onPress={() => navigation.navigate('AddLessonScreen', { classId })}>
+          <Plus size={20} color="#ffffff" />
         </Pressable>
       </View>
 
@@ -37,13 +43,11 @@ const LessonTab = ({ classId }: { classId: string }) => {
         <View className="items-center px-10 py-20">
           <BookOpen size={48} color="#cbd5f5" />
 
-          <Text className="mt-6 text-lg font-bold text-slate-700">
-            No Lessons Yet
-          </Text>
+          <Text className="mt-6 text-lg font-bold text-slate-700">No Lessons Yet</Text>
 
           <Text className="mt-2 text-center text-sm text-slate-500">
-            You haven't uploaded any lessons yet. Start adding learning
-            materials so your students can access them anytime.
+            You haven't uploaded any lessons yet. Start adding learning materials so your students
+            can access them anytime.
           </Text>
         </View>
       ) : (
@@ -51,8 +55,7 @@ const LessonTab = ({ classId }: { classId: string }) => {
           {lessons.map((lesson, idx) => (
             <View
               key={idx}
-              className="flex-row items-center justify-between rounded-xl border border-slate-300 p-5"
-            >
+              className="flex-row items-center justify-between rounded-xl border border-slate-300 p-5">
               {/* LEFT SIDE */}
               <View className="flex-row items-center gap-3">
                 <View className="h-12 w-12 items-center justify-center rounded-xl bg-green-100">
@@ -60,12 +63,10 @@ const LessonTab = ({ classId }: { classId: string }) => {
                 </View>
 
                 <View>
-                  <Text className="text-xl font-bold text-slate-800">
-                    {lesson.title}
-                  </Text>
+                  <Text className="text-xl font-bold text-slate-800">{lesson.title}</Text>
 
                   <Text className="text-xs font-semibold text-slate-500">
-                    UPLOADED: {dayjs(lesson.createdAt).format("MMM DD, YYYY")}
+                    UPLOADED: {dayjs(lesson.createdAt).format('MMM DD, YYYY')}
                   </Text>
                 </View>
               </View>
