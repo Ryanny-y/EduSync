@@ -189,19 +189,24 @@ model AnnouncementFile {
 
 // File
 model File {
-  id       String   @id @default(uuid())
-  fileName String
-  fileType FileType
-  path     String
-  size     Int
+  id             String   @id @default(uuid())
+  fileName       String
+  mimeType       String
+  fileType       FileType
+  size           Int
 
-  workMaterials   WorkMaterial[]
-  lessonMaterials LessonMaterial[]
-  submissions     SubmissionFile[]
+  driveFileId    String   @unique
+  webViewLink    String
+  webContentLink String
 
-  createdAt         DateTime           @default(now())
-  announcementFiles AnnouncementFile[]
+  createdAt DateTime @default(now())
+
+  workMaterials        WorkMaterial[]
+  lessonMaterials      LessonMaterial[]
+  submissions          SubmissionFile[]
+  announcementFiles    AnnouncementFile[]
 }
+
 
 // Submission
 model Submission {

@@ -1,0 +1,154 @@
+import prismaClient from "../../config/client";
+import { CustomError } from "../../common/utils/Errors";
+import * as googleDrive from "../../infra/storage/googleDrive.service";
+import { CreateLessonDto, LessonDto } from "./lesson.types";
+import { mapLessonToDto, mapMimeTypeToFileType } from "./lesson.mapper";
+
+// Verify user has access to class
+// const verifyClassAccess = async (
+//   userId: string,
+//   role: string,
+//   classId: string,
+// ): Promise<void> => {
+//   if (role === "ADMIN") return;
+
+//   const hasAccess = await prismaClient.class.findFirst({
+//     where: {
+//       id: classId,
+//       OR: [{ teacherId: userId }, { students: { some: { id: userId } } }],
+//     },
+//   });
+
+//   if (!hasAccess) {
+//     throw new CustomError(403, "Access denied to this class");
+//   }
+// };
+
+// // Get all lessons in a class
+// export const getLessonsByClassId = async (
+//   userId: string,
+//   role: string,
+//   classId: string,
+// ): Promise<LessonDto[]> => {
+//   await verifyClassAccess(userId, role, classId);
+
+//   const lessons = await prismaClient.lesson.findMany({
+//     where: { classId },
+//     include: {
+//       materials: {
+//         include: {
+//           file: true,
+//         },
+//       },
+//     },
+//     orderBy: { createdAt: "desc" },
+//   });
+
+//   return lessons.map(mapLessonToDto);
+// };
+
+// Upload lesson with materials
+export const createLesson = async (
+  teacherId: string,
+  classId: string,
+  data: CreateLessonDto,
+  files: Express.Multer.File[],
+): Promise<LessonDto> => {
+  // Verify teacher owns the class
+  const classData = await prismaClient.class.findUnique({
+    where: { id: classId },
+  });
+
+  if (!classData) {
+    throw new CustomError(404, "Class not found");
+  }
+
+  if (classData.teacherId !== teacherId) {
+    throw new CustomError(403, "Only class teacher can create lessons");
+  }
+
+  // Upload files to Google Drive and create lesson in transaction
+  const lesson = await prismaClient.$transaction(async (tx) => {
+    // Create lesson
+    const newLesson = await tx.lesson.create({
+      data: {
+        title: data.title,
+        classId,
+      },
+    });
+
+    // Upload files and create materials
+    for (const file of files) {
+      // Upload to Google Drive
+      const driveResult = await googleDrive.uploadFileToDrive(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+      );
+
+      // Create file record
+      const fileRecord = await tx.file.create({
+        data: {
+          fileName: file.originalname,
+          mimeType: file.mimetype,
+          fileType: mapMimeTypeToFileType(file.mimetype),
+          size: file.size,
+          driveFileId: driveResult.fileId,
+          webViewLink: driveResult.webViewLink,
+          webContentLink: driveResult.webContentLink,
+        },
+      });
+
+      // Create lesson material link
+      await tx.lessonMaterial.create({
+        data: {
+          lessonId: newLesson.id,
+          fileId: fileRecord.id,
+        },
+      });
+    }
+
+    return tx.lesson.findUnique({
+      where: { id: newLesson.id },
+      include: {
+        materials: { include: { file: true } },
+      },
+    });
+  });
+
+  return mapLessonToDto(lesson);
+};
+
+// Delete lesson and materials
+// export const deleteLesson = async (
+//   teacherId: string,
+//   lessonId: string,
+// ): Promise<void> => {
+//   const lesson = await prismaClient.lesson.findUnique({
+//     where: { id: lessonId },
+//     include: {
+//       class: true,
+//       materials: { include: { file: true } },
+//     },
+//   });
+
+//   if (!lesson) {
+//     throw new CustomError(404, "Lesson not found");
+//   }
+
+//   if (lesson.class.teacherId !== teacherId) {
+//     throw new CustomError(403, "Only class teacher can delete lessons");
+//   }
+
+//   // Delete files from Google Drive and database
+//   await prismaClient.$transaction(async (tx) => {
+//     // Delete from Drive
+//     for (const material of lesson.materials) {
+//       await googleDrive.deleteFileFromDrive(material.file.path);
+//       await tx.file.delete({ where: { id: material.file.id } });
+//     }
+
+//     // Delete lesson (cascades to lessonMaterials)
+//     await tx.lesson.delete({ where: { id: lessonId } });
+//   });
+// };
