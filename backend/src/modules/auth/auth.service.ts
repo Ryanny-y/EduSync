@@ -13,6 +13,7 @@ import { addDays } from "date-fns";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const {
+    id,
     firstName,
     middleName = "",
     lastName,
@@ -38,12 +39,17 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
     throw new CustomError(400, "Passwords do not match.");
   }
 
+  if(role === "STUDENT" && !id) {
+    throw new CustomError(400, "Student Number is required");
+  }
+
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create user
   const createdUser = await prismaClient.user.create({
     data: {
+      ...(id && { id }),
       firstName,
       middleName,
       lastName,
@@ -81,7 +87,10 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
   if (!match) throw new CustomError(401, "Email or password is incorrect.");
 
   if (foundUser.role !== data.role) {
-    throw new CustomError(403, `You are not registered as ${data.role.toLowerCase()}`);
+    throw new CustomError(
+      403,
+      `You are not registered as ${data.role.toLowerCase()}`,
+    );
   }
 
   // CREATE JWTS
@@ -181,7 +190,6 @@ export const refreshToken = async (
     accessToken: newAccessToken,
   };
 };
-
 
 export const logout = async (refreshToken: string): Promise<void> => {
   let payload: any;

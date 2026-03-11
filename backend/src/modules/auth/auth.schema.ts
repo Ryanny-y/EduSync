@@ -3,6 +3,7 @@ import { Role } from "../../generated/prisma";
 
 export const createUserBodySchema = z.object({
   body: z.object({
+    id: z.string().regex(/^\d{11}$/, "ID must be exactly 11 digits").optional(),
     firstName: z.string().min(1, "First name is required"),
     middleName: z.string().optional().default(""),
     lastName: z.string().min(1, "Last name is required"),

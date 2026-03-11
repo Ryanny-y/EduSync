@@ -4,9 +4,6 @@ import { AuthResponseDto, CreateUserDto, CreateUserResponse, LoginResponse, Logi
 import { refreshTokenCookieSchema } from "./auth.schema";
 import { ZodError } from "zod";
 import { CustomError } from "../../common/utils/Errors";
-// import { CustomError } from "../../common/utils/Errors";
-// import { refreshTokenCookieSchema } from "./auth.schema";
-// import { ZodError } from "zod";
 
 export const createUser = async (
   req: Request<{}, {}, CreateUserDto>,

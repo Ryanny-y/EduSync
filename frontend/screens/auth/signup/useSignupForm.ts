@@ -7,6 +7,7 @@ export const useSignupForm = (role: CreateUserForm['role']) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<CreateUserForm>({
+    id: undefined,
     firstName: '',
     middleName: '',
     lastName: '',
