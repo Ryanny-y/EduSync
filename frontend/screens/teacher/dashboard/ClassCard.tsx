@@ -1,9 +1,13 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import { ChevronRight, Clock, Users } from 'lucide-react-native';
 import { View } from 'react-native';
+import { TeacherStackParamList } from 'types/navigation';
 
 type Props = {
+  id: string;
   name: string,
   subject: string;
   section: string;
@@ -11,9 +15,13 @@ type Props = {
   studentCount: number;
 };
 
-const ClassCard = ({ name, subject, section, time, studentCount }: Props) => {
+type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'ClassDetailsScreen'>;
+
+const ClassCard = ({ id, name, subject, section, time, studentCount }: Props) => {
+  const navigation = useNavigation<NavigationProps>();
+
   return (
-    <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+    <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg" onPress={() => navigation.navigate("ClassDetailsScreen", { classId: id })}>
       {/* subtle background accent */}
       <View className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-green-200 opacity-60" />
       <View className="absolute -bottom-16 -left-2 h-32 w-32 rounded-full bg-green-200 opacity-60" />

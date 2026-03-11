@@ -6,12 +6,19 @@ import Pressable from 'components/ui/Pressable';
 import PagerView from 'react-native-pager-view';
 import StreamTab from './class-details/StreamTab';
 import StudentTab from './class-details/StudentTab';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { TeacherStackParamList } from 'types/navigation';
 
 const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
 
+type EditClassProp = RouteProp<TeacherStackParamList, 'ClassDetailsScreen'>;
+
 const ClassDetailsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<Tab>('Stream');
+  const route = useRoute<EditClassProp>();
+  const { classId } = route.params;
+
   const pagerRef = useRef<PagerView>(null);
 
   const onPageSelected = (e: any) => {
@@ -63,7 +70,7 @@ const ClassDetailsScreen = () => {
 
         {/* Students */}
         <View key="1" className="w-full flex-1 px-4 py-10">
-          {/* <StudentTab classId={}/> */}
+          <StudentTab classId={classId} isActive={selectedTab === 'Students'}/>
         </View>
 
         {/* Lessons */}

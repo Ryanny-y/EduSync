@@ -5,8 +5,11 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 import { ClassStudentsDto } from 'types/user';
 
-const StudentTab = ({ classId }: { classId: string }) => {
+const StudentTab = ({ classId, isActive }: { classId: string; isActive: boolean }) => {
+  if (!isActive) return null;
+
   const { data, loading, error } = useFetchData<ClassStudentsDto>(`class/${classId}/students`);
+  console.log(data);
 
   return (
     <View className="gap-7">

@@ -7,6 +7,7 @@ import ClassCard from './ClassCard';
 import Pressable from 'components/ui/Pressable';
 import { useClassContext } from 'context/ClassContext';
 import { useMemo } from 'react';
+import { BookOpen } from 'lucide-react-native';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'TeacherClassesScreen'>;
 
@@ -30,11 +31,25 @@ const MyClasses = () => {
       </View>
 
       {/* Classes Container */}
-      <View className="gap-3">
-        {classes.map((item, i) => (
-          <ClassCard key={i} {...item} />
-        ))}
-      </View>
+      {!loading && classes.length == 0 ? (
+        <View className="items-center px-10 py-24">
+          <BookOpen size={48} color="#cbd5f5" />
+
+          <Text className="mt-6 text-lg font-bold text-slate-700">No Classes Yet</Text>
+
+          <Text className="mt-2 text-center text-sm text-slate-500">
+            You haven't created any classes yet. Start by creating your first class and invite
+            students to join.
+          </Text>
+        </View>
+      ) : (
+        <View className="gap-3">
+          {classes.map((item, i) => (
+            <ClassCard key={i} {...item} />
+          ))}
+        </View>
+      )}
+
     </View>
   );
 };
