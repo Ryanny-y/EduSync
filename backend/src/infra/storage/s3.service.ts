@@ -10,11 +10,6 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CustomError } from "../../common/utils/Errors";
 
-console.log(process.env.AWS_REGION);
-console.log(process.env.AWS_ACCESS_KEY_ID);
-console.log(process.env.AWS_SECRET_ACCESS_KEY);
-
-
 const s3Client = new S3Client({
   region: process.env.AWS_REGION!,
   credentials: {
@@ -94,6 +89,5 @@ export const deleteFile = async (key: string): Promise<void> => {
     }));
   } catch (error) {
     console.error("S3 delete error:", error);
-    // Don't throw - file might not exist
   }
 };

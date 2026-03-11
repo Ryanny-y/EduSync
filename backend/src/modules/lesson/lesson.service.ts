@@ -122,14 +122,23 @@ export const deleteLesson = async (
     throw new CustomError(403, "Only class teacher can delete lessons");
   }
 
+  const keys = lesson.materials.map((m) => m.file.path);
+
   // Delete files from Google Drive and database
   await prismaClient.$transaction(async (tx) => {
     // Delete from S3
     for (const material of lesson.materials) {
-      await s3Service.deleteFile(material.file.path);
+      await tx.lessonMaterial.delete({
+        where: { id: material.id },
+      });
+
       await tx.file.delete({ where: { id: material.file.id } });
     }
 
     await tx.lesson.delete({ where: { id: lessonId } });
   });
+
+  for (const key of keys) {
+    await s3Service.deleteFile(key);
+  }
 };
