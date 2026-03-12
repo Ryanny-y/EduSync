@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { Text } from './ui/Text';
 import {
   ChevronRight,
@@ -31,7 +31,7 @@ const TeacherClassCard = ({
 }: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
   const navigation = useNavigation<NavigationProps>();
-  
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
@@ -144,14 +144,24 @@ const TeacherClassCard = ({
 
           <View className="flex-row items-center gap-3">
             <Pressable
-              onPress={() => navigation.navigate("ClassDetailsScreen", { classId: item.id })}
+              onPress={() => navigation.navigate('ClassDetailsScreen', { classId: item.id })}
               className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl p-4"
               style={{ backgroundColor: item.bgColor || '#22c55e' }}>
               <Text className="font-bold text-white">Open Class</Text>
               <ChevronRight size={20} color="#ffffff" />
             </Pressable>
 
-            <Pressable className="rounded-2xl bg-green-200 p-4">
+            <Pressable
+              className="rounded-2xl bg-green-200 p-4"
+              onPress={() => {
+                if (item.gmeetLink) {
+                  Linking.openURL(item.gmeetLink).catch((err) =>
+                    console.error('Failed to open link:', err)
+                  );
+                } else {
+                  console.warn('No Google Meet link available for this class');
+                }
+              }}>
               <Video size={20} color="#90CF8E" />
             </Pressable>
           </View>

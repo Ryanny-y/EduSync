@@ -1,6 +1,6 @@
 import Pressable from 'components/ui/Pressable';
 import { ChevronLeft, Copy, Video, MoreVertical } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { generateGradient } from 'utils/colors';
 import { useNavigation } from '@react-navigation/native';
@@ -26,19 +26,27 @@ const ClassDetailHeader = ({ item }: { item: IClass }) => {
     <LinearGradient
       colors={gradient}
       locations={[0, 0.4, 1]}
-      className="w-full gap-8 px-5 pb-7 pt-16"
-    >
+      className="w-full gap-8 px-5 pb-7 pt-16">
       {/* Top Navigation */}
       <View className="flex-row items-center justify-between">
         <Pressable
           onPress={() => navigation.goBack()}
-          className="rounded-full border border-white/40 bg-white/20 p-2"
-        >
+          className="rounded-full border border-white/40 bg-white/20 p-2">
           <ChevronLeft color="#ffffff" />
         </Pressable>
 
         <View className="flex-row items-center gap-3">
-          <Pressable className="rounded-full border border-white/40 bg-white/20 p-3">
+          <Pressable
+            className="rounded-full border border-white/40 bg-white/20 p-3"
+            onPress={() => {
+              if (item.gmeetLink) {
+                Linking.openURL(item.gmeetLink).catch((err) =>
+                  console.error('Failed to open link:', err)
+                );
+              } else {
+                console.warn('No Google Meet link available for this class');
+              }
+            }}>
             <Video color="#ffffff" size={20} />
           </Pressable>
 
@@ -55,21 +63,15 @@ const ClassDetailHeader = ({ item }: { item: IClass }) => {
           <Text numberOfLines={2} className="text-3xl font-bold text-white">
             {item.name}
           </Text>
-          
+
           <Text numberOfLines={2} className="text-2xl font-bold text-slate-100">
             {item.subject}
           </Text>
 
-          <Text className="text-base font-semibold text-slate-100">
-            Section: {item.section}
-          </Text>
+          <Text className="text-base font-semibold text-slate-100">Section: {item.section}</Text>
 
-          <Text className="text-sm font-semibold text-slate-200">
-            Time: {item.time}
-          </Text>
-          <Text className="text-sm font-semibold text-slate-200">
-            Room: {item.room}
-          </Text>
+          <Text className="text-sm font-semibold text-slate-200">Time: {item.time}</Text>
+          <Text className="text-sm font-semibold text-slate-200">Room: {item.room}</Text>
         </View>
 
         {/* Class Code Badge */}
@@ -78,13 +80,8 @@ const ClassDetailHeader = ({ item }: { item: IClass }) => {
             Class Code
           </Text>
 
-          <Pressable
-            onPress={copyCode}
-            className="flex-row items-center gap-2"
-          >
-            <Text className="text-lg font-black tracking-wider text-white">
-              {item.code}
-            </Text>
+          <Pressable onPress={copyCode} className="flex-row items-center gap-2">
+            <Text className="text-lg font-black tracking-wider text-white">{item.code}</Text>
 
             <Copy size={16} color="#ffffff" />
           </Pressable>

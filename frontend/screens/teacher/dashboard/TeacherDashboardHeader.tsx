@@ -8,7 +8,7 @@ const StudentDashboardHeader = () => {
   const { user, logout } = useAuth();
 
   return (
-    <View className='mb-10'>
+    <View className="mb-10">
       <View className="flex w-full flex-row items-center justify-between">
         <View>
           <Text className="text-lg font-bold text-slate-400">Good Morning,</Text>
@@ -28,10 +28,7 @@ const StudentDashboardHeader = () => {
 
         <View className="flex-row gap-3 pr-2">
           <Pressable>
-            <Upload size={20} color="#475569"/>
-          </Pressable>
-          <Pressable>
-            <MessageSquare size={20} color="#475569"/>
+            <MessageSquare size={20} color="#475569" />
           </Pressable>
         </View>
       </View>
