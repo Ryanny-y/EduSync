@@ -1,7 +1,7 @@
 import { FileImage, FileText, FileVideo, File, FileChartPie } from "lucide-react-native";
 
 export const getFileIcon = (fileName: string) => {
-  const ext = fileName.split('.').pop()?.toLowerCase();
+  const ext = fileName?.split('.').pop()?.toLowerCase();
 
   switch (ext) {
     case 'pdf':

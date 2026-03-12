@@ -31,16 +31,9 @@ const TeacherClassCard = ({
 }: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
   const navigation = useNavigation<NavigationProps>();
+  
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
-  const handleDeletePress = () => {
-    setDeleteModalVisible(true);
-  };
-
-  const handleCancelDelete = () => {
-    setDeleteModalVisible(false);
-  };
 
   const handleConfirmDelete = async () => {
     if (isDeleting) return;
@@ -116,7 +109,9 @@ const TeacherClassCard = ({
                     activeOpacity: 0.6,
                   },
                 }}
-                onSelect={handleDeletePress}>
+                onSelect={() => {
+                  setDeleteModalVisible(true);
+                }}>
                 <View className="flex-row items-center gap-2 p-2">
                   <Trash2 size={16} color={'#ef4444'} />
                   <Text className="text-red-500">Delete</Text>
@@ -166,9 +161,9 @@ const TeacherClassCard = ({
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         visible={deleteModalVisible}
-        onClose={handleCancelDelete}
+        onClose={() => setDeleteModalVisible(false)}
         onConfirm={handleConfirmDelete}
-        className={item.name}
+        title={item.name}
       />
     </>
   );

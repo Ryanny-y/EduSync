@@ -9,7 +9,8 @@ export const validate =
         body: req.body,
         params: req.params,
         query: req.query,
-        cookies: req.cookies
+        cookies: req.cookies,
+        files: req.files
       });
 
       next();

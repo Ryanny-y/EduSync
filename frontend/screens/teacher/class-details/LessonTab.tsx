@@ -6,15 +6,20 @@ import { ApiResponse } from 'types/common';
 import { ILesson } from 'types/lesson';
 import dayjs from 'dayjs';
 import Pressable from 'components/ui/Pressable';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { TeacherStackParamList } from 'types/navigation';
+import DeleteConfirmationModal from 'components/DeleteConfirmationModal';
+import useMutation from 'hooks/useMutation';
+import Toast from 'react-native-toast-message';
+import { getErrorMessage } from 'utils/errorHandler';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'AddLessonScreen'>;
 
 const LessonTab = ({ classId }: { classId: string }) => {
   const navigation = useNavigation<NavigationProps>();
+  const { execute } = useMutation();
   const { data, loading, error, refetchData } = useFetchData<ApiResponse<ILesson[]>>(
     `class/${classId}/lessons`
   );
@@ -28,6 +33,42 @@ const LessonTab = ({ classId }: { classId: string }) => {
   const lessons = useMemo(() => {
     return data?.data ?? [];
   }, [data]);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    if (!selectedLesson || isDeleting) return;
+
+    setIsDeleting(true);
+
+    try {
+      const response: ApiResponse<void> = await execute(
+        `class/${classId}/lessons/${selectedLesson.id}`,
+        { method: 'DELETE' }
+      );
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+
+      setDeleteModalVisible(false);
+      setSelectedLesson(null);
+
+      refetchData();
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getErrorMessage(error),
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (!data || !data.data) return null;
 
@@ -79,11 +120,15 @@ const LessonTab = ({ classId }: { classId: string }) => {
 
               {/* ACTIONS */}
               <View className="flex-row items-center gap-5">
-                <Pressable>
+                {/* <Pressable onPress={() => navigation.navigate("EditLessonScreen", { lesson })}>
                   <Pencil size={20} strokeWidth={2.5} color="#90CF8E" />
-                </Pressable>
+                </Pressable> */}
 
-                <Pressable>
+                <Pressable
+                  onPress={() => {
+                    setSelectedLesson(lesson);
+                    setDeleteModalVisible(true);
+                  }}>
                   <Trash2 size={20} color="#ef4444" />
                 </Pressable>
               </View>
@@ -91,6 +136,14 @@ const LessonTab = ({ classId }: { classId: string }) => {
           ))}
         </View>
       )}
+
+      <DeleteConfirmationModal
+        visible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={handleConfirmDelete}
+        title={selectedLesson?.title ?? ''}
+        loading={isDeleting}
+      />
     </View>
   );
 };
