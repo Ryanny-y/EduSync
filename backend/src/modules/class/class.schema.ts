@@ -57,4 +57,7 @@ export const unenrollClassParamsSchema = z.object({
   params: z.object({
     id: z.uuid(),
   }),
+  body: z.object({
+    studentId: z.string().optional(),
+  })
 });

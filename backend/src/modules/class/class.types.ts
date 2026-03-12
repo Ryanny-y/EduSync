@@ -5,6 +5,7 @@ import {
   updateClassBodySchema,
   classDtoSchema,
   joinClassBodySchema,
+  unenrollClassParamsSchema,
 } from "./class.schema";
 
 export type ClassDto = z.infer<typeof classDtoSchema>;
@@ -12,6 +13,7 @@ export type ClassDto = z.infer<typeof classDtoSchema>;
 export type CreateClassDto = z.infer<typeof createClassBodySchema>["body"];
 export type UpdateClassDto = z.infer<typeof updateClassBodySchema>["body"];
 export type JoinClassDto = z.infer<typeof joinClassBodySchema>["body"];
+export type UnenrollStudentDto = z.infer<typeof unenrollClassParamsSchema>["body"];
 
 export type CreateClassResponse = ApiResponse<ClassDto>;
 export type GetClassesResponse = ApiResponse<ClassDto[]>;

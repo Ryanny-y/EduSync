@@ -9,37 +9,38 @@ import Toast from 'react-native-toast-message';
 import useMutation from 'hooks/useMutation';
 import { getErrorMessage } from 'utils/errorHandler';
 
-
-const StudentClassCard = ({ item, refetchData }: { item: IClass } & { refetchData: () => void } ) => {
-
+const StudentClassCard = ({
+  item,
+  refetchData,
+}: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
   const [isUnenrolling, setIsUnenrolling] = useState(false);
 
   const handleUnenroll = async () => {
     if (isUnenrolling) return;
-        setIsUnenrolling(true);
-    
-        try {
-          const response: ApiResponse<void> = await execute(`class/${item.id}/unenroll`, {
-            method: 'POST',
-          });
-    
-          Toast.show({
-            type: 'success',
-            text1: 'Success',
-            text2: response.message,
-          });
-          refetchData();
-        } catch (error) {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: getErrorMessage(error),
-          });
-        } finally {
-          setIsUnenrolling(false);
-        }
-  }
+    setIsUnenrolling(true);
+
+    try {
+      const response: ApiResponse<void> = await execute(`class/${item.id}/unenroll`, {
+        method: 'POST',
+      });
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+      refetchData();
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getErrorMessage(error),
+      });
+    } finally {
+      setIsUnenrolling(false);
+    }
+  };
 
   return (
     <View className="mb-5 rounded-2xl bg-white shadow-lg">
@@ -48,37 +49,39 @@ const StudentClassCard = ({ item, refetchData }: { item: IClass } & { refetchDat
         className="flex-row items-start justify-between rounded-t-2xl px-5 py-7"
         style={{ backgroundColor: item.bgColor || '#22c55e' }}>
         <View className="flex-1 gap-1 pr-3">
-          <Text className="text-2xl font-bold text-white">{item.name} - {item.subject}</Text>
+          <Text className="text-2xl font-bold text-white">
+            {item.name} - {item.subject}
+          </Text>
           <Text className="font-semibold text-white">Teacher: {item.teacher}</Text>
         </View>
 
         <Menu>
-            <MenuTrigger>
-              <EllipsisVertical color="#ffffff" size={20} />
-            </MenuTrigger>
+          <MenuTrigger>
+            <EllipsisVertical color="#ffffff" size={20} />
+          </MenuTrigger>
 
-            <MenuOptions
+          <MenuOptions
+            customStyles={{
+              optionsContainer: {
+                width: 140,
+                borderRadius: 10,
+                paddingVertical: 2,
+                backgroundColor: 'white',
+              },
+            }}>
+            <MenuOption
               customStyles={{
-                optionsContainer: {
-                  width: 140,
-                  borderRadius: 10,
-                  paddingVertical: 2,
-                  backgroundColor: 'white',
+                optionTouchable: {
+                  activeOpacity: 0.6,
                 },
-              }}>
-              <MenuOption
-                customStyles={{
-                  optionTouchable: {
-                    activeOpacity: 0.6,
-                  },
-                }}
-                onSelect={handleUnenroll}>
-                <View className="flex-row items-center gap-2 p-2">
-                  <Text>Unenroll</Text>
-                </View>
-              </MenuOption>
-            </MenuOptions>
-          </Menu>
+              }}
+              onSelect={handleUnenroll}>
+              <View className="flex-row items-center gap-2 p-2">
+                <Text>Unenroll</Text>
+              </View>
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
       </View>
 
       {/* BOTTOM */}

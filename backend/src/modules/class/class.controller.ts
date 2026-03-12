@@ -10,6 +10,7 @@ import {
   DeleteClassResponse,
   ClassDto,
   JoinClassDto,
+  UnenrollStudentDto,
 } from "./class.types";
 import { ApiResponse } from "../../common/types/api";
 import { ClassStudentsDto, UserDto } from "../user/user.types";
@@ -149,14 +150,16 @@ export const joinClass = async (
 };
 
 export const unenrollClass = async (
-  req: Request<{ id: string }>,
+  req: Request<{ id: string }, {}, UnenrollStudentDto>,
   res: Response<DeleteClassResponse>,
   next: NextFunction,
 ) => {
   try {
+    const classId = req.params.id;
     const userId = req.userId!;
+    const studentId = req.body.studentId || userId;
 
-    await classService.unenroll(userId, req.params.id);
+    await classService.unenroll(studentId, classId);
 
     return res.json({
       success: true,
