@@ -13,6 +13,7 @@ import { CreateClassType, IClass } from 'types/class';
 import { ApiResponse } from 'types/common';
 import { TeacherStackParamList } from 'types/navigation';
 import { getErrorMessage } from 'utils/errorHandler';
+import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
 import { validateCreateClass } from 'utils/validators';
 
 type EditClassProp = RouteProp<TeacherStackParamList, 'EditClassScreen'>;
@@ -72,9 +73,7 @@ const EditClassScreen = () => {
       });
 
       showSuccess(response.message || 'Class updated successfully');
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1000);
+      navigateBackWithDelay(navigation);
     } catch (error: any) {
       showError(getErrorMessage(error));
     } finally {

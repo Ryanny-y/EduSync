@@ -12,6 +12,7 @@ import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'reac
 import { CreateClassType, IClass } from 'types/class';
 import { ApiResponse } from 'types/common';
 import { getErrorMessage } from 'utils/errorHandler';
+import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
 import { validateCreateClass } from 'utils/validators';
 
 const CreateClassScreen = () => {
@@ -56,9 +57,7 @@ const CreateClassScreen = () => {
         room: '',
         gmeetLink: undefined,
       });
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1000);
+      navigateBackWithDelay(navigation);
     } catch (error: any) {
       showError(getErrorMessage(error));
     } finally {

@@ -1,3 +1,4 @@
+import { Text } from 'components/ui/Text';
 import { useState } from 'react';
 
 export type MessageType = {
@@ -24,11 +25,25 @@ export const useMessage = () => {
     setMessage(null);
   };
 
+  const MessageComponent = () => {
+    if (!message) return null;
+
+    return (
+      <Text
+        className={`mb-3 text-center ${
+          message.type === 'success' ? 'text-green-500' : 'text-red-500'
+        }`}>
+        {message.message}
+      </Text>
+    );
+  };
+
   return {
     message,
     setMessage,
     showSuccess,
     showError,
     clearMessage,
+    MessageComponent
   };
 };

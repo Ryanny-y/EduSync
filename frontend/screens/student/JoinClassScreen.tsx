@@ -11,6 +11,7 @@ import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'reac
 import { IClass } from 'types/class';
 import { ApiResponse } from 'types/common';
 import { getErrorMessage } from 'utils/errorHandler';
+import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
 
 const JoinClassScreen = () => {
   const [classCode, setClassCode] = useState<string>('');
@@ -41,9 +42,7 @@ const JoinClassScreen = () => {
 
       showSuccess(response.message);
       setClassCode('');
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1000);
+      navigateBackWithDelay(navigation);
     } catch (error) {
       showError(getErrorMessage(error));
     } finally {
