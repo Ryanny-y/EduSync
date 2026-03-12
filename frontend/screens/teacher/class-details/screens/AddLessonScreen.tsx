@@ -8,9 +8,19 @@ import { ICreateLesson } from 'types/lesson';
 import { UploadCloud } from 'lucide-react-native';
 import { Text } from 'components/ui/Text';
 import { getFileIcon } from 'utils/helpers';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { ApiResponse } from 'types/common';
+import useMutation from 'hooks/useMutation';
+import { TeacherStackParamList } from 'types/navigation';
+import { useMessage } from 'hooks/useMessage';
+import { getErrorMessage } from 'utils/errorHandler';
+import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
+
+type AddLessonScreenRouteProp = RouteProp<TeacherStackParamList, 'AddLessonScreen'>;
 
 const AddLessonScreen = () => {
+  const route = useRoute<AddLessonScreenRouteProp>();
+  const { classId } = route.params;
   const [formData, setFormData] = useState<ICreateLesson>({
     title: '',
     materials: [],
@@ -18,8 +28,10 @@ const AddLessonScreen = () => {
 
   const navigation = useNavigation();
   const [isUploading, setIsUploading] = useState(false);
+  const { execute } = useMutation();
 
   const { handleChange } = useFormHandlers<ICreateLesson>(setFormData);
+  const { showSuccess, MessageComponent, showError } = useMessage();
 
   const pickDocuments = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -73,7 +85,30 @@ const AddLessonScreen = () => {
   };
 
   const handleAddLesson = async () => {
-    console.log('adding Lesson:', formData);
+    if (isUploading) return;
+
+    if (!formData.title.trim()) {
+      alert('Lesson title is required');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const response: ApiResponse<void> = await execute(`class/${classId}/lessons`, {
+        method: 'POST',
+        body: createLessonFormData(formData),
+      });
+
+      showSuccess(response.message);
+      navigateBackWithDelay(navigation);
+    } catch (error) {
+      const msg = getErrorMessage(error);
+      console.log('Upload failed:', error);
+      showError(msg);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -131,6 +166,7 @@ const AddLessonScreen = () => {
             );
           })}
 
+          <MessageComponent />
           <View className="flex-row gap-3">
             <Pressable
               onPress={() => navigation.goBack()}

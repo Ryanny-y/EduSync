@@ -6,8 +6,8 @@ import { ApiResponse } from 'types/common';
 import { ILesson } from 'types/lesson';
 import dayjs from 'dayjs';
 import Pressable from 'components/ui/Pressable';
-import React, { useMemo } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useMemo } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { TeacherStackParamList } from 'types/navigation';
 
@@ -17,6 +17,12 @@ const LessonTab = ({ classId }: { classId: string }) => {
   const navigation = useNavigation<NavigationProps>();
   const { data, loading, error, refetchData } = useFetchData<ApiResponse<ILesson[]>>(
     `class/${classId}/lessons`
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchData();
+    }, [])
   );
 
   const lessons = useMemo(() => {
