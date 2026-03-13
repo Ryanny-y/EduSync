@@ -15,6 +15,8 @@ import { TeacherStackParamList } from 'types/navigation';
 import { useMessage } from 'hooks/useMessage';
 import { getErrorMessage } from 'utils/errorHandler';
 import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
+import FileUploader from 'components/ui/FileUploader';
+import FileList from 'components/ui/FileList';
 
 type AddLessonScreenRouteProp = RouteProp<TeacherStackParamList, 'AddLessonScreen'>;
 
@@ -32,41 +34,6 @@ const AddLessonScreen = () => {
 
   const { handleChange } = useFormHandlers<ICreateLesson>(setFormData);
   const { showSuccess, MessageComponent, showError } = useMessage();
-
-  const pickDocuments = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      multiple: true,
-      type: [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'image/*',
-        'video/*',
-      ],
-    });
-
-    if (result.canceled) return;
-
-    const files = result.assets.map((file) => ({
-      uri: file.uri,
-      name: file.name,
-      type: file.mimeType ?? 'application/octet-stream',
-    }));
-
-    setFormData((prev) => ({
-      ...prev,
-      materials: [...(prev.materials ?? []), ...files],
-    }));
-  };
-
-  const removeFile = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      materials: prev.materials?.filter((_, i) => i !== index),
-    }));
-  };
 
   const createLessonFormData = (data: ICreateLesson) => {
     const form = new FormData();
@@ -126,45 +93,24 @@ const AddLessonScreen = () => {
           />
 
           {/* Upload Button */}
-          <Pressable
-            onPress={pickDocuments}
-            className="items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 active:bg-slate-100">
-            <View className="mb-3 h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50">
-              <UploadCloud size={24} color="#4f46e5" />
-            </View>
+          <FileUploader
+            onFilesSelected={(files) =>
+              setFormData((prev) => ({
+                ...prev,
+                materials: [...(prev.materials ?? []), ...files],
+              }))
+            }
+          />
 
-            <View className="items-center">
-              <Text className="text-sm font-bold text-slate-900">Click to upload files</Text>
-
-              <Text className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                PDF, PPT, DOC, Images
-              </Text>
-            </View>
-          </Pressable>
-
-          {/* File List */}
-          {formData.materials?.map((file, index) => {
-            const IconComponent = getFileIcon(file.name);
-
-            return (
-              <View
-                key={index}
-                className="flex-row items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-5">
-                {/* Icon + File Name */}
-                <View className="flex-1 flex-row items-center gap-2">
-                  <IconComponent size={20} color="#4B5563" />
-                  <Text className="flex-1" numberOfLines={1} ellipsizeMode="tail">
-                    {file.name}
-                  </Text>
-                </View>
-
-                {/* Remove Button */}
-                <Pressable onPress={() => removeFile(index)}>
-                  <Text className="font-semibold text-red-500">Remove</Text>
-                </Pressable>
-              </View>
-            );
-          })}
+          <FileList
+            files={formData.materials ?? []}
+            onRemove={(index) =>
+              setFormData((prev) => ({
+                ...prev,
+                materials: prev.materials?.filter((_, i) => i !== index),
+              }))
+            }
+          />
 
           <MessageComponent />
           <View className="flex-row gap-3">
@@ -182,7 +128,7 @@ const AddLessonScreen = () => {
                 isUploading ? 'bg-green-300' : 'bg-green-500'
               }`}>
               <Text className="text-lg font-medium text-white">
-                {isUploading ? 'Updating...' : 'Save Changes'}
+                {isUploading ? 'Uploading...' : 'Save Changes'}
               </Text>
             </Pressable>
           </View>
