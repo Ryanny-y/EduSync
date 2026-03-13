@@ -1,0 +1,48 @@
+import { z } from "zod";
+import { WorkType } from "../../generated/prisma";
+import { fileSchema, uploadedFileSchema } from "../file/file.schema";
+
+export const workSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().nullable(),
+  type: z.enum(WorkType),
+  dueDate: z.iso.date().nullable(),
+  classId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  materials: z.array(
+    z.object({
+      id: z.string(),
+      file: fileSchema,
+    }),
+  ),
+  submissionCount: z.number(),
+});
+
+export const createWorkSchema = z.object({
+  body: z.object({
+    title: z.string().min(1),
+    description: z.string().optional(),
+    type: z.enum(WorkType),
+    dueDate: z.iso.datetime().optional(),
+  }),
+  files: z.array(uploadedFileSchema).optional(),
+});
+
+export const updateWorkSchema = z.object({
+  body: z.object({
+    title: z.string().min(1).optional(),
+    description: z.string().optional(),
+    type: z.enum(WorkType).optional(),
+    dueDate: z.iso.datetime().optional(),
+  }),
+  files: z.array(uploadedFileSchema).optional(),
+});
+
+export const workParamsSchema = z.object({
+  params: z.object({
+    classId: z.uuid(),
+    workId: z.uuid().optional(),
+  }),
+});
