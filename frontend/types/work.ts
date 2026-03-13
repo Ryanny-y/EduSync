@@ -1,6 +1,8 @@
 import { IFile, IUploadFile } from "./common";
 
-export type WorkType = 'ASSIGNMENT' | 'QUIZ' | 'TASK' | 'PROJECT';
+export const workTypes = ['ASSIGNMENT', 'QUIZ', 'TASK', 'PROJECT'] as const;
+
+export type WorkType = typeof workTypes[number];
 
 export interface IWork {
   id: string;
@@ -25,7 +27,6 @@ export interface ICreateWork {
   title: string;
   description?: string | null;
   type: WorkType;
-  dueDate?: string | null;
-  classId: string;
+  dueDate?: Date | null;
   materials?: IUploadFile[];
 }

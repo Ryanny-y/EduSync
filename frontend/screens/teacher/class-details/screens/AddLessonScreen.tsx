@@ -3,11 +3,8 @@ import FloatingInput from 'components/ui/FloatingInput';
 import useFormHandlers from 'hooks/useFormHandlers';
 import React, { useState } from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
 import { ICreateLesson } from 'types/lesson';
-import { UploadCloud } from 'lucide-react-native';
 import { Text } from 'components/ui/Text';
-import { getFileIcon } from 'utils/helpers';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { ApiResponse } from 'types/common';
 import useMutation from 'hooks/useMutation';
@@ -128,7 +125,7 @@ const AddLessonScreen = () => {
                 isUploading ? 'bg-green-300' : 'bg-green-500'
               }`}>
               <Text className="text-lg font-medium text-white">
-                {isUploading ? 'Uploading...' : 'Save Changes'}
+                {isUploading ? 'Uploading...' : 'Add Lesson'}
               </Text>
             </Pressable>
           </View>
