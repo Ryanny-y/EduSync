@@ -10,6 +10,8 @@ import { ILessonMaterial } from 'types/lesson';
 import { TeacherStackParamList } from 'types/navigation';
 import { getFileIcon, getMimeType, getUniqueFileName } from 'utils/helpers';
 import * as FileSystem from 'expo-file-system/legacy';
+import FileActions from 'components/ui/FileActions';
+import FileCard from 'components/FileCard';
 
 type LessonDetailsScreenRouteProp = RouteProp<TeacherStackParamList, 'LessonDetailsScreen'>;
 
@@ -130,58 +132,9 @@ const LessonDetailsScreen = () => {
               </View>
             ) : (
               <View className="gap-2">
-                {lesson.materials.map((material: ILessonMaterial) => {
-                  const { file } = material;
-                  const IconComponent = getFileIcon(file.fileName);
-
-                  return (
-                    <View
-                      key={material.id}
-                      className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                      {/* File Info Section */}
-                      <View className="flex-1 flex-row items-center gap-3">
-                        <View className="h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                          <IconComponent size={20} color="#4B5563" />
-                        </View>
-
-                        <View className="flex-1">
-                          <Text
-                            className="text-base font-semibold text-slate-800"
-                            numberOfLines={2}>
-                            {file.fileName}
-                          </Text>
-
-                          <View className="mt-1 flex-row items-center justify-between">
-                            <View className="rounded-full bg-slate-100 px-2 py-1">
-                              <Text className="text-xs font-medium uppercase text-slate-500">
-                                {file.fileType}
-                              </Text>
-                            </View>
-
-                            <Text className="text-xs text-gray-400">
-                              {dayjs(file.createdAt).format('MMM DD, YYYY')}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-
-                      {/* Action Buttons */}
-                      <View className="ml-5 flex-row items-center gap-2">
-                        <Pressable
-                          onPress={() => handleView(file)}
-                          className="rounded-lg bg-blue-100 px-3 py-3 active:opacity-70">
-                          <Eye size={16} color="#2563EB" />
-                        </Pressable>
-
-                        <Pressable
-                          onPress={() => handleDownload(file)}
-                          className="rounded-lg bg-green-100 px-3 py-3 active:opacity-70">
-                          <Download size={16} color="#16A34A" />
-                        </Pressable>
-                      </View>
-                    </View>
-                  );
-                })}
+                {lesson.materials.map((material: ILessonMaterial) => (
+                  <FileCard key={material.id} file={material.file} />
+                ))}
               </View>
             )}
           </View>

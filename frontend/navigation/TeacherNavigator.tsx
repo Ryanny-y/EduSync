@@ -8,6 +8,7 @@ import EditClassScreen from 'screens/teacher/my-class/EditClassScreen';
 import TeacherClassesScreen from 'screens/teacher/TeacherClassesScreen';
 import TeacherDashboardScreen from 'screens/teacher/TeacherDashboardScreen';
 import LessonDetailsScreen from 'screens/teacher/class-details/lesson/LessonDetailsScreen';
+import WorkDetailsScreen from 'screens/teacher/class-details/works/WorkDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function TeacherNavigator() {
       <Stack.Screen name="EditLessonScreen" component={EditLessonScreen} />
 
       {/* WORK DETAILS SCREEN RELATED */}
+      <Stack.Screen name="WorkDetailsScreen" component={WorkDetailsScreen} />
       <Stack.Screen name="CreateWorkScreen" component={CreateWorkScreen} />
     </Stack.Navigator>
   );

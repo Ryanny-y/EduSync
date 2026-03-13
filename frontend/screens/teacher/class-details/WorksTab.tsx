@@ -84,7 +84,7 @@ const WorksTab = ({ classId }: { classId: string }) => {
                     </Text>
                   </View>
                 </View>
-                
+
                 {/* BODY */}
                 <View className="flex-row items-center justify-between gap-2">
                   {/* LEFT SIDE HEADER */}
@@ -145,7 +145,9 @@ const WorksTab = ({ classId }: { classId: string }) => {
 
                 {/* BOTTOM */}
                 <View className="mt-2">
-                  <Pressable className="flex items-center rounded-xl bg-green-500 p-2 text-center">
+                  <Pressable
+                    className="flex items-center rounded-xl bg-green-500 p-2 text-center"
+                    onPress={() => navigation.navigate('WorkDetailsScreen', { work })}>
                     <Text className="text-white">
                       View {`${work.type[0]}${work.type.slice(1).toLowerCase()}`}
                     </Text>

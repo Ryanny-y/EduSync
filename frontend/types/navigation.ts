@@ -1,6 +1,7 @@
 import { UserRole } from "types/user";
 import { IClass } from "./class";
 import { ILesson } from "./lesson";
+import { IWork } from "./work";
 
 export type AuthStackParamList = {
   WelcomeScreen: undefined;
@@ -27,4 +28,5 @@ export type TeacherStackParamList = {
   EditLessonScreen: { lesson: ILesson };
   // WORKS
   CreateWorkScreen: { classId: string };
+  WorkDetailsScreen: { work: IWork };
 }

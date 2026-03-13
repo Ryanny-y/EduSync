@@ -11,7 +11,7 @@ const StudentDashboardHeader = () => {
     <View className="mb-10">
       <View className="flex w-full flex-row items-center justify-between">
         <View>
-          <Text className="text-lg font-bold text-slate-400">Good Morning,</Text>
+          <Text className="text-lg font-bold text-slate-400">Good Day,</Text>
           <Text className="text-xl font-semibold">{`${user?.lastName}, ${user?.firstName}`}</Text>
         </View>
 
