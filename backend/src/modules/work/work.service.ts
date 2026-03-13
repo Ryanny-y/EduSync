@@ -1,8 +1,9 @@
 import prismaClient from "../../config/client";
-import { CustomError } from "../../common/utils/Errors";
 import * as s3Service from "../../infra/storage/s3.service";
-import { CreateWorkInput, UpdateWorkInput, WorkDto } from "./work.types";
+import { CreateWorkInput, WorkDto } from "./work.types";
 import { verifyClassAccess } from "../class/class.helpers";
+import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
+import { mapToWorkDto } from "./work.mapper";
 
 // Get all works in a class
 export const getWorksByClassId = async (
@@ -72,66 +73,66 @@ export const getWorksByClassId = async (
 // };
 
 // Create work with materials
-// export const createWork = async (
-//   teacherId: string,
-//   classId: string,
-//   data: CreateWorkInput,
-//   files: Express.Multer.File[]
-// ): Promise<WorkDto> => {
-//   await verifyClassAccess(teacherId, "TEACHER", classId, true);
+export const createWork = async (
+  teacherId: string,
+  classId: string,
+  data: CreateWorkInput,
+  files: Express.Multer.File[],
+): Promise<WorkDto> => {
+  await verifyClassAccess(teacherId, "TEACHER", classId, true);
 
-//   const work = await prismaClient.$transaction(async (tx) => {
-//     const newWork = await tx.work.create({
-//       data: {
-//         title: data.title,
-//         description: data.description || null,
-//         type: data.type,
-//         dueDate: data.dueDate ? new Date(data.dueDate) : null,
-//         classId,
-//       },
-//     });
+  const work = await prismaClient.$transaction(async (tx) => {
+    const newWork = await tx.work.create({
+      data: {
+        title: data.title,
+        description: data.description || null,
+        type: data.type,
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        classId,
+      },
+    });
 
-//     if (files.length > 0) {
-//       for (const file of files) {
-//         const s3Result = await s3Service.uploadFile(
-//           file.buffer,
-//           file.originalname,
-//           file.mimetype,
-//           `classes/${classId}/works`
-//         );
+    if (files.length > 0) {
+      for (const file of files) {
+        const s3Result = await s3Service.uploadFile(
+          file.buffer,
+          file.originalname,
+          file.mimetype,
+          `classes/${classId}/works`,
+        );
 
-//         const fileRecord = await tx.file.create({
-//           data: {
-//             fileName: file.originalname,
-//             fileType: mapMimeTypeToEnum(file.mimetype),
-//             path: s3Result.key,
-//             bucket: s3Result.bucket,
-//             url: s3Result.url,
-//             urlExpiresAt: new Date(Date.now() + 3600 * 1000),
-//             size: file.size,
-//           },
-//         });
+        const fileRecord = await tx.file.create({
+          data: {
+            fileName: file.originalname,
+            fileType: mapMimeTypeToFileType(file.mimetype),
+            path: s3Result.key,
+            bucket: s3Result.bucket,
+            url: s3Result.url,
+            urlExpiresAt: new Date(Date.now() + 3600 * 1000),
+            size: file.size,
+          },
+        });
 
-//         await tx.workMaterial.create({
-//           data: {
-//             workId: newWork.id,
-//             fileId: fileRecord.id,
-//           },
-//         });
-//       }
-//     }
+        await tx.workMaterial.create({
+          data: {
+            workId: newWork.id,
+            fileId: fileRecord.id,
+          },
+        });
+      }
+    }
 
-//     return tx.work.findUnique({
-//       where: { id: newWork.id },
-//       include: {
-//         materials: { include: { file: true } },
-//         _count: { select: { submissions: true } },
-//       },
-//     });
-//   });
+    return tx.work.findUnique({
+      where: { id: newWork.id },
+      include: {
+        materials: { include: { file: true } },
+        _count: { select: { submissions: true } },
+      },
+    });
+  });
 
-//   return mapToWorkDto(work!);
-// };
+  return mapToWorkDto(work!);
+};
 
 // Update work
 // export const updateWork = async (
@@ -264,26 +265,3 @@ export const getWorksByClassId = async (
 //   });
 // };
 
-// Helper: Map to DTO
-function mapToWorkDto(work: any): WorkDto {
-  return {
-    id: work.id,
-    title: work.title,
-    description: work.description,
-    type: work.type,
-    dueDate: work.dueDate,
-    classId: work.classId,
-    createdAt: work.createdAt,
-    updatedAt: work.updatedAt,
-    materials:
-      work.materials?.map((m: any) => ({
-        id: m.id,
-        fileName: m.file.fileName,
-        fileType: m.file.fileType,
-        s3Key: m.file.path,
-        url: m.file.url,
-        size: m.file.size,
-      })) || [],
-    submissionCount: work._count?.submissions || 0,
-  };
-}

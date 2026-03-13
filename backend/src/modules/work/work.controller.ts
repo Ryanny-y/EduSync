@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as workService from './work.service';
-import { GetWorkResponse, GetWorksResponse, WorkParams } from "./work.types";
+import { GetWorksResponse, WorkDto, WorkParams } from "./work.types";
+import { ApiResponse } from "../../common/types/api";
 
 export const getWorks = async (
   req: Request<WorkParams>,
@@ -47,30 +48,30 @@ export const getWorks = async (
 //   }
 // };
 
-// export const createWork = async (
-//   req: Request<WorkParams>,
-//   res: Response<ApiResponse<WorkDto>>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const files = (req.files as Express.Multer.File[]) || [];
+export const createWork = async (
+  req: Request<WorkParams>,
+  res: Response<ApiResponse<WorkDto>>,
+  next: NextFunction
+) => {
+  try {
+    const files = req.files as Express.Multer.File[] || [];
 
-//     const work = await workService.createWork(
-//       req.userId!,
-//       req.params.classId,
-//       req.body,
-//       files
-//     );
+    const work = await workService.createWork(
+      req.userId!,
+      req.params.classId!,
+      req.body,
+      files
+    );
 
-//     res.status(201).json({
-//       success: true,
-//       message: "Work created",
-//       data: work,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.status(201).json({
+      success: true,
+      message: "Work created",
+      data: work,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const updateWork = async (
 //   req: Request<WorkParams>,

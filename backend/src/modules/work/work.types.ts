@@ -12,7 +12,7 @@ export interface WorkParams {
   materialId?: string;
 }
 
-
+  
 // Responses
 export type GetWorksResponse = ApiResponse<WorkDto[]>;
 export type GetWorkResponse = ApiResponse<WorkDto>;

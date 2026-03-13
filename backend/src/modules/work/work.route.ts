@@ -3,6 +3,7 @@ import * as workController from "./work.controller";
 import { validate } from "../../common/middlewares/validate";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 import { createWorkSchema, workParamsSchema } from "./work.schema";
+import { upload } from "../../common/middlewares/upload";
 
 const router = Router({ mergeParams: true });
 
@@ -23,13 +24,13 @@ router.get(
 // );
 
 // POST /classes/:classId/works - Create work
-// router.post(
-//   "/",
-//   verifyJwt,
-//   upload.array("materials", 10),
-//   validate(createWorkSchema),
-//   workController.createWork
-// );
+router.post(
+  "/",
+  verifyJwt,
+  upload.array("materials", 10),
+  validate(createWorkSchema),
+  workController.createWork
+);
 
 // PUT /classes/:classId/works/:workId - Update work
 // router.put(

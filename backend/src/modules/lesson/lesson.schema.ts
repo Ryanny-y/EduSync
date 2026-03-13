@@ -5,7 +5,8 @@ export const lessonSchema = z.object({
   id: z.string(),
   title: z.string(),
   classId: z.string(),
-  createdAt: z.date(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 
   materials: z.array(
     z.object({
