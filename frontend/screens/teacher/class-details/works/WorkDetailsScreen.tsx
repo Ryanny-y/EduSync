@@ -19,8 +19,8 @@ const WorkDetailsScreen = () => {
     <View className="flex-1">
       <Header title="Work Details" />
 
-      <View className="flex-1 p-5">
-        <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsHorizontalScrollIndicator={false}>
+        <View className="flex-1 px-5">
           {/* Work Details */}
           <View className="mb-8 items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-5">
             <WorkTypeBadge type={work.type} />
@@ -47,17 +47,17 @@ const WorkDetailsScreen = () => {
             </View>
 
             <View className="flex-row items-center gap-5">
-              <View className="flex-1 items-ce">
+              <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Submitted</Text>
-                <Text className='text-xl font-bold text-green-600'>7</Text>
+                <Text className="text-xl font-bold text-green-600">7</Text>
               </View>
-              <View className="flex-1 items-ce">
+              <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Missing</Text>
-                <Text className='text-xl font-bold text-red-500'>7</Text>
+                <Text className="text-xl font-bold text-red-500">7</Text>
               </View>
-              <View className="flex-1 items-ce">
+              <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Total</Text>
-                <Text className='text-xl font-bold'>7</Text>
+                <Text className="text-xl font-bold">7</Text>
               </View>
             </View>
           </View>
@@ -74,9 +74,19 @@ const WorkDetailsScreen = () => {
               ))}
             </View>
           </View>
+
           {/* Submissions */}
-        </ScrollView>
-      </View>
+          <View className="gap-2">
+            <Text className="text-sm font-semibold uppercase text-slate-500">Submission (8)</Text>
+
+            <View className="mb-8 gap-2">
+              {work.materials.map((material: IWorkMaterial) => (
+                <FileCard key={material.id} file={material.file} />
+              ))}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };

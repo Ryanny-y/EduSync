@@ -8,12 +8,19 @@ import { ApiResponse } from 'types/common';
 import Toast from 'react-native-toast-message';
 import useMutation from 'hooks/useMutation';
 import { getErrorMessage } from 'utils/errorHandler';
+import { StudentStackParamList } from 'types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+
+type NavigationProps = NativeStackNavigationProp<StudentStackParamList, 'ClassDetailsScreen'>;
 
 const StudentClassCard = ({
   item,
   refetchData,
 }: { item: IClass } & { refetchData: () => void }) => {
   const { execute } = useMutation();
+  const navigation = useNavigation<NavigationProps>();
+
   const [isUnenrolling, setIsUnenrolling] = useState(false);
 
   const handleUnenroll = async () => {
@@ -95,6 +102,7 @@ const StudentClassCard = ({
 
         <View className="flex-row items-center gap-3">
           <Pressable
+            onPress={() => navigation.navigate('ClassDetailsScreen', { classId: item.id })}
             className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl p-4"
             style={{ backgroundColor: item.bgColor || '#22c55e' }}>
             <Text className="text-white">Open Class</Text>
