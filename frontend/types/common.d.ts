@@ -15,7 +15,7 @@ export interface IFile {
   path: string;
   size: number;
   bucket?: string | null;
-  url?: string | null;
+  url: string;
   urlExpiresAt?: Date | null;
   createdAt: Date;
 }

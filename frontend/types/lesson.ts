@@ -5,6 +5,7 @@ export interface ILesson {
   title: string;
   classId: string;
   createdAt: Date;
+  updatedAt: Date;
 
   materials: ILessonMaterial[];
 }

@@ -1,6 +1,6 @@
 import { Text } from 'components/ui/Text';
 import useFetchData from 'hooks/useFetchData';
-import { BookOpen, Pencil, Plus, Trash2 } from 'lucide-react-native';
+import { BookOpen, Eye, Pencil, Plus, Trash2 } from 'lucide-react-native';
 import { ScrollView, View } from 'react-native';
 import { ApiResponse } from 'types/common';
 import { ILesson } from 'types/lesson';
@@ -103,7 +103,7 @@ const LessonTab = ({ classId }: { classId: string }) => {
             {lessons.map((lesson) => (
               <View
                 key={lesson.id}
-                className="flex-row items-center justify-between rounded-xl border border-slate-300 p-5">
+                className="flex-row items-center justify-between rounded-xl border border-slate-300 px-5 py-3">
                 {/* LEFT SIDE */}
                 <View className="flex-row items-center gap-3">
                   <View className="h-12 w-12 items-center justify-center rounded-xl bg-green-100">
@@ -121,9 +121,9 @@ const LessonTab = ({ classId }: { classId: string }) => {
 
                 {/* ACTIONS */}
                 <View className="flex-row items-center gap-5">
-                  {/* <Pressable onPress={() => navigation.navigate("EditLessonScreen", { lesson })}>
-                  <Pencil size={20} strokeWidth={2.5} color="#90CF8E" />
-                </Pressable> */}
+                  <Pressable onPress={() => navigation.navigate('LessonDetailsScreen', { lesson })}>
+                    <Eye size={20} strokeWidth={2.5} color="#64748b" />
+                  </Pressable>
 
                   <Pressable
                     onPress={() => {
