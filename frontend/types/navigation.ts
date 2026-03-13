@@ -1,7 +1,7 @@
-import { UserRole } from "types/user";
-import { IClass } from "./class";
-import { ILesson } from "./lesson";
-import { IWork } from "./work";
+import { UserRole } from 'types/user';
+import { IClass } from './class';
+import { ILesson } from './lesson';
+import { IWork } from './work';
 
 export type AuthStackParamList = {
   WelcomeScreen: undefined;
@@ -16,7 +16,11 @@ export type StudentStackParamList = {
   StudentClassesScreen: undefined;
   JoinClassScreen: undefined;
   ClassDetailsScreen: { classId: string };
-}
+
+  // Lessons
+  LessonsScreen: { classId: string };
+  LessonDetailsScreen: { lesson: ILesson };
+};
 
 export type TeacherStackParamList = {
   TeacherClassesScreen: undefined;
@@ -30,4 +34,4 @@ export type TeacherStackParamList = {
   // WORKS
   CreateWorkScreen: { classId: string };
   WorkDetailsScreen: { work: IWork };
-}
+};

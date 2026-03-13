@@ -5,15 +5,18 @@ import useFetchData from 'hooks/useFetchData';
 import { ApiResponse } from 'types/common';
 import { IClass } from 'types/class';
 import { StudentStackParamList } from 'types/navigation';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { Text } from 'components/ui/Text';
 import { BookOpen, ChevronRight, FileText } from 'lucide-react-native';
 import Pressable from 'components/ui/Pressable';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type EditClassProp = RouteProp<StudentStackParamList, 'ClassDetailsScreen'>;
+type NavigationProps = NativeStackNavigationProp<StudentStackParamList, 'LessonsScreen'>;
+type ClassDetailsRouteProp = RouteProp<StudentStackParamList, 'ClassDetailsScreen'>;
 
 const ClassDetailsScreen = () => {
-  const route = useRoute<EditClassProp>();
+  const route = useRoute<ClassDetailsRouteProp>();
+  const navigation = useNavigation<NavigationProps>();
   const { classId } = route.params;
 
   // TODO: Handle Loading and error state
@@ -34,7 +37,9 @@ const ClassDetailsScreen = () => {
 
           <View className="gap-3">
             {/* LESSON */}
-            <Pressable className="flex-row items-center gap-5 rounded-xl border border-slate-200/50 bg-white p-5">
+            <Pressable
+              className="flex-row items-center gap-5 rounded-xl border border-slate-200/50 bg-white p-5"
+              onPress={() => navigation.navigate('LessonsScreen', { classId })}>
               {/* RIGHT SIDE */}
               <View className="rounded-xl bg-indigo-50 p-4">
                 <BookOpen color={'#6366f1'} />
