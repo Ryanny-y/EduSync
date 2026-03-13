@@ -12,3 +12,10 @@ export const fileSchema = z.object({
   urlExpiresAt: z.date().nullable().optional(),
   createdAt: z.date(),
 });
+
+export const uploadedFileSchema = z.object({
+  originalname: z.string(),
+  mimetype: z.string(),
+  buffer: z.instanceof(Buffer),
+  size: z.number(),
+});
