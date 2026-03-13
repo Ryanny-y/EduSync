@@ -12,6 +12,7 @@ import { ApiResponse } from 'types/common';
 import { IClass } from 'types/class';
 import LessonTab from './class-details/LessonTab';
 import ClassDetailHeader from './class-details/ClassDetailHeader';
+import WorksTab from './class-details/WorksTab';
 
 const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
@@ -22,11 +23,9 @@ const ClassDetailsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<Tab>('Stream');
   const route = useRoute<EditClassProp>();
   const { classId } = route.params;
-  
+
   // TODO: Handle Loading and Error
-  const { data, loading, error } = useFetchData<ApiResponse<IClass>>(
-    `class/${classId}`
-  );
+  const { data, loading, error } = useFetchData<ApiResponse<IClass>>(`class/${classId}`);
   const pagerRef = useRef<PagerView>(null);
 
   const onPageSelected = (e: any) => {
@@ -34,11 +33,11 @@ const ClassDetailsScreen = () => {
     setSelectedTab(TABS[index]);
   };
 
-  if(!data || !data.data) return;
+  if (!data || !data.data) return;
 
   return (
     <View className="w-full flex-1 items-center justify-start bg-background">
-      <ClassDetailHeader item={data.data}/>
+      <ClassDetailHeader item={data.data} />
 
       {/* Tabs */}
       <ScrollView
@@ -85,12 +84,12 @@ const ClassDetailsScreen = () => {
 
         {/* Lessons */}
         <View key="2" className="w-full flex-1 px-4 py-5">
-          {selectedTab === "Lessons" && <LessonTab classId={classId}/>}
+          {selectedTab === 'Lessons' && <LessonTab classId={classId} />}
         </View>
 
         {/* Works */}
         <View key="3" className="w-full flex-1 px-4 py-5">
-          <Text className="text-lg font-bold">Works Content</Text>
+          {selectedTab === 'Works' && <WorksTab classId={classId} />}
         </View>
       </PagerView>
     </View>

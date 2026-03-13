@@ -155,11 +155,18 @@ const TeacherClassCard = ({
               className="rounded-2xl bg-green-200 p-4"
               onPress={() => {
                 if (item.gmeetLink) {
-                  Linking.openURL(item.gmeetLink).catch((err) =>
-                    console.error('Failed to open link:', err)
-                  );
+                  Linking.openURL(item.gmeetLink).catch((err) => {
+                    Toast.show({
+                      type: 'error',
+                      text1: 'Failed to open link:',
+                      text2: getErrorMessage(err),
+                    });
+                  });
                 } else {
-                  console.warn('No Google Meet link available for this class');
+                  Toast.show({
+                    type: 'info',
+                    text1: 'No Google Meet link available for this class',
+                  });
                 }
               }}>
               <Video size={20} color="#90CF8E" />

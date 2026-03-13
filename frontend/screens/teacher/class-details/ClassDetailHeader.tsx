@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
 import { IClass } from 'types/class';
+import { getErrorMessage } from 'utils/errorHandler';
 
 const ClassDetailHeader = ({ item }: { item: IClass }) => {
   const navigation = useNavigation();
@@ -40,11 +41,18 @@ const ClassDetailHeader = ({ item }: { item: IClass }) => {
             className="rounded-full border border-white/40 bg-white/20 p-3"
             onPress={() => {
               if (item.gmeetLink) {
-                Linking.openURL(item.gmeetLink).catch((err) =>
-                  console.error('Failed to open link:', err)
-                );
+                Linking.openURL(item.gmeetLink).catch((err) => {
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Failed to open link:',
+                    text2: getErrorMessage(err),
+                  });
+                });
               } else {
-                console.warn('No Google Meet link available for this class');
+                Toast.show({
+                  type: 'info',
+                  text1: 'No Google Meet link available for this class',
+                });
               }
             }}>
             <Video color="#ffffff" size={20} />

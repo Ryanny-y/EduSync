@@ -21,6 +21,9 @@ export type TeacherStackParamList = {
   CreateClassScreen: undefined;
   EditClassScreen: { classData: IClass };
   ClassDetailsScreen: { classId: string };
+  // LESSON
   AddLessonScreen: { classId: string };
   EditLessonScreen: { lesson: ILesson };
+  // WORKS
+  CreateWorkScreen: { classId: string };
 }

@@ -1,0 +1,31 @@
+import { IFile, IUploadFile } from "./common";
+
+export type WorkType = 'ASSIGNMENT' | 'QUIZ' | 'TASK' | 'PROJECT';
+
+export interface IWork {
+  id: string;
+  title: string;
+  description: string | null;
+  type: WorkType;
+  dueDate: string | null;
+  classId: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  materials: IWorkMaterial[];
+  submissionCount: number;
+}
+
+export interface IWorkMaterial {
+  id: string;
+  file: IFile;
+}
+
+export interface ICreateWork {
+  title: string;
+  description?: string | null;
+  type: WorkType;
+  dueDate?: string | null;
+  classId: string;
+  materials?: IUploadFile[];
+}
