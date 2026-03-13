@@ -58,7 +58,9 @@ const ClassDetailsScreen = () => {
             </Pressable>
 
             {/* Works */}
-            <Pressable className="flex-row items-center gap-5 rounded-xl border border-slate-200/50 bg-white p-5">
+            <Pressable
+              className="flex-row items-center gap-5 rounded-xl border border-slate-200/50 bg-white p-5"
+              onPress={() => navigation.navigate('WorksScreen', { classId })}>
               {/* RIGHT SIDE */}
               <View className="rounded-xl bg-green-50 p-4 text-green-600">
                 <FileText color={'#16a34a'} />

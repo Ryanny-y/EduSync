@@ -14,14 +14,14 @@ const QuickActionCards = () => {
 
   return (
     <View className="mt-8 w-full flex-row gap-3">
-      <Pressable className="flex-1">
+      {/* <Pressable className="flex-1">
         <View className="items-center gap-3 rounded-lg bg-white p-5">
           <View className="rounded-xl bg-indigo-50 p-3">
             <BookOpen color="#6366f1" />
           </View>
           <Text className="font-semibold text-slate-500 text-sm">Lessons</Text>
         </View>
-      </Pressable>
+      </Pressable> */}
 
       <Pressable className="flex-1">
         <View className="items-center gap-3 rounded-lg bg-white p-5">

@@ -20,6 +20,10 @@ export type StudentStackParamList = {
   // Lessons
   LessonsScreen: { classId: string };
   LessonDetailsScreen: { lesson: ILesson };
+
+  // WORKS
+  WorksScreen: { classId: string };
+  WorkDetailsScreen: { work: IWork };
 };
 
 export type TeacherStackParamList = {

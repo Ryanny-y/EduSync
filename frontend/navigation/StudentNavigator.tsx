@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LessonDetailsScreen from 'screens/student/class-details/LessonDetailsScreen';
-import LessonsScreen from 'screens/student/class-details/LessonsScreen';
+import LessonDetailsScreen from 'screens/student/class-details/lesson/LessonDetailsScreen';
+import LessonsScreen from 'screens/student/class-details/lesson/LessonsScreen';
+import WorkDetailsScreen from 'screens/student/class-details/works/WorksDetailsScreen';
+import WorksScreen from 'screens/student/class-details/works/WorksScreen';
 import ClassDetailsScreen from 'screens/student/ClassDetailsScreen';
 import JoinClassScreen from 'screens/student/JoinClassScreen';
 import StudentClassesScreen from 'screens/student/StudentClassesScreen';
@@ -25,6 +27,10 @@ export default function StudentNavigator() {
       {/* Lessons */}
       <Stack.Screen name="LessonsScreen" component={LessonsScreen} />
       <Stack.Screen name="LessonDetailsScreen" component={LessonDetailsScreen} />
+
+      {/* Works */}
+      <Stack.Screen name="WorksScreen" component={WorksScreen} />
+      <Stack.Screen name="WorkDetailsScreen" component={WorkDetailsScreen} />
 
     </Stack.Navigator>
   );

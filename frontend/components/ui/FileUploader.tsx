@@ -11,10 +11,16 @@ export type UploadFile = {
 };
 
 type FileUploaderProps = {
+  title?: string;
   onFilesSelected: (files: UploadFile[]) => void;
+  showButton?: boolean;
 };
 
-const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
+const FileUploader = ({
+  title = 'Click to upload files',
+  onFilesSelected,
+  showButton,
+}: FileUploaderProps) => {
   const pickDocuments = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       multiple: true,
@@ -49,11 +55,17 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
       </View>
 
       <View className="items-center">
-        <Text className="text-sm font-bold text-slate-900">Click to upload files</Text>
+        <Text className="text-sm font-bold text-slate-900">{title}</Text>
 
         <Text className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
           PDF, PPT, DOC, Images
         </Text>
+
+        {showButton && (
+          <Text className="mt-5 rounded-xl border-2 border-slate-200/50 px-5 py-2 text-sm">
+            Browse Files
+          </Text>
+        )}
       </View>
     </Pressable>
   );

@@ -1,5 +1,5 @@
 import Pressable from 'components/ui/Pressable';
-import { ChevronLeft, Copy, Video, MoreVertical, BookOpen, Clock, MapPin } from 'lucide-react-native';
+import { ChevronLeft, Video, MoreVertical, BookOpen, Clock, MapPin } from 'lucide-react-native';
 import { Linking, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { generateGradient } from 'utils/colors';
