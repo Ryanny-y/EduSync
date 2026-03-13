@@ -3,7 +3,7 @@ import Header from 'components/Header';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import dayjs from 'dayjs';
-import { Download, Eye } from 'lucide-react-native';
+import { Book, Download, Eye } from 'lucide-react-native';
 import React from 'react';
 import { Alert, Linking, ScrollView, View } from 'react-native';
 import { ILessonMaterial } from 'types/lesson';
@@ -118,60 +118,72 @@ const LessonDetailsScreen = () => {
             </Text>
 
             {/* Materials Container */}
-            <View className="gap-2">
-              {lesson.materials.map((material: ILessonMaterial) => {
-                const { file } = material;
-                const IconComponent = getFileIcon(file.fileName);
+            {lesson.materials.length === 0 ? (
+              <View className="items-center px-10 py-16">
+                <Book size={48} color="#cbd5f5" />
 
-                return (
-                  <View
-                    key={material.id}
-                    className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                    {/* File Info Section */}
-                    <View className="flex-1 flex-row items-center gap-3">
-                      {/* File Icon */}
-                      <View className="h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                        <IconComponent size={20} color="#4B5563" />
-                      </View>
+                <Text className="mt-6 text-lg font-bold text-slate-700">No Lesson Materials</Text>
 
-                      {/* File Name & Type */}
-                      <View className="flex-1">
-                        <Text className="text-base font-semibold text-slate-800" numberOfLines={2}>
-                          {file.fileName}
-                        </Text>
-                        <View className="mt-1 flex-row items-center justify-between">
-                          <View className="rounded-full bg-slate-100 px-2 py-1">
-                            <Text className="text-xs font-medium uppercase text-slate-500">
-                              {file.fileType}
+                <Text className="mt-2 text-center text-sm text-slate-500">
+                  This lesson doesn't have any uploaded materials yet.
+                </Text>
+              </View>
+            ) : (
+              <View className="gap-2">
+                {lesson.materials.map((material: ILessonMaterial) => {
+                  const { file } = material;
+                  const IconComponent = getFileIcon(file.fileName);
+
+                  return (
+                    <View
+                      key={material.id}
+                      className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                      {/* File Info Section */}
+                      <View className="flex-1 flex-row items-center gap-3">
+                        <View className="h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
+                          <IconComponent size={20} color="#4B5563" />
+                        </View>
+
+                        <View className="flex-1">
+                          <Text
+                            className="text-base font-semibold text-slate-800"
+                            numberOfLines={2}>
+                            {file.fileName}
+                          </Text>
+
+                          <View className="mt-1 flex-row items-center justify-between">
+                            <View className="rounded-full bg-slate-100 px-2 py-1">
+                              <Text className="text-xs font-medium uppercase text-slate-500">
+                                {file.fileType}
+                              </Text>
+                            </View>
+
+                            <Text className="text-xs text-gray-400">
+                              {dayjs(file.createdAt).format('MMM DD, YYYY')}
                             </Text>
                           </View>
-                          <Text className="text-xs text-gray-400">
-                            {dayjs(file.createdAt).format('MMM DD, YYYY')}
-                          </Text>
                         </View>
                       </View>
-                    </View>
 
-                    {/* Action Buttons */}
-                    <View className="ml-5 flex-row items-center gap-2">
-                      {/* View Button */}
-                      <Pressable
-                        onPress={() => handleView(file)}
-                        className="flex-row items-center gap-1 rounded-lg bg-blue-100 px-3 py-3 active:opacity-70">
-                        <Eye size={16} color="#2563EB" />
-                      </Pressable>
+                      {/* Action Buttons */}
+                      <View className="ml-5 flex-row items-center gap-2">
+                        <Pressable
+                          onPress={() => handleView(file)}
+                          className="rounded-lg bg-blue-100 px-3 py-3 active:opacity-70">
+                          <Eye size={16} color="#2563EB" />
+                        </Pressable>
 
-                      {/* Download Button */}
-                      <Pressable
-                        onPress={() => handleDownload(file)}
-                        className="flex-row items-center gap-1 rounded-lg bg-green-100 px-3 py-3 active:opacity-70">
-                        <Download size={16} color="#16A34A" />
-                      </Pressable>
+                        <Pressable
+                          onPress={() => handleDownload(file)}
+                          className="rounded-lg bg-green-100 px-3 py-3 active:opacity-70">
+                          <Download size={16} color="#16A34A" />
+                        </Pressable>
+                      </View>
                     </View>
-                  </View>
-                );
-              })}
-            </View>
+                  );
+                })}
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
