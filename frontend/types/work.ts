@@ -25,7 +25,7 @@ export interface IWorkMaterial {
 
 export interface ICreateWork {
   title: string;
-  description?: string | null;
+  description?: string;
   type: WorkType;
   dueDate?: Date | null;
   materials?: IUploadFile[];

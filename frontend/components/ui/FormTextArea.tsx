@@ -2,7 +2,7 @@ import React from 'react';
 import { TextInput, View } from 'react-native';
 import { Text } from './Text';
 
-type FormInputProps = {
+type FormTextAreaProps = {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
@@ -11,27 +11,31 @@ type FormInputProps = {
   placeholder?: string;
 };
 
-const FormInput = ({
+const FormTextArea = ({
   label,
   value,
   onChangeText,
   inputProps,
   maxLength,
   placeholder,
-}: FormInputProps) => {
+}: FormTextAreaProps) => {
   return (
-    <View className="gap-2 ">
+    <View className="gap-2">
       <Text className="text-sm font-bold uppercase text-gray-400">{label}</Text>
+
       <TextInput
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        className="flex-1 rounded-lg border border-gray-200 bg-gray-100 px-3 py-4 placeholder:text-gray-500"
+        multiline
+        textAlignVertical="top"
+        numberOfLines={4}
         maxLength={maxLength}
+        className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-4 min-h-[120px] placeholder:text-gray-500"
         {...inputProps}
       />
     </View>
   );
 };
 
-export default FormInput;
+export default FormTextArea;

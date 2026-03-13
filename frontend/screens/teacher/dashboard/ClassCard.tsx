@@ -8,7 +8,7 @@ import { TeacherStackParamList } from 'types/navigation';
 
 type Props = {
   id: string;
-  name: string,
+  name: string;
   subject: string;
   section: string;
   time: string;
@@ -21,7 +21,9 @@ const ClassCard = ({ id, name, subject, section, time, studentCount }: Props) =>
   const navigation = useNavigation<NavigationProps>();
 
   return (
-    <Pressable className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg" onPress={() => navigation.navigate("ClassDetailsScreen", { classId: id })}>
+    <Pressable
+      className="relative flex-row items-center justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg"
+      onPress={() => navigation.navigate('ClassDetailsScreen', { classId: id })}>
       {/* subtle background accent */}
       <View className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-green-200 opacity-60" />
       <View className="absolute -bottom-16 -left-2 h-32 w-32 rounded-full bg-green-200 opacity-60" />
@@ -50,7 +52,9 @@ const ClassCard = ({ id, name, subject, section, time, studentCount }: Props) =>
 
             <View className="flex-row items-center gap-1">
               <Users size={15} color="#64748b" />
-              <Text className="text-sm font-semibold text-slate-500">{studentCount} studentCount</Text>
+              <Text className="text-sm font-semibold text-slate-500">
+                {studentCount} {studentCount > 1 ? 'students' : 'student'}
+              </Text>
             </View>
           </View>
         </View>

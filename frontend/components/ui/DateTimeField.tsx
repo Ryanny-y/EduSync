@@ -53,11 +53,16 @@ const DateTimeField = ({ label, value, onChange }: Props) => {
       </Pressable>
 
       {showDatePicker && (
-        <DateTimePicker value={value ?? new Date()} mode="date" onChange={handleDateChange} />
+        <DateTimePicker
+          minimumDate={dayjs().startOf('day').toDate()}
+          value={value ?? new Date()}
+          mode="date"
+          onChange={handleDateChange}
+        />
       )}
 
       {showTimePicker && (
-        <DateTimePicker value={value ?? new Date()} mode="time" onChange={handleTimeChange} />
+        <DateTimePicker  value={value ?? new Date()} mode="time" onChange={handleTimeChange} />
       )}
     </View>
   );

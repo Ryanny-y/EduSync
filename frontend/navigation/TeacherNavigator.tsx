@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AddLessonScreen from 'screens/teacher/class-details/screens/AddLessonScreen';
-import CreateWorkScreen from 'screens/teacher/class-details/screens/CreateWorkScreen';
-import EditLessonScreen from 'screens/teacher/class-details/screens/EditLessonScreen';
+import AddLessonScreen from 'screens/teacher/class-details/lesson/AddLessonScreen';
+import CreateWorkScreen from 'screens/teacher/class-details/works/CreateWorkScreen';
+import EditLessonScreen from 'screens/teacher/class-details/lesson/EditLessonScreen';
 import ClassDetailsScreen from 'screens/teacher/ClassDetailsScreen';
 import CreateClassScreen from 'screens/teacher/my-class/CreateClassScreen';
 import EditClassScreen from 'screens/teacher/my-class/EditClassScreen';

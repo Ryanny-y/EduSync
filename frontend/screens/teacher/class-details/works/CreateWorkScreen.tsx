@@ -9,12 +9,23 @@ import { ICreateWork, workTypes } from 'types/work';
 import FileUploader from 'components/ui/FileUploader';
 import FileList from 'components/ui/FileList';
 import { useMessage } from 'hooks/useMessage';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import DateTimeField from 'components/ui/DateTimeField';
+import { getErrorMessage } from 'utils/errorHandler';
+import { navigateBackWithDelay } from 'utils/navigateBackWithDelay';
+import { ApiResponse } from 'types/common';
+import useMutation from 'hooks/useMutation';
+import { TeacherStackParamList } from 'types/navigation';
+import FormTextArea from 'components/ui/FormTextArea';
+
+type CreateWorkScreenRouteProp = RouteProp<TeacherStackParamList, "CreateWorkScreen">;
 
 const CreateWorkScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute<CreateWorkScreenRouteProp>();
+  const { classId } = route.params;
   const [isPublishing, setIsPublishing] = useState(false);
+  const { execute } = useMutation();
 
   const [formData, setFormData] = useState<ICreateWork>({
     title: '',
@@ -27,9 +38,56 @@ const CreateWorkScreen = () => {
   const { showSuccess, MessageComponent, showError } = useMessage();
   const { handleChange } = useFormHandlers<ICreateWork>(setFormData);
 
+  const createLessonFormData = (data: ICreateWork) => {
+    const form = new FormData();
+
+    form.append('title', data.title);
+    form.append('type', data.type);
+
+    if (data.description) {
+      form.append('description', data.description);
+    }
+
+    if (data.dueDate) {
+      form.append('dueDate', data.dueDate.toISOString());
+    }
+
+    data.materials?.forEach((file) => {
+      form.append('materials', {
+        uri: file.uri,
+        name: file.name,
+        type: file.type,
+      } as any);
+    });
+
+    return form;
+  };
+
   const handleCreateWork = async () => {
-    console.log(formData);
-    
+    if (isPublishing) return;
+
+    if (!formData.title.trim()) {
+      alert('Lesson title is required');
+      return;
+    }
+
+    setIsPublishing(true);
+
+    try {
+      const response: ApiResponse<void> = await execute(`class/${classId}/works`, {
+        method: 'POST',
+        body: createLessonFormData(formData),
+      });
+
+      showSuccess(response.message);
+      navigateBackWithDelay(navigation);
+    } catch (error) {
+      const msg = getErrorMessage(error);
+      console.log('Upload failed:', error);
+      showError(msg);
+    } finally {
+      setIsPublishing(false);
+    }
   };
   return (
     <View className="flex-1 bg-slate-50">
@@ -47,7 +105,7 @@ const CreateWorkScreen = () => {
             placeholder="e.g. Essay: Climate Change"
           />
 
-          <FormInput
+          <FormTextArea
             label="description"
             value={formData.description ?? ''}
             onChangeText={(value) => handleChange('description', value)}
