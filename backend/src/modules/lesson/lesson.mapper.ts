@@ -1,4 +1,3 @@
-import { FileType } from "../../generated/prisma";
 import { LessonDto } from "./lesson.types";
 
 export const mapLessonToDto = (lesson: any): LessonDto => ({
@@ -6,14 +5,17 @@ export const mapLessonToDto = (lesson: any): LessonDto => ({
   title: lesson.title,
   classId: lesson.classId,
   createdAt: lesson.createdAt,
+  updatedAt: lesson.updatedAt,
 
   materials:
     lesson.materials?.map((m: any) => ({
       id: m.id,
-      fileName: m.file.fileName,
-      fileType: m.file.fileType,
-      s3Key: m.file.path,
-      url: m.file.url, // Presigned URL
-      size: m.file.size,
+      file: {
+        fileName: m.file.fileName,
+        fileType: m.file.fileType,
+        s3Key: m.file.path,
+        url: m.file.url,
+        size: m.file.size,
+      }
     })) || [],
 });
