@@ -9,6 +9,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CustomError } from "../../common/utils/Errors";
+import { File } from '../../generated/prisma';
+import prismaClient from '../../config/client';
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION!,
@@ -90,4 +92,16 @@ export const deleteFile = async (key: string): Promise<void> => {
   } catch (error) {
     console.error("S3 delete error:", error);
   }
+};
+
+export const refreshPresignedUrlIfExpired = async (file: File) => {
+  if (!file.urlExpiresAt || new Date() > file.urlExpiresAt) {
+    const newUrl = await generatePresignedUrl(file.path);
+    await prismaClient.file.update({
+      where: { id: file.id },
+      data: { url: newUrl, urlExpiresAt: new Date(Date.now() + 3600 * 1000) },
+    });
+    file.url = newUrl;
+  }
+  return file;
 };

@@ -2,9 +2,10 @@ import prismaClient from "../../config/client";
 import { CustomError } from "../../common/utils/Errors";
 import * as s3Service from "../../infra/storage/s3.service";
 import { CreateLessonDto, LessonDto } from "./lesson.types";
-import { mapLessonToDto, mapMimeTypeToFileType } from "./lesson.mapper";
+import { mapLessonToDto } from "./lesson.mapper";
 import { verifyClassAccess } from "../class/class.helpers";
 import { Role } from "../../generated/prisma";
+import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 
 export const getLessonsByClassId = async (
   userId: string,

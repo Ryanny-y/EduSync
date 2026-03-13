@@ -1,27 +1,34 @@
 import { CustomError } from "../../common/utils/Errors";
 import prismaClient from "../../config/client";
-import { Role } from "../../generated/prisma";
 
 export const verifyClassAccess = async (
   userId: string,
-  role: Role,
+  role: string,
   classId: string,
+  requireTeacher = false,
 ): Promise<void> => {
   if (role === "ADMIN") return;
 
   const hasAccess = await prismaClient.class.findFirst({
     where: {
       id: classId,
-      OR: [{ teacherId: userId }, { students: { some: { id: userId } } }],
+      ...(requireTeacher
+        ? { teacherId: userId }
+        : {
+            OR: [{ teacherId: userId }, { students: { some: { id: userId } } }],
+          }),
     },
-    select: { id: true },
   });
 
   if (!hasAccess) {
-    throw new CustomError(403, "Access denied");
+    throw new CustomError(
+      requireTeacher ? 403 : 404,
+      requireTeacher
+        ? "Only class teacher can perform this action"
+        : "Class not found or access denied",
+    );
   }
 };
-
 
 export const generateClassCode = (): string => {
   const chars =

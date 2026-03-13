@@ -10,6 +10,7 @@ import {
 } from "./class.schema";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 import lessonRoute from '../lesson/lesson.route';
+import workRoute from '../work/work.route';
 
 const router = Router();
 
@@ -61,6 +62,7 @@ router.post(
 
 // Nested Routes
 router.use("/:classId/lessons", lessonRoute)
+router.use("/:classId/works", workRoute);
 
 router.get(
   "/:id/stream",
@@ -74,13 +76,6 @@ router.get(
   verifyJwt,
   validate(classParamsSchema),
   classController.getClassStudents,
-);
-
-router.get(
-  "/:id/works",
-  verifyJwt,
-  validate(classParamsSchema),
-  classController.getClassWorks,
 );
 
 export default router;

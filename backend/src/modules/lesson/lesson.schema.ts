@@ -1,5 +1,5 @@
 import z from "zod";
-import { fileSchema } from "../file/file.schema";
+import { fileSchema, uploadedFileSchema } from "../file/file.schema";
 
 export const lessonSchema = z.object({
   id: z.string(),
@@ -11,7 +11,7 @@ export const lessonSchema = z.object({
     z.object({
       id: z.string(),
       file: fileSchema,
-    })
+    }),
   ),
 });
 
@@ -19,12 +19,10 @@ export const createLessonSchema = z.object({
   body: z.object({
     title: z.string().min(1),
   }),
-  files: z.array(z.object({
-    originalname: z.string(),
-    mimetype: z.string(),
-    buffer: z.instanceof(Buffer),
-    size: z.number(),
-  })).optional().default([]),
+  files: z
+    .array(uploadedFileSchema)
+    .optional()
+    .default([]),
 });
 
 export const lessonParamsSchema = z.object({
