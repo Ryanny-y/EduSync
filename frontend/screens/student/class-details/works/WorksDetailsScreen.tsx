@@ -12,12 +12,13 @@ import useFetchData from 'hooks/useFetchData';
 import useMutation from 'hooks/useMutation';
 import { CheckCircle, Clock } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { ApiResponse, IUploadFile } from 'types/common';
+import { ApiResponse, IFile, IUploadFile } from 'types/common';
 import { StudentStackParamList } from 'types/navigation';
 import { ISubmission } from 'types/submission';
 import { IWorkMaterial } from 'types/work';
+import { getErrorMessage } from 'utils/errorHandler';
 
 type WorkDetailsRouteProp = RouteProp<StudentStackParamList, 'WorkDetailsScreen'>;
 
@@ -32,6 +33,7 @@ const WorkDetailsScreen = () => {
   );
 
   const [uploading, setUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!data?.data || !data) return null;
 
@@ -58,14 +60,46 @@ const WorkDetailsScreen = () => {
       Toast.show({
         type: 'success',
         text1: 'Success',
-        text2: "File uploaded",
+        text2: 'File uploaded',
       });
       refetchData?.(); // Refresh submission
-    } catch (err: any) {
-      console.error(err);
-      Alert.alert('Upload failed', err?.response?.data?.message || 'Something went wrong.');
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'error',
+        text2: getErrorMessage(err),
+      });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleFileDelete = async (file: IFile) => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      const response: ApiResponse<ISubmission> = await execute(
+        `class/${work.classId}/works/${work.id}/submissions/${submission.id}/files`,
+        {
+          method: 'DELETE',
+          body: JSON.stringify({ filesToDelete: [file.id] }),
+        }
+      );
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'File Deleted',
+      });
+      refetchData?.();
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'error',
+        text2: getErrorMessage(err),
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -138,8 +172,10 @@ const WorkDetailsScreen = () => {
             {submission.files?.length > 0 && (
               <FileList
                 files={submission.files.map((f) => f.file)}
-                onRemove={async (index) => {
-                  console.log('Remove file at index', index);
+                onRemove={(file) => {
+                  if ('id' in file) {
+                    handleFileDelete(file);
+                  }
                 }}
               />
             )}

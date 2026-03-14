@@ -145,9 +145,8 @@ export const gradeSubmission = async (
 export const getOrCreateMySubmission = async (
   studentId: string,
   classId: string,
-  workId: string
+  workId: string,
 ): Promise<SubmissionDto> => {
-  
   // Verify enrollment
   const enrolled = await prismaClient.class.findFirst({
     where: {
@@ -200,7 +199,7 @@ export const getOrCreateMySubmission = async (
         ...f.file,
         url: await s3Service.generatePresignedUrl(f.file.path),
       },
-    }))
+    })),
   );
 
   const submissionWithUrls = {
@@ -288,7 +287,7 @@ export const getOrCreateMySubmission = async (
 export const addSubmissionFiles = async (
   studentId: string,
   submissionId: string,
-  files: Express.Multer.File[]
+  files: Express.Multer.File[],
 ): Promise<SubmissionDto> => {
   const submission = await prismaClient.submission.findFirst({
     where: { id: submissionId, studentId },
@@ -309,7 +308,7 @@ export const addSubmissionFiles = async (
         file.buffer,
         file.originalname,
         file.mimetype,
-        `submissions/${submissionId}`
+        `submissions/${submissionId}`,
       );
 
       const fileRecord = await tx.file.create({
@@ -344,58 +343,73 @@ export const addSubmissionFiles = async (
   return mapToSubmissionDto(updated!, submission.work.dueDate);
 };
 
-// export const deleteSubmissionFiles = async (
-//   studentId: string,
-//   submissionId: string,
-//   fileIds: string[]
-// ): Promise<SubmissionDto> => {
-//   const submission = await prismaClient.submission.findFirst({
-//     where: { id: submissionId, studentId },
-//     include: {
-//       work: true,
-//       files: { include: { file: true } },
-//     },
-//   });
+export const deleteSubmissionFiles = async (
+  studentId: string,
+  submissionId: string,
+  fileIds: string[],
+): Promise<SubmissionDto> => {
+  const submission = await prismaClient.submission.findFirst({
+    where: { id: submissionId, studentId },
+    include: {
+      work: { select: { dueDate: true } },
+      files: {
+        select: { fileId: true, file: { select: { id: true, path: true } } },
+      },
+    },
+  });
 
-//   if (!submission) {
-//     throw new CustomError(404, "Submission not found");
-//   }
+  if (!submission) {
+    throw new CustomError(404, "Submission not found");
+  }
 
-//   if (submission.turnedInAt) {
-//     throw new CustomError(403, "Cannot modify turned in submission");
-//   }
+  if (submission.turnedInAt) {
+    throw new CustomError(403, "Cannot modify turned in submission");
+  }
 
-//   const validFileIds = submission.files
-//     .filter((f) => fileIds.includes(f.fileId))
-//     .map((f) => f.fileId);
+  const submissionFileIds = submission.files.map((f) => f.fileId);
 
-//   if (validFileIds.length !== fileIds.length) {
-//     throw new CustomError(400, "Some files do not belong to this submission");
-//   }
+  if (!fileIds.every((id) => submissionFileIds.includes(id))) {
+    throw new CustomError(400, "Some files do not belong to this submission");
+  }
 
-//   const updated = await prismaClient.$transaction(async (tx) => {
-//     for (const fileId of validFileIds) {
-//       const file = await tx.file.findUnique({ where: { id: fileId } });
-//       if (file) {
-//         await s3Service.deleteFile(file.path);
-//         await tx.submissionFile.deleteMany({
-//           where: { submissionId, fileId },
-//         });
-//         await tx.file.delete({ where: { id: fileId } });
-//       }
-//     }
+  const filesToDelete = submission.files
+    .filter((f) => fileIds.includes(f.fileId))
+    .map((f) => f.file);
 
-//     return tx.submission.findUnique({
-//       where: { id: submissionId },
-//       include: {
-//         student: { select: { id: true, firstName: true, lastName: true } },
-//         files: { include: { file: true } },
-//       },
-//     });
-//   });
+  // delete from S3 first (outside transaction)
+  await Promise.all(
+    filesToDelete.map((file) => s3Service.deleteFile(file.path)),
+  );
 
-//   return mapToSubmissionDto(updated!, submission.work.dueDate);
-// };
+  const updated = await prismaClient.$transaction(async (tx) => {
+    await tx.submissionFile.deleteMany({
+      where: {
+        submissionId,
+        fileId: { in: fileIds },
+      },
+    });
+
+    await tx.file.deleteMany({
+      where: {
+        id: { in: fileIds },
+      },
+    });
+
+    return tx.submission.findUnique({
+      where: { id: submissionId },
+      include: {
+        student: { select: { id: true, firstName: true, lastName: true } },
+        files: { include: { file: true } },
+      },
+    });
+  });
+
+  if (!updated) {
+    throw new CustomError(404, "Submission not found after update");
+  }
+
+  return mapToSubmissionDto(updated, submission.work.dueDate);
+};
 
 // export const deleteSubmission = async (
 //   userId: string,

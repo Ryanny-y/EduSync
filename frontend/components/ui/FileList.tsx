@@ -6,7 +6,7 @@ import { IFile, IUploadFile } from 'types/common';
 
 type FileListProps = {
   files: (IUploadFile | IFile)[];
-  onRemove?: (index: number) => void;
+  onRemove?: (file: IFile | IUploadFile) => void;
 };
 
 const FileList = ({ files, onRemove }: FileListProps) => {
@@ -31,7 +31,7 @@ const FileList = ({ files, onRemove }: FileListProps) => {
             </View>
 
             {onRemove && (
-              <Pressable onPress={() => onRemove(index)}>
+              <Pressable onPress={() => onRemove(file)}>
                 <Text className="font-semibold text-red-500">Remove</Text>
               </Pressable>
             )}

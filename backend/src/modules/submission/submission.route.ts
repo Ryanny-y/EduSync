@@ -57,7 +57,7 @@ router.get(
 //   submissionController.unsubmit
 // );
 
-// // POST /classes/:classId/works/:workId/submissions/:submissionId/files
+// POST /classes/:classId/works/:workId/submissions/:submissionId/files
 router.post(
   "/:submissionId/files",
   verifyJwt,
@@ -65,13 +65,13 @@ router.post(
   submissionController.addFiles
 );
 
-// // DELETE /classes/:classId/works/:workId/submissions/:submissionId/files
-// router.delete(
-//   "/:submissionId/files",
-//   verifyJwt,
-//   validate(updateSubmissionFilesSchema),
-//   submissionController.deleteFiles
-// );
+// DELETE /classes/:classId/works/:workId/submissions/:submissionId/files
+router.delete(
+  "/:submissionId/files",
+  verifyJwt,
+  validate(updateSubmissionFilesSchema),
+  submissionController.deleteFiles
+);
 
 // // DELETE /classes/:classId/works/:workId/submissions/:submissionId
 // router.delete(

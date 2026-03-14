@@ -40,8 +40,8 @@ const AddLessonScreen = () => {
     data.materials?.forEach((file) => {
       form.append('materials', {
         uri: file.uri,
-        name: file.fileName,
-        type: file.fileType,
+        name: file.name,
+        type: file.type,
       } as any);
     });
 
@@ -101,10 +101,10 @@ const AddLessonScreen = () => {
 
           <FileList
             files={formData.materials ?? []}
-            onRemove={(index) =>
+            onRemove={(file) =>
               setFormData((prev) => ({
                 ...prev,
-                materials: prev.materials?.filter((_, i) => i !== index),
+                materials: prev.materials?.filter((f) => f !== file),
               }))
             }
           />

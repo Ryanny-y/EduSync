@@ -151,27 +151,27 @@ export const addFiles = async (
   }
 };
 
-// export const deleteFiles = async (
-//   req: Request<SubmissionParams, {}, UpdateSubmissionFilesInput>,
-//   res: Response<GetSubmissionResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const result = await submissionService.deleteSubmissionFiles(
-//       req.userId!,
-//       req.params.submissionId!,
-//       req.body.filesToDelete || []
-//     );
+export const deleteFiles = async (
+  req: Request<SubmissionParams, {}, UpdateSubmissionFilesInput>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const result = await submissionService.deleteSubmissionFiles(
+      req.userId!,
+      req.params.submissionId!,
+      req.body.filesToDelete || []
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Files deleted",
-//       data: result,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Files deleted",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const deleteSub = async (
 //   req: Request<SubmissionParams>,

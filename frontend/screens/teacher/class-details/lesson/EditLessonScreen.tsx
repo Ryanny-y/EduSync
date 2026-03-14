@@ -117,10 +117,10 @@ const EditLessonScreen = () => {
 
           <FileList
             files={formData.materials ?? []}
-            onRemove={(index) =>
+            onRemove={(file) =>
               setFormData((prev) => ({
                 ...prev,
-                materials: prev.materials?.filter((_, i) => i !== index),
+                materials: prev.materials?.filter(f => f !== file),
               }))
             }
           />
