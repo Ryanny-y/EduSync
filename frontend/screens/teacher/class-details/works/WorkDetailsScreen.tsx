@@ -178,7 +178,7 @@ const WorkDetailsScreen = () => {
                     </View>
                   ) : (
                     <View>
-                      <ChevronRight color="#cbd5e1" className='text-slate-300'/>
+                      <ChevronRight color="#cbd5e1" className="text-slate-300" />
                     </View>
                   )}
                 </Pressable>

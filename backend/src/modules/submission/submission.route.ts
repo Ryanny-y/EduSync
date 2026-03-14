@@ -58,12 +58,12 @@ router.get(
 // );
 
 // // POST /classes/:classId/works/:workId/submissions/:submissionId/files
-// router.post(
-//   "/:submissionId/files",
-//   verifyJwt,
-//   upload.array("files", 10),
-//   submissionController.addFiles
-// );
+router.post(
+  "/:submissionId/files",
+  verifyJwt,
+  upload.array("files", 10),
+  submissionController.addFiles
+);
 
 // // DELETE /classes/:classId/works/:workId/submissions/:submissionId/files
 // router.delete(

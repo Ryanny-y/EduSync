@@ -2,15 +2,10 @@ import React from 'react';
 import { View, Pressable } from 'react-native';
 import { Text } from 'components/ui/Text';
 import { getFileIcon } from 'utils/helpers';
-
-export type UploadFile = {
-  uri: string;
-  name: string;
-  type: string;
-};
+import { IFile, IUploadFile } from 'types/common';
 
 type FileListProps = {
-  files: UploadFile[];
+  files: (IUploadFile | IFile)[];
   onRemove?: (index: number) => void;
 };
 
@@ -20,30 +15,24 @@ const FileList = ({ files, onRemove }: FileListProps) => {
   return (
     <View className="gap-3">
       {files.map((file, index) => {
-        const IconComponent = getFileIcon(file.name);
+        const fileName = 'name' in file ? file.name : file.fileName;
+        const IconComponent = getFileIcon(fileName);
 
         return (
           <View
             key={index}
-            className="flex-row items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-5"
-          >
+            className="flex-row items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-5">
             <View className="flex-1 flex-row items-center gap-2">
               <IconComponent size={20} color="#4B5563" />
 
-              <Text
-                className="flex-1"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {file.name}
+              <Text className="flex-1" numberOfLines={1} ellipsizeMode="tail">
+                {fileName}
               </Text>
             </View>
 
             {onRemove && (
               <Pressable onPress={() => onRemove(index)}>
-                <Text className="font-semibold text-red-500">
-                  Remove
-                </Text>
+                <Text className="font-semibold text-red-500">Remove</Text>
               </Pressable>
             )}
           </View>

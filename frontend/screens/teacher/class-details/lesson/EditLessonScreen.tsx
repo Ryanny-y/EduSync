@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { Text } from 'components/ui/Text';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { ApiResponse } from 'types/common';
+import { ApiResponse, IUploadFile } from 'types/common';
 import useMutation from 'hooks/useMutation';
 import { TeacherStackParamList } from 'types/navigation';
 import { useMessage } from 'hooks/useMessage';
@@ -15,6 +15,8 @@ import FileList from 'components/ui/FileList';
 import FileUploader from 'components/ui/FileUploader';
 
 type EditLessonScreenRouteProp = RouteProp<TeacherStackParamList, 'EditLessonScreen'>;
+
+type Material = IUploadFile & { isExisting: boolean };
 
 const EditLessonScreen = () => {
   const route = useRoute<EditLessonScreenRouteProp>();
@@ -31,10 +33,10 @@ const EditLessonScreen = () => {
     materials:
       lesson.materials?.map((file: any) => ({
         uri: file.url,
-        name: file.name,
-        type: file.type,
-        isExisting: true,
-      })) || [],
+        name: file.name, // matches IUploadFile
+        type: file.type, // matches IUploadFile
+        isExisting: true, // flag for existing files
+      })) || ([] as Material[]),
   });
 
   const { handleChange } = useFormHandlers<typeof formData>(setFormData);
@@ -99,13 +101,13 @@ const EditLessonScreen = () => {
 
           {/* Upload Files */}
           <FileUploader
-            onFilesSelected={(files) =>
+            onFilesSelected={(files: IUploadFile[]) =>
               setFormData((prev) => ({
                 ...prev,
                 materials: [
-                  ...(prev.materials ?? []),
-                  ...files.map((file) => ({
-                    ...file,
+                  ...prev.materials,
+                  ...files.map((f) => ({
+                    ...f,
                     isExisting: false,
                   })),
                 ],

@@ -127,29 +127,29 @@ export const getMySubmission = async (
 //   }
 // };
 
-// export const addFiles = async (
-//   req: Request<SubmissionParams>,
-//   res: Response<GetSubmissionResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const files = (req.files as Express.Multer.File[]) || [];
+export const addFiles = async (
+  req: Request<SubmissionParams>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const files = (req.files as Express.Multer.File[]) || [];
     
-//     const result = await submissionService.addSubmissionFiles(
-//       req.userId!,
-//       req.params.submissionId!,
-//       files
-//     );
+    const result = await submissionService.addSubmissionFiles(
+      req.userId!,
+      req.params.submissionId!,
+      files
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Files added",
-//       data: result,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Files added",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const deleteFiles = async (
 //   req: Request<SubmissionParams, {}, UpdateSubmissionFilesInput>,

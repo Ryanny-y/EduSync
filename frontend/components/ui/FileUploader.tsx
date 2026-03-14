@@ -3,16 +3,11 @@ import { Pressable, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { UploadCloud } from 'lucide-react-native';
 import { Text } from 'components/ui/Text';
-
-export type UploadFile = {
-  uri: string;
-  name: string;
-  type: string;
-};
+import { IUploadFile } from 'types/common';
 
 type FileUploaderProps = {
   title?: string;
-  onFilesSelected: (files: UploadFile[]) => void;
+  onFilesSelected: (files: IUploadFile[]) => void;
   showButton?: boolean;
 };
 
@@ -37,7 +32,7 @@ const FileUploader = ({
 
     if (result.canceled) return;
 
-    const files: UploadFile[] = result.assets.map((file) => ({
+    const files: IUploadFile[] = result.assets.map((file) => ({
       uri: file.uri,
       name: file.name,
       type: file.mimeType ?? 'application/octet-stream',

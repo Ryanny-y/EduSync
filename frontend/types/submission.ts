@@ -19,7 +19,10 @@ export interface ISubmission {
   grade: number | null;
   feedback: string | null;
 
-  files: IFile[];
+  files: {
+    id: string; // wrapper ID from backend
+    file: IFile; // the actual file
+  }[];
 
   isLate: boolean;
 

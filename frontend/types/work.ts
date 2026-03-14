@@ -1,11 +1,10 @@
-import { IFile, IUploadFile } from "./common";
+import { HasId, IFile, IUploadFile } from "./common";
 
 export const workTypes = ['ASSIGNMENT', 'QUIZ', 'TASK', 'PROJECT'] as const;
 
 export type WorkType = typeof workTypes[number];
 
-export interface IWork {
-  id: string;
+export interface IWork extends HasId {
   title: string;
   description: string | null;
   type: WorkType;

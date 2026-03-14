@@ -56,8 +56,8 @@ const CreateWorkScreen = () => {
     data.materials?.forEach((file) => {
       form.append('materials', {
         uri: file.uri,
-        name: file.name,
-        type: file.type,
+        name: file.fileName,
+        type: file.fileType,
       } as any);
     });
 

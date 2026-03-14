@@ -11,6 +11,7 @@ import {
   GradeSubmissionInput,
 } from "./submission.types";
 import { verifyClassAccess } from "../class/class.helpers";
+import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 
 // ==================== STUDENT SERVICES ====================
 export const getSubmissionsForWork = async (
@@ -284,64 +285,64 @@ export const getOrCreateMySubmission = async (
 //   return mapToSubmissionDto(updated, submission.work.dueDate);
 // };
 
-// export const addSubmissionFiles = async (
-//   studentId: string,
-//   submissionId: string,
-//   files: Express.Multer.File[]
-// ): Promise<SubmissionDto> => {
-//   const submission = await prismaClient.submission.findFirst({
-//     where: { id: submissionId, studentId },
-//     include: { work: true },
-//   });
+export const addSubmissionFiles = async (
+  studentId: string,
+  submissionId: string,
+  files: Express.Multer.File[]
+): Promise<SubmissionDto> => {
+  const submission = await prismaClient.submission.findFirst({
+    where: { id: submissionId, studentId },
+    include: { work: true },
+  });
 
-//   if (!submission) {
-//     throw new CustomError(404, "Submission not found");
-//   }
+  if (!submission) {
+    throw new CustomError(404, "Submission not found");
+  }
 
-//   if (submission.turnedInAt) {
-//     throw new CustomError(403, "Cannot modify turned in submission");
-//   }
+  if (submission.turnedInAt) {
+    throw new CustomError(403, "Cannot modify turned in submission");
+  }
 
-//   const updated = await prismaClient.$transaction(async (tx) => {
-//     for (const file of files) {
-//       const s3Result = await s3Service.uploadFile(
-//         file.buffer,
-//         file.originalname,
-//         file.mimetype,
-//         `submissions/${submissionId}`
-//       );
+  const updated = await prismaClient.$transaction(async (tx) => {
+    for (const file of files) {
+      const s3Result = await s3Service.uploadFile(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+        `submissions/${submissionId}`
+      );
 
-//       const fileRecord = await tx.file.create({
-//         data: {
-//           fileName: file.originalname,
-//           fileType: mapMimeTypeToFileType(file.mimetype),
-//           path: s3Result.key,
-//           bucket: s3Result.bucket,
-//           url: s3Result.url,
-//           urlExpiresAt: new Date(Date.now() + 3600 * 1000),
-//           size: file.size,
-//         },
-//       });
+      const fileRecord = await tx.file.create({
+        data: {
+          fileName: file.originalname,
+          fileType: mapMimeTypeToFileType(file.mimetype),
+          path: s3Result.key,
+          bucket: s3Result.bucket,
+          url: s3Result.url,
+          urlExpiresAt: new Date(Date.now() + 3600 * 1000),
+          size: file.size,
+        },
+      });
 
-//       await tx.submissionFile.create({
-//         data: {
-//           submissionId,
-//           fileId: fileRecord.id,
-//         },
-//       });
-//     }
+      await tx.submissionFile.create({
+        data: {
+          submissionId,
+          fileId: fileRecord.id,
+        },
+      });
+    }
 
-//     return tx.submission.findUnique({
-//       where: { id: submissionId },
-//       include: {
-//         student: { select: { id: true, firstName: true, lastName: true } },
-//         files: { include: { file: true } },
-//       },
-//     });
-//   });
+    return tx.submission.findUnique({
+      where: { id: submissionId },
+      include: {
+        student: { select: { id: true, firstName: true, lastName: true } },
+        files: { include: { file: true } },
+      },
+    });
+  });
 
-//   return mapToSubmissionDto(updated!, submission.work.dueDate);
-// };
+  return mapToSubmissionDto(updated!, submission.work.dueDate);
+};
 
 // export const deleteSubmissionFiles = async (
 //   studentId: string,
