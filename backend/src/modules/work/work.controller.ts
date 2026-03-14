@@ -1,8 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import * as workService from './work.service';
-import { GetWorkResponse, GetWorksResponse, WorkDto, WorkParams } from "./work.types";
+import { GetStudentWorksResponse, GetWorkResponse, GetWorksResponse, WorkDto, WorkParams } from "./work.types";
 import { ApiResponse } from "../../common/types/api";
 
+
+export const getStudentWorks = async (
+  req: Request<WorkParams>,
+  res: Response<GetStudentWorksResponse>,
+  next: NextFunction
+) => {
+  try {
+    const works = await workService.getStudentWorks(
+      req.userId!,
+      req.role,
+      req.params.classId!
+    );
+
+    res.json({
+      success: true,
+      message: "Works retrieved",
+      data: works,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ============================= TEACHER ============================
 export const getWorks = async (
   req: Request<WorkParams>,
   res: Response<GetWorksResponse>,
@@ -25,28 +49,28 @@ export const getWorks = async (
   }
 };
 
-// export const getWork = async (
-//   req: Request<WorkParams>,
-//   res: Response<GetWorkResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const work = await workService.getWorkById(
-//       req.userId!,
-//       req.role!,
-//       req.params.classId!,
-//       req.params.workId!
-//     );
+export const getWork = async (
+  req: Request<WorkParams>,
+  res: Response<GetWorkResponse>,
+  next: NextFunction
+) => {
+  try {
+    const work = await workService.getWorkById(
+      req.userId!,
+      req.role!,
+      req.params.classId!,
+      req.params.workId!
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Work retrieved",
-//       data: work,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Work retrieved",
+      data: work,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const createWork = async (
   req: Request<WorkParams>,

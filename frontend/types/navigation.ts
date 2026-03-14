@@ -23,7 +23,7 @@ export type StudentStackParamList = {
 
   // WORKS
   WorksScreen: { classId: string };
-  WorkDetailsScreen: { work: IWork };
+  WorkDetailsScreen: { classId: string, workId: string };
 };
 
 export type TeacherStackParamList = {

@@ -1,10 +1,55 @@
 import prismaClient from "../../config/client";
 import * as s3Service from "../../infra/storage/s3.service";
-import { CreateWorkInput, WorkDto } from "./work.types";
+import { CreateWorkInput, StudentWorkDto, WorkDto } from "./work.types";
 import { verifyClassAccess } from "../class/class.helpers";
 import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 import { mapToWorkDto } from "./work.mapper";
 import { CustomError } from "../../common/utils/Errors";
+import { mapToSubmissionDto } from "../submission/submission.mapper";
+import { Role } from "../../generated/prisma";
+
+// =========================== STUDENT ===============================
+export const getStudentWorks = async (
+  studentId: string,
+  role: Role,
+  classId: string,
+): Promise<StudentWorkDto[]> => {
+  await verifyClassAccess(studentId, role, classId);
+
+  // Fetch all works along with the student's submission
+  const works = await prismaClient.work.findMany({
+    where: { classId },
+    include: {
+      submissions: {
+        where: { studentId },
+        include: { student: true, files: { include: { file: true } }, work: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Map each work to include the student's submission status
+  const worksWithStatus = works.map((work) => {
+    const submission = work.submissions[0];
+    const status = submission
+      ? mapToSubmissionDto(submission, work.dueDate)
+      : {
+          status: work.dueDate && new Date() > work.dueDate ? "MISSING" : "PENDING",
+        };
+
+    return {
+      id: work.id,
+      title: work.title,
+      type: work.type,
+      description: work.description || null,
+      dueDate: work.dueDate,
+      classId: work.classId,
+      submissionStatus: status.status, // "PENDING" | "SUBMITTED" | "LATE" | "GRADED" | "MISSING"
+    };
+  });
+
+  return worksWithStatus;
+};
 
 // Get all works in a class
 export const getWorksByClassId = async (
@@ -50,36 +95,36 @@ export const getWorksByClassId = async (
 };
 
 // Get single work by ID
-// export const getWorkById = async (
-//   userId: string,
-//   role: string,
-//   classId: string,
-//   workId: string,
-// ): Promise<WorkDto> => {
-//   await verifyClassAccess(userId, role, classId);
+export const getWorkById = async (
+  userId: string,
+  role: string,
+  classId: string,
+  workId: string,
+): Promise<WorkDto> => {
+  await verifyClassAccess(userId, role, classId);
 
-//   const work = await prismaClient.work.findFirst({
-//     where: { id: workId, classId },
-//     include: {
-//       materials: { include: { file: true } },
-//       _count: { select: { submissions: true } },
-//     },
-//   });
+  const work = await prismaClient.work.findFirst({
+    where: { id: workId, classId },
+    include: {
+      materials: { include: { file: true } },
+      _count: { select: { submissions: true } },
+    },
+  });
 
-//   if (!work) {
-//     throw new CustomError(404, "Work not found");
-//   }
+  if (!work) {
+    throw new CustomError(404, "Work not found");
+  }
 
-//   // Refresh URLs
-//   work.materials = await Promise.all(
-//     work.materials.map(async (material) => {
-//       material.file = await s3Service.refreshPresignedUrlIfExpired(material.file);
-//       return material;
-//     }),
-//   );
+  // Refresh URLs
+  work.materials = await Promise.all(
+    work.materials.map(async (material) => {
+      material.file = await s3Service.refreshPresignedUrlIfExpired(material.file);
+      return material;
+    }),
+  );
 
-//   return mapToWorkDto(work);
-// };
+  return mapToWorkDto(work);
+};
 
 // Create work with materials
 export const createWork = async (

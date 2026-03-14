@@ -1,6 +1,7 @@
 import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Header from 'components/Header';
+import SubmissionStatusBadge from 'components/ui/SubmissionStatusBadge';
 import { Text } from 'components/ui/Text';
 import WorkTypeBadge from 'components/ui/WorkTypeBadge';
 import dayjs from 'dayjs';
@@ -10,7 +11,7 @@ import { useCallback, useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { ApiResponse } from 'types/common';
 import { StudentStackParamList } from 'types/navigation';
-import { IWork } from 'types/work';
+import { IStudentWork, IWork } from 'types/work';
 
 type NavigationProps = NativeStackNavigationProp<StudentStackParamList, 'WorkDetailsScreen'>;
 type WorksScreenClassProp = RouteProp<StudentStackParamList, 'WorksScreen'>;
@@ -20,8 +21,8 @@ const WorksScreen = () => {
   const route = useRoute<WorksScreenClassProp>();
   const { classId } = route.params;
 
-  const { data, loading, error, refetchData } = useFetchData<ApiResponse<IWork[]>>(
-    `class/${classId}/works`
+  const { data, loading, error, refetchData } = useFetchData<ApiResponse<IStudentWork[]>>(
+    `class/${classId}/works/my`
   );
 
   const works = useMemo(() => {
@@ -29,9 +30,6 @@ const WorksScreen = () => {
   }, [data]);
 
   if (!data || !data.data) return null;
-
-  console.log(works);
-  
 
   return (
     <View className="flex-1 bg-slate-50">
@@ -52,7 +50,7 @@ const WorksScreen = () => {
           </View>
         ) : (
           <View className="gap-3 p-5">
-            {works.map((work: IWork) => {
+            {works.map((work: IStudentWork) => {
               return (
                 <Pressable
                   key={work.id}
@@ -60,10 +58,7 @@ const WorksScreen = () => {
                   {/* TOP */}
                   <View className="flex-1 flex-row items-center justify-between gap-3">
                     <WorkTypeBadge type={work.type} />
-                    <View className="flex-row items-center gap-1 rounded-2xl bg-slate-100 px-3 py-1">
-                      <Clock size={10} />
-                      <Text className="text-xs">Pending</Text>
-                    </View>
+                    <SubmissionStatusBadge status={work.submissionStatus} />
                   </View>
 
                   {/* TITLES */}
@@ -83,19 +78,25 @@ const WorksScreen = () => {
                         size={14}
                         color={dayjs(work.dueDate).isSame(dayjs(), 'day') ? '#ef4444' : '#16a34a'}
                       />
-                      <Text
-                        className={`font-medium text-sm ${
-                          dayjs(work.dueDate).isSame(dayjs(), 'day')
-                            ? 'text-red-500'
-                            : 'text-slate-400'
-                        }`}>
-                        Due Date: {dayjs(work.dueDate).format('MMM D, YYYY')}
-                      </Text>
+                      {work.dueDate ? (
+                        <Text
+                          className={`text-sm font-medium ${
+                            dayjs(work.dueDate).isSame(dayjs(), 'day')
+                              ? 'text-red-500'
+                              : 'text-slate-400'
+                          }`}>
+                          Due Date: {dayjs(work.dueDate).format('MMM D, YYYY')}
+                        </Text>
+                      ) : (
+                        <Text className="text-sm font-medium text-slate-400">No Due Date</Text>
+                      )}
                     </View>
 
                     <Pressable
                       className="mt-3 w-full rounded-xl bg-green-500 py-2"
-                      onPress={() => navigation.navigate('WorkDetailsScreen', { work })}>
+                      onPress={() =>
+                        navigation.navigate('WorkDetailsScreen', { classId, workId: work.id })
+                      }>
                       <Text className="text-center text-white">View Details</Text>
                     </Pressable>
                   </View>

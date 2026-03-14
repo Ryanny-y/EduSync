@@ -8,6 +8,14 @@ import submissionRoutes from "../submission/submission.route";
 
 const router = Router({ mergeParams: true });
 
+// GET /classes/:classId/works - List all works of logged in student
+router.get(
+  "/my",
+  verifyJwt,
+  validate(workParamsSchema),
+  workController.getStudentWorks
+);
+
 // GET /classes/:classId/works - List all works
 router.get(
   "/",
@@ -17,12 +25,12 @@ router.get(
 );
 
 // GET /classes/:classId/works/:workId - Get single work
-// router.get(
-//   "/:workId",
-//   verifyJwt,
-//   validate(workParamsSchema),
-//   workController.getWork
-// );
+router.get(
+  "/:workId",
+  verifyJwt,
+  validate(workParamsSchema),
+  workController.getWork
+);
 
 // POST /classes/:classId/works - Create work
 router.post(
