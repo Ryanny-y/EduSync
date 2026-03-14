@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as workService from './work.service';
-import { GetWorksResponse, WorkDto, WorkParams } from "./work.types";
+import { GetWorkResponse, GetWorksResponse, WorkDto, WorkParams } from "./work.types";
 import { ApiResponse } from "../../common/types/api";
 
 export const getWorks = async (

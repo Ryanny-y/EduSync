@@ -3,7 +3,11 @@ import { CustomError } from "../../common/utils/Errors";
 import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
 import { Prisma, Role } from "../../generated/prisma";
 import { mapClassToDto } from "./class.mapper";
-import { generateBgColor, generateClassCode, verifyClassAccess } from "./class.helpers";
+import {
+  generateBgColor,
+  generateClassCode,
+  verifyClassAccess,
+} from "./class.helpers";
 import { ClassStudentsDto } from "../user/user.types";
 
 export const createClass = async (
@@ -102,6 +106,19 @@ export const getClassById = async (
       id: classId,
       OR: [{ teacherId: userId }, { students: { some: { id: userId } } }],
     },
+    include: {
+      teacher: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      _count: {
+        select: {
+          students: true,
+        },
+      },
+    },
   });
 
   if (!cls) {
@@ -198,7 +215,6 @@ export const joinClassService = async (
   return mapClassToDto(updatedClass);
 };
 
-
 export const unenroll = async (
   userId: string,
   classId: string,
@@ -232,7 +248,6 @@ export const unenroll = async (
     },
   });
 };
-
 
 // Tab-Specific Routes
 export const getClassStream = async (
@@ -287,7 +302,7 @@ export const getClassStudents = async (
           email: true,
         },
         orderBy: { lastName: "asc" },
-      }
+      },
     },
   });
 
@@ -308,10 +323,19 @@ export const getClassWorks = async (
     where: { classId },
     orderBy: { dueDate: "asc" },
     include: {
-      submissions: role === "STUDENT" ? {
-        where: { studentId: userId },
-        select: { id: true, status: true, grade: true },
-      } : false,
+      submissions:
+        role === "STUDENT"
+          ? {
+              where: { studentId: userId },
+              select: {
+                id: true,
+                turnedInAt: true,
+                gradedAt: true,
+                feedBack: true,
+                grade: true,
+              },
+            }
+          : false,
     },
   });
 };
