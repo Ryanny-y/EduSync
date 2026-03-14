@@ -106,26 +106,26 @@ export const turnIn = async (
   }
 };
 
-// export const unsubmit = async (
-//   req: Request<SubmissionParams>,
-//   res: Response<GetSubmissionResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const result = await submissionService.unsubmitSubmission(
-//       req.userId!,
-//       req.params.submissionId!
-//     );
+export const unsubmit = async (
+  req: Request<SubmissionParams>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const result = await submissionService.unsubmitSubmission(
+      req.userId!,
+      req.params.submissionId!
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Work unsubmitted",
-//       data: result,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Work unsubmitted",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const addFiles = async (
   req: Request<SubmissionParams>,

@@ -146,6 +146,35 @@ const WorkDetailsScreen = () => {
     }
   };
 
+  const handleUnsubmit = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const response: ApiResponse<ISubmission> = await execute(
+        `class/${work.classId}/works/${work.id}/submissions/${submission.id}/unsubmit`,
+        {
+          method: 'POST',
+        }
+      );
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+      refetchData?.();
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getErrorMessage(err),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <View className="flex-1">
       <Header title="Work Details" />
@@ -237,7 +266,7 @@ const WorkDetailsScreen = () => {
             {canUnsubmit && (
               <Pressable
                 className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-green-500 py-4"
-                onPress={handleSubmit}>
+                onPress={handleUnsubmit}>
                 <CheckCircle size={20} color="#fff" />
                 <Text className="text-white">Unsubmit</Text>
               </Pressable>

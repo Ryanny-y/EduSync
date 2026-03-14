@@ -49,13 +49,13 @@ router.post(
   submissionController.turnIn
 );
 
-// // POST /classes/:classId/works/:workId/submissions/:submissionId/unsubmit
-// router.post(
-//   "/:submissionId/unsubmit",
-//   verifyJwt,
-//   validate(singleSubmissionParamsSchema),
-//   submissionController.unsubmit
-// );
+// POST /classes/:classId/works/:workId/submissions/:submissionId/unsubmit
+router.post(
+  "/:submissionId/unsubmit",
+  verifyJwt,
+  validate(singleSubmissionParamsSchema),
+  submissionController.unsubmit
+);
 
 // POST /classes/:classId/works/:workId/submissions/:submissionId/files
 router.post(
