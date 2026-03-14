@@ -265,7 +265,7 @@ const WorkDetailsScreen = () => {
 
             {canUnsubmit && (
               <Pressable
-                className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-green-500 py-4"
+                className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-gray-400 py-4"
                 onPress={handleUnsubmit}>
                 <CheckCircle size={20} color="#fff" />
                 <Text className="text-white">Unsubmit</Text>

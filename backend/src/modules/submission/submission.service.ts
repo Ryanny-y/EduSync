@@ -65,20 +65,20 @@ export const getSubmissionsForWork = async (
     },
   });
 
-  const submissions = await Promise.all(
-    work.submissions.map(async (sub) => ({
-      ...sub,
-      files: await Promise.all(
-        sub.files.map(async (f) => ({
-          ...f,
-          file: {
-            ...f.file,
-            url: await s3Service.generatePresignedUrl(f.file.path),
-          },
-        })),
-      ),
-    })),
-  );
+  const submissions = [];
+  for (const sub of work.submissions) {
+    const files = await Promise.all(
+      sub.files.map(async (f) => ({
+        ...f,
+        file: {
+          ...f.file,
+          url: await s3Service.generatePresignedUrl(f.file.path),
+        },
+      })),
+    );
+
+    submissions.push({ ...sub, files });
+  }
 
   let filtered = submissions;
 
@@ -192,15 +192,18 @@ export const getOrCreateMySubmission = async (
   });
 
   // Generate presigned URLs dynamically
-  const filesWithUrls = await Promise.all(
-    submission.files.map(async (f) => ({
+  const filesWithUrls = [];
+  for (const f of submission.files) {
+    const url = await s3Service.generatePresignedUrl(f.file.path);
+
+    filesWithUrls.push({
       ...f,
       file: {
         ...f.file,
-        url: await s3Service.generatePresignedUrl(f.file.path),
+        url,
       },
-    })),
-  );
+    });
+  }
 
   const submissionWithUrls = {
     ...submission,
@@ -212,7 +215,7 @@ export const getOrCreateMySubmission = async (
 
 export const turnInSubmission = async (
   studentId: string,
-  submissionId: string
+  submissionId: string,
 ): Promise<SubmissionDto> => {
   const submission = await prismaClient.submission.findFirst({
     where: { id: submissionId, studentId },
@@ -249,7 +252,7 @@ export const turnInSubmission = async (
 
 export const unsubmitSubmission = async (
   studentId: string,
-  submissionId: string
+  submissionId: string,
 ): Promise<SubmissionDto> => {
   const submission = await prismaClient.submission.findFirst({
     where: { id: submissionId, studentId },

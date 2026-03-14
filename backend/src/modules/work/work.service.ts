@@ -23,20 +23,28 @@ export const getWorksByClassId = async (
     orderBy: { createdAt: "desc" },
   });
 
-  const worksWithUrls = await Promise.all(
-    works.map(async (work) => ({
+  const worksWithUrls = [];
+
+  for (const work of works) {
+    const materials = [];
+
+    for (const material of work.materials) {
+      const url = await s3Service.generatePresignedUrl(material.file.path);
+
+      materials.push({
+        ...material,
+        file: {
+          ...material.file,
+          url,
+        },
+      });
+    }
+
+    worksWithUrls.push({
       ...work,
-      materials: await Promise.all(
-        work.materials.map(async (material) => ({
-          ...material,
-          file: {
-            ...material.file,
-            url: await s3Service.generatePresignedUrl(material.file.path),
-          },
-        })),
-      ),
-    })),
-  );
+      materials,
+    });
+  }
 
   return worksWithUrls.map(mapToWorkDto);
 };

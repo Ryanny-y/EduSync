@@ -26,21 +26,29 @@ export const getLessonsByClassId = async (
     orderBy: { createdAt: "desc" },
   });
 
-  const lessonsWithUrls = await Promise.all(
-    lessons.map(async (lesson) => ({
-      ...lesson,
-      materials: await Promise.all(
-        lesson.materials.map(async (material) => ({
-          ...material,
-          file: {
-            ...material.file,
-            url: await s3Service.generatePresignedUrl(material.file.path),
-          },
-        })),
-      ),
-    })),
-  );
+  const lessonsWithUrls = [];
 
+  for (const lesson of lessons) {
+    const materials = [];
+
+    for (const material of lesson.materials) {
+      const url = await s3Service.generatePresignedUrl(material.file.path);
+
+      materials.push({
+        ...material,
+        file: {
+          ...material.file,
+          url,
+        },
+      });
+    }
+
+    lessonsWithUrls.push({
+      ...lesson,
+      materials,
+    });
+  }
+  
   return lessonsWithUrls.map(mapLessonToDto);
 };
 

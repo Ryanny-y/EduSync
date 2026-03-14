@@ -30,6 +30,9 @@ const WorksScreen = () => {
 
   if (!data || !data.data) return null;
 
+  console.log(works);
+  
+
   return (
     <View className="flex-1 bg-slate-50">
       <Header title="My Works" />
