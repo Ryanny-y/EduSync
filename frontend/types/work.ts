@@ -15,7 +15,12 @@ export interface IWork {
   updatedAt: Date;
 
   materials: IWorkMaterial[];
-  submissionCount: number;
+  submissionStats: {
+    total: number;
+    submitted: number;
+    graded: number;
+    missing: number;
+  };
 }
 
 export interface IWorkMaterial {

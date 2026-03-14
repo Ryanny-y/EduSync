@@ -49,15 +49,15 @@ const WorkDetailsScreen = () => {
             <View className="flex-row items-center gap-5">
               <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Submitted</Text>
-                <Text className="text-xl font-bold text-green-600">7</Text>
+                <Text className="text-xl font-bold text-green-600">{work.submissionStats.submitted}</Text>
               </View>
               <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Missing</Text>
-                <Text className="text-xl font-bold text-red-500">7</Text>
+                <Text className="text-xl font-bold text-red-500">{work.submissionStats.missing}</Text>
               </View>
               <View className="items-ce flex-1">
                 <Text className="text-sm font-semibold uppercase text-slate-400">Total</Text>
-                <Text className="text-xl font-bold">7</Text>
+                <Text className="text-xl font-bold">{work.submissionStats.total}</Text>
               </View>
             </View>
           </View>

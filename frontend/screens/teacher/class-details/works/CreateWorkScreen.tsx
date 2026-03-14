@@ -139,6 +139,7 @@ const CreateWorkScreen = () => {
             <View className="flex-1">
               <DateTimeField
                 label="Due Date"
+                placeholder="No Due Date"
                 value={formData.dueDate}
                 onChange={(date) => handleChange('dueDate', date)}
               />

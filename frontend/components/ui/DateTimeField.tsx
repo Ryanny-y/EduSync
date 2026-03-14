@@ -8,9 +8,10 @@ type Props = {
   label: string;
   value?: Date | null;
   onChange: (date: Date) => void;
+  placeholder?: string;
 };
 
-const DateTimeField = ({ label, value, onChange }: Props) => {
+const DateTimeField = ({ label, value, onChange, placeholder = 'Select date & time' }: Props) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -49,7 +50,7 @@ const DateTimeField = ({ label, value, onChange }: Props) => {
       <Pressable
         onPress={() => setShowDatePicker(true)}
         className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-5">
-        <Text>{value ? dayjs(value).format('MMM D, YYYY h:mm A') : 'Select date & time'}</Text>
+        <Text>{value ? dayjs(value).format('MMM D, YYYY h:mm A') : `${placeholder}`}</Text>
       </Pressable>
 
       {showDatePicker && (
@@ -62,7 +63,7 @@ const DateTimeField = ({ label, value, onChange }: Props) => {
       )}
 
       {showTimePicker && (
-        <DateTimePicker  value={value ?? new Date()} mode="time" onChange={handleTimeChange} />
+        <DateTimePicker value={value ?? new Date()} mode="time" onChange={handleTimeChange} />
       )}
     </View>
   );
