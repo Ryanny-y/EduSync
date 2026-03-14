@@ -4,6 +4,7 @@ import { validate } from "../../common/middlewares/validate";
 import verifyJwt from "../../common/middlewares/verifyJwt";
 import { createWorkSchema, workParamsSchema } from "./work.schema";
 import { upload } from "../../common/middlewares/upload";
+import submissionRoutes from "../submission/submission.route";
 
 const router = Router({ mergeParams: true });
 
@@ -55,5 +56,9 @@ router.delete(
 //   verifyJwt,
 //   workController.deleteMaterial
 // );
+
+
+// 
+router.use("/:workId/submissions", submissionRoutes);
 
 export default router;

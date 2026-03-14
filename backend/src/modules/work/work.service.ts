@@ -257,10 +257,20 @@ export const deleteWork = async (
       await tx.workMaterial.delete({
         where: { id: material.id },
       });
-      await tx.file.delete({ where: { id: material.file.id } });
+
+      await tx.file.delete({
+        where: { id: material.file.id },
+      });
     }
 
-    await tx.work.delete({ where: { id: workId } });
+    // delete submissions first
+    await tx.submission.deleteMany({
+      where: { workId },
+    });
+
+    await tx.work.delete({
+      where: { id: workId },
+    });
   });
 
   // Delete from S3 after the transaction
