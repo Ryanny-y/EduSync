@@ -23,22 +23,22 @@ export const getWorksByClassId = async (
     orderBy: { createdAt: "desc" },
   });
 
-  // Refresh presigned URLs if expired
-  const worksWithFreshUrls = await Promise.all(
-    works.map(async (work) => {
-      work.materials = await Promise.all(
-        work.materials.map(async (material) => {
-          material.file = await s3Service.refreshPresignedUrlIfExpired(
-            material.file,
-          );
-          return material;
-        }),
-      );
-      return work;
-    }),
+  const worksWithUrls = await Promise.all(
+    works.map(async (work) => ({
+      ...work,
+      materials: await Promise.all(
+        work.materials.map(async (material) => ({
+          ...material,
+          file: {
+            ...material.file,
+            url: await s3Service.generatePresignedUrl(material.file.path),
+          },
+        })),
+      ),
+    })),
   );
 
-  return worksWithFreshUrls.map(mapToWorkDto);
+  return worksWithUrls.map(mapToWorkDto);
 };
 
 // Get single work by ID

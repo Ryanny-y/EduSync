@@ -85,26 +85,26 @@ export const getMySubmission = async (
   }
 };
 
-// export const turnIn = async (
-//   req: Request<SubmissionParams>,
-//   res: Response<GetSubmissionResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const result = await submissionService.turnInSubmission(
-//       req.userId!,
-//       req.params.submissionId!
-//     );
+export const turnIn = async (
+  req: Request<SubmissionParams>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const result = await submissionService.turnInSubmission(
+      req.userId!,
+      req.params.submissionId!
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Work turned in",
-//       data: result,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Work turned in",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const unsubmit = async (
 //   req: Request<SubmissionParams>,
@@ -165,7 +165,7 @@ export const deleteFiles = async (
 
     res.json({
       success: true,
-      message: "Files deleted",
+      message: "File deleted",
       data: result,
     });
   } catch (error) {

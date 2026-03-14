@@ -34,10 +34,22 @@ const WorkDetailsScreen = () => {
 
   const [uploading, setUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!data?.data || !data) return null;
 
   const submission = data.data;
+
+  const now = new Date();
+  const dueDate = work.dueDate ? new Date(work.dueDate) : null;
+
+  const canSubmit =
+    submission.status === 'PENDING' || submission.status === 'LATE'
+      ? !dueDate || now <= dueDate
+      : false;
+
+  const canUnsubmit =
+    submission.turnedInAt && submission.status !== 'GRADED' && (!dueDate || now <= dueDate);
 
   const handleFilesSelected = async (files: IUploadFile[]) => {
     if (uploading) return;
@@ -89,7 +101,7 @@ const WorkDetailsScreen = () => {
       Toast.show({
         type: 'success',
         text1: 'Success',
-        text2: 'File Deleted',
+        text2: response.message,
       });
       refetchData?.();
     } catch (err) {
@@ -100,6 +112,37 @@ const WorkDetailsScreen = () => {
       });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const response: ApiResponse<ISubmission> = await execute(
+        `class/${work.classId}/works/${work.id}/submissions/${submission.id}/turn-in`,
+        {
+          method: 'POST',
+        }
+      );
+
+      console.log(response);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+      refetchData?.();
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'error',
+        text2: getErrorMessage(err),
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -163,11 +206,13 @@ const WorkDetailsScreen = () => {
           <View className="gap-2">
             <Text className="text-sm font-semibold uppercase text-slate-500">Submission</Text>
 
-            <FileUploader
-              title="Upload your work"
-              onFilesSelected={handleFilesSelected}
-              showButton
-            />
+            {canSubmit && (
+              <FileUploader
+                title="Upload your work"
+                onFilesSelected={handleFilesSelected}
+                showButton
+              />
+            )}
 
             {submission.files?.length > 0 && (
               <FileList
@@ -180,10 +225,23 @@ const WorkDetailsScreen = () => {
               />
             )}
 
-            <Pressable className="mt-4 flex-row items-center justify-center gap-2 rounded-3xl bg-green-500 py-5">
-              <CheckCircle size={20} color="#fff" />
-              <Text className="text-white">Submit Work</Text>
-            </Pressable>
+            {canSubmit && (
+              <Pressable
+                className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-green-500 py-4"
+                onPress={handleSubmit}>
+                <CheckCircle size={20} color="#fff" />
+                <Text className="text-white">Submit Work</Text>
+              </Pressable>
+            )}
+
+            {canUnsubmit && (
+              <Pressable
+                className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-green-500 py-4"
+                onPress={handleSubmit}>
+                <CheckCircle size={20} color="#fff" />
+                <Text className="text-white">Unsubmit</Text>
+              </Pressable>
+            )}
           </View>
         </View>
       </ScrollView>

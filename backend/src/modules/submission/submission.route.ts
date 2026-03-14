@@ -41,13 +41,13 @@ router.get(
   submissionController.getMySubmission
 );
 
-// // POST /classes/:classId/works/:workId/submissions/:submissionId/turn-in
-// router.post(
-//   "/:submissionId/turn-in",
-//   verifyJwt,
-//   validate(singleSubmissionParamsSchema),
-//   submissionController.turnIn
-// );
+// POST /classes/:classId/works/:workId/submissions/:submissionId/turn-in
+router.post(
+  "/:submissionId/turn-in",
+  verifyJwt,
+  validate(singleSubmissionParamsSchema),
+  submissionController.turnIn
+);
 
 // // POST /classes/:classId/works/:workId/submissions/:submissionId/unsubmit
 // router.post(
@@ -73,7 +73,7 @@ router.delete(
   submissionController.deleteFiles
 );
 
-// // DELETE /classes/:classId/works/:workId/submissions/:submissionId
+// DELETE /classes/:classId/works/:workId/submissions/:submissionId
 // router.delete(
 //   "/:submissionId",
 //   verifyJwt,

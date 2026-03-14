@@ -210,42 +210,42 @@ export const getOrCreateMySubmission = async (
   return mapToSubmissionDto(submissionWithUrls, submission.work.dueDate);
 };
 
-// export const turnInSubmission = async (
-//   studentId: string,
-//   submissionId: string
-// ): Promise<SubmissionDto> => {
-//   const submission = await prismaClient.submission.findFirst({
-//     where: { id: submissionId, studentId },
-//     include: {
-//       work: true,
-//       student: { select: { id: true, firstName: true, lastName: true } },
-//       files: { include: { file: true } },
-//     },
-//   });
+export const turnInSubmission = async (
+  studentId: string,
+  submissionId: string
+): Promise<SubmissionDto> => {
+  const submission = await prismaClient.submission.findFirst({
+    where: { id: submissionId, studentId },
+    include: {
+      work: true,
+      student: { select: { id: true, firstName: true, lastName: true } },
+      files: { include: { file: true } },
+    },
+  });
 
-//   if (!submission) {
-//     throw new CustomError(404, "Submission not found");
-//   }
+  if (!submission) {
+    throw new CustomError(404, "Submission not found");
+  }
 
-//   if (submission.turnedInAt) {
-//     throw new CustomError(400, "Already turned in");
-//   }
+  if (submission.turnedInAt) {
+    throw new CustomError(400, "Already turned in");
+  }
 
-//   if (submission.files.length === 0) {
-//     throw new CustomError(400, "Cannot submit without files");
-//   }
+  if (submission.files.length === 0) {
+    throw new CustomError(400, "Cannot submit without files");
+  }
 
-//   const updated = await prismaClient.submission.update({
-//     where: { id: submissionId },
-//     data: { turnedInAt: new Date() },
-//     include: {
-//       student: { select: { id: true, firstName: true, lastName: true } },
-//       files: { include: { file: true } },
-//     },
-//   });
+  const updated = await prismaClient.submission.update({
+    where: { id: submissionId },
+    data: { turnedInAt: new Date() },
+    include: {
+      student: { select: { id: true, firstName: true, lastName: true } },
+      files: { include: { file: true } },
+    },
+  });
 
-//   return mapToSubmissionDto(updated, submission.work.dueDate);
-// };
+  return mapToSubmissionDto(updated, submission.work.dueDate);
+};
 
 // export const unsubmitSubmission = async (
 //   studentId: string,
