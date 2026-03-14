@@ -1,5 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import DeleteConfirmationModal from 'components/DeleteConfirmationModal';
 import Pressable from 'components/ui/Pressable';
 import { Text } from 'components/ui/Text';
 import WorkTypeBadge from 'components/ui/WorkTypeBadge';
@@ -7,12 +8,14 @@ import dayjs from 'dayjs';
 import useFetchData from 'hooks/useFetchData';
 import useMutation from 'hooks/useMutation';
 import { Calendar, ClipboardList, Edit, EllipsisVertical, Eye, Trash2 } from 'lucide-react-native';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
+import Toast from 'react-native-toast-message';
 import { ApiResponse } from 'types/common';
 import { TeacherStackParamList } from 'types/navigation';
 import { IWork } from 'types/work';
+import { getErrorMessage } from 'utils/errorHandler';
 
 type NavigationProps = NativeStackNavigationProp<TeacherStackParamList, 'CreateWorkScreen'>;
 
@@ -32,6 +35,44 @@ const WorksTab = ({ classId }: { classId: string }) => {
   const works = useMemo(() => {
     return data?.data ?? [];
   }, [data]);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedWork, setSelectedWork] = useState<IWork | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    if (!selectedWork || isDeleting) return;
+
+    setIsDeleting(true);
+
+    try {
+      const response: ApiResponse<void> = await execute(
+        `class/${classId}/works/${selectedWork.id}`,
+        { method: 'DELETE' }
+      );
+      
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: response.message,
+      });
+
+      setDeleteModalVisible(false);
+      setSelectedWork(null);
+
+      refetchData();
+    } catch (error) {
+      console.log(error);
+      
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getErrorMessage(error),
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (!data || !data.data) return null;
 
@@ -132,7 +173,8 @@ const WorksTab = ({ classId }: { classId: string }) => {
                           },
                         }}
                         onSelect={() => {
-                          // setDeleteModalVisible(true);
+                          setSelectedWork(work);
+                          setDeleteModalVisible(true);
                         }}>
                         <View className="flex-row items-center gap-2 p-2">
                           <Trash2 size={16} color={'#ef4444'} />
@@ -158,6 +200,14 @@ const WorksTab = ({ classId }: { classId: string }) => {
           </View>
         )}
       </View>
+
+      <DeleteConfirmationModal
+        visible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={handleConfirmDelete}
+        title={selectedWork?.title ?? ''}
+        loading={isDeleting}
+      />
     </ScrollView>
   );
 };

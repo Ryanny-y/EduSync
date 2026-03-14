@@ -42,12 +42,12 @@ router.post(
 // );
 
 // DELETE /classes/:classId/works/:workId - Delete work
-// router.delete(
-//   "/:workId",
-//   verifyJwt,
-//   validate(workParamsSchema),
-//   workController.deleteWork
-// );
+router.delete(
+  "/:workId",
+  verifyJwt,
+  validate(workParamsSchema),
+  workController.deleteWork
+);
 
 // DELETE /classes/:classId/works/:workId/materials/:materialId - Delete specific material
 // router.delete(

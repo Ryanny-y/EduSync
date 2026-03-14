@@ -4,6 +4,7 @@ import { CreateWorkInput, WorkDto } from "./work.types";
 import { verifyClassAccess } from "../class/class.helpers";
 import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 import { mapToWorkDto } from "./work.mapper";
+import { CustomError } from "../../common/utils/Errors";
 
 // Get all works in a class
 export const getWorksByClassId = async (
@@ -81,7 +82,20 @@ export const createWork = async (
 ): Promise<WorkDto> => {
   await verifyClassAccess(teacherId, "TEACHER", classId, true);
 
+  // Get all enrolled students before transaction
+  const classWithStudents = await prismaClient.class.findUnique({
+    where: { id: classId },
+    include: { students: { select: { id: true } } },
+  });
+
+  if (!classWithStudents) {
+    throw new CustomError(404, "Class not found");
+  }
+
+  const studentIds = classWithStudents.students.map((s) => s.id);
+
   const work = await prismaClient.$transaction(async (tx) => {
+    // Create New Work
     const newWork = await tx.work.create({
       data: {
         title: data.title,
@@ -92,6 +106,7 @@ export const createWork = async (
       },
     });
 
+    // Upload Materials
     if (files.length > 0) {
       for (const file of files) {
         const s3Result = await s3Service.uploadFile(
@@ -120,6 +135,16 @@ export const createWork = async (
           },
         });
       }
+    }
+
+    if (studentIds.length > 0) {
+      await tx.submission.createMany({
+        data: studentIds.map((studentId) => ({
+          studentId,
+          workId: newWork.id,
+        })),
+        skipDuplicates: true,
+      });
     }
 
     return tx.work.findUnique({
@@ -209,32 +234,40 @@ export const createWork = async (
 // };
 
 // Delete work
-// export const deleteWork = async (
-//   teacherId: string,
-//   classId: string,
-//   workId: string
-// ): Promise<void> => {
-//   await verifyClassAccess(teacherId, "TEACHER", classId, true);
+export const deleteWork = async (
+  teacherId: string,
+  classId: string,
+  workId: string,
+): Promise<void> => {
+  await verifyClassAccess(teacherId, "TEACHER", classId, true);
 
-//   const work = await prismaClient.work.findFirst({
-//     where: { id: workId, classId },
-//     include: { materials: { include: { file: true } } },
-//   });
+  const work = await prismaClient.work.findFirst({
+    where: { id: workId, classId },
+    include: { materials: { include: { file: true } } },
+  });
 
-//   if (!work) {
-//     throw new CustomError(404, "Work not found");
-//   }
+  if (!work) {
+    throw new CustomError(404, "Work not found");
+  }
 
-//   await prismaClient.$transaction(async (tx) => {
-//     // Delete from S3
-//     for (const material of work.materials) {
-//       await s3Service.deleteFile(material.file.path);
-//       await tx.file.delete({ where: { id: material.file.id } });
-//     }
+  const keys = work.materials.map((m) => m.file.path);
 
-//     await tx.work.delete({ where: { id: workId } });
-//   });
-// };
+  await prismaClient.$transaction(async (tx) => {
+    for (const material of work.materials) {
+      await tx.workMaterial.delete({
+        where: { id: material.id },
+      });
+      await tx.file.delete({ where: { id: material.file.id } });
+    }
+
+    await tx.work.delete({ where: { id: workId } });
+  });
+
+  // Delete from S3 after the transaction
+  for (const key of keys) {
+    await s3Service.deleteFile(key);
+  }
+};
 
 // Delete specific material from work
 // export const deleteWorkMaterial = async (
@@ -264,4 +297,3 @@ export const createWork = async (
 //     await tx.workMaterial.delete({ where: { id: materialId } });
 //   });
 // };
-

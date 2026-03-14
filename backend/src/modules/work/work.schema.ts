@@ -17,7 +17,12 @@ export const workSchema = z.object({
       file: fileSchema,
     }),
   ),
-  submissionCount: z.number(),
+  submissionStats: z.object({
+    total: z.number(),
+    submitted: z.number(),
+    graded: z.number(),
+    missing: z.number(),
+  }),
 });
 
 export const createWorkSchema = z.object({

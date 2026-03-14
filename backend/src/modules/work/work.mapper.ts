@@ -1,6 +1,8 @@
 import { WorkDto } from "./work.types";
 
 export function mapToWorkDto(work: any): WorkDto {
+  const submissions = work.submissions || [];
+
   return {
     id: work.id,
     title: work.title,
@@ -21,6 +23,11 @@ export function mapToWorkDto(work: any): WorkDto {
           size: m.file.size,
         },
       })) || [],
-    submissionCount: work._count?.submissions || 0,
+    submissionStats: {
+      total: work._count?.submissions || 0,
+      submitted: submissions.filter((s: any) => s.turnedInAt !== null).length,
+      graded: submissions.filter((s: any) => s.gradedAt !== null).length,
+      missing: submissions.filter((s: any) => s.turnedInAt === null && work.dueDate && new Date() > work.dueDate).length,
+    },
   };
 }

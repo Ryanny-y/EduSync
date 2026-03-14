@@ -99,27 +99,27 @@ export const createWork = async (
 //   }
 // };
 
-// export const deleteWork = async (
-//   req: Request<WorkParams>,
-//   res: Response<ApiResponse<void>>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     await workService.deleteWork(
-//       req.userId!,
-//       req.params.classId,
-//       req.params.workId!
-//     );
+export const deleteWork = async (
+  req: Request<WorkParams>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction
+) => {
+  try {
+    await workService.deleteWork(
+      req.userId!,
+      req.params.classId!,
+      req.params.workId!
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Work deleted",
-//       data: undefined,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Work deleted",
+      data: undefined,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const deleteMaterial = async (
 //   req: Request<WorkParams & { materialId: string }>,
