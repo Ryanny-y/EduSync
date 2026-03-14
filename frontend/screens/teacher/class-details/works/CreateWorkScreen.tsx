@@ -17,8 +17,9 @@ import { ApiResponse } from 'types/common';
 import useMutation from 'hooks/useMutation';
 import { TeacherStackParamList } from 'types/navigation';
 import FormTextArea from 'components/ui/FormTextArea';
+import FloatingInput from 'components/ui/FloatingInput';
 
-type CreateWorkScreenRouteProp = RouteProp<TeacherStackParamList, "CreateWorkScreen">;
+type CreateWorkScreenRouteProp = RouteProp<TeacherStackParamList, 'CreateWorkScreen'>;
 
 const CreateWorkScreen = () => {
   const navigation = useNavigation();

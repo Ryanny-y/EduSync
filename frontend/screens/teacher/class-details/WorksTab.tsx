@@ -50,7 +50,7 @@ const WorksTab = ({ classId }: { classId: string }) => {
         `class/${classId}/works/${selectedWork.id}`,
         { method: 'DELETE' }
       );
-      
+
       Toast.show({
         type: 'success',
         text1: 'Success',
@@ -63,7 +63,7 @@ const WorksTab = ({ classId }: { classId: string }) => {
       refetchData();
     } catch (error) {
       console.log(error);
-      
+
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -121,7 +121,9 @@ const WorksTab = ({ classId }: { classId: string }) => {
                           ? 'text-red-500'
                           : 'text-slate-500'
                       }`}>
-                      Due: {dayjs(work.dueDate).format('MMM D, YYYY')}
+                      {work?.dueDate
+                        ? `Due: ${dayjs(work.dueDate).format('MMM D, YYYY')}`
+                        : 'No Due Date'}
                     </Text>
                   </View>
                 </View>

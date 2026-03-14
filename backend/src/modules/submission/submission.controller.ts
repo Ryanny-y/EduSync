@@ -37,7 +37,7 @@ export const getSubmissions = async (
   }
 };
 
-export const gradeSubmissionCtrl = async (
+export const gradeSubmission = async (
   req: Request<SubmissionParams, {}, GradeSubmissionInput>,
   res: Response<GetSubmissionResponse>,
   next: NextFunction
@@ -63,27 +63,27 @@ export const gradeSubmissionCtrl = async (
 
 // ==================== STUDENT CONTROLLERS ====================
 
-// export const getMySubmission = async (
-//   req: Request<SubmissionParams>,
-//   res: Response<GetSubmissionResponse>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const result = await submissionService.getOrCreateMySubmission(
-//       req.userId!,
-//       req.params.classId,
-//       req.params.workId
-//     );
+export const getMySubmission = async (
+  req: Request<SubmissionParams>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const result = await submissionService.getOrCreateMySubmission(
+      req.userId!,
+      req.params.classId!,
+      req.params.workId!
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Submission retrieved",
-//       data: result,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Submission retrieved",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const turnIn = async (
 //   req: Request<SubmissionParams>,

@@ -3,12 +3,17 @@ import FileCard from 'components/FileCard';
 import Header from 'components/Header';
 import FileUploader from 'components/ui/FileUploader';
 import Pressable from 'components/ui/Pressable';
+import SubmissionStatusBadge from 'components/ui/SubmissionStatusBadge';
 import { Text } from 'components/ui/Text';
 import WorkTypeBadge from 'components/ui/WorkTypeBadge';
 import dayjs from 'dayjs';
-import { Calendar, CheckCircle, Clock, FileUp } from 'lucide-react-native';
+import useFetchData from 'hooks/useFetchData';
+import { CheckCircle, Clock } from 'lucide-react-native';
+import { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
+import { ApiResponse } from 'types/common';
 import { StudentStackParamList } from 'types/navigation';
+import { ISubmission } from 'types/submission';
 import { IWorkMaterial } from 'types/work';
 
 type WorkDetailsRouteProp = RouteProp<StudentStackParamList, 'WorkDetailsScreen'>;
@@ -16,6 +21,15 @@ type WorkDetailsRouteProp = RouteProp<StudentStackParamList, 'WorkDetailsScreen'
 const WorkDetailsScreen = () => {
   const route = useRoute<WorkDetailsRouteProp>();
   const { work } = route.params;
+
+  // TODO: Handle Loading and Error State
+  const { data, loading, error, refetchData } = useFetchData<ApiResponse<ISubmission>>(
+    `class/${work.classId}/works/${work.id}/submissions/my`
+  );
+
+  if (!data?.data || !data) return null;
+
+  const submission = data.data;
 
   return (
     <View className="flex-1">
@@ -30,10 +44,7 @@ const WorkDetailsScreen = () => {
             <View className="w-full flex-row items-center justify-between">
               <WorkTypeBadge type={work.type} />
 
-              <View className="flex-row items-center gap-1 rounded-2xl bg-slate-100 px-3 py-1">
-                <Clock size={10} />
-                <Text className="text-xs">Pending</Text>
-              </View>
+              <SubmissionStatusBadge status={submission.status} />
             </View>
 
             <View className="w-full gap-2">

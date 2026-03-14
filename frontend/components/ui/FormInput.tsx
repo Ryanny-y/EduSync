@@ -26,8 +26,9 @@ const FormInput = ({
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        className="flex-1 rounded-lg border border-gray-200 bg-gray-100 px-3 py-4 placeholder:text-gray-500"
+        textAlignVertical="top"
         maxLength={maxLength}
+        className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-4 placeholder:text-gray-500"
         {...inputProps}
       />
     </View>

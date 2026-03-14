@@ -29,17 +29,17 @@ router.post(
   "/:submissionId/grade",
   verifyJwt,
   validate(gradeSubmissionSchema),
-  submissionController.gradeSubmissionCtrl
+  submissionController.gradeSubmission
 );
 
 // ==================== STUDENT ROUTES ====================
 
 // // GET /classes/:classId/works/:workId/submissions/my
-// router.get(
-//   "/my",
-//   verifyJwt,
-//   submissionController.getMySubmission
-// );
+router.get(
+  "/my",
+  verifyJwt,
+  submissionController.getMySubmission
+);
 
 // // POST /classes/:classId/works/:workId/submissions/:submissionId/turn-in
 // router.post(

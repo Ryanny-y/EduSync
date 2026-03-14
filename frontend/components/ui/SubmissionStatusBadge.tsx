@@ -11,7 +11,7 @@ const SubmissionStatusBadge = ({ status }: Props) => {
 
   const styles = {
     PENDING: {
-      bg: 'bg-gray-50',
+      bg: 'bg-gray-200',
       text: 'text-gray-500',
     },
     SUBMITTED: {

@@ -12,6 +12,7 @@ import {
 } from "./submission.types";
 import { verifyClassAccess } from "../class/class.helpers";
 
+// ==================== STUDENT SERVICES ====================
 export const getSubmissionsForWork = async (
   teacherId: string,
   classId: string,
@@ -95,8 +96,10 @@ export const gradeSubmission = async (
   classId: string,
   workId: string,
   submissionId: string,
-  input: GradeSubmissionInput
+  input: GradeSubmissionInput,
 ): Promise<SubmissionDto> => {
+  await verifyClassAccess(teacherId, "TEACHER", classId, true);
+
   const work = await prismaClient.work.findFirst({
     where: { id: workId, classId, class: { teacherId } },
   });
@@ -138,6 +141,75 @@ export const gradeSubmission = async (
 };
 
 // ==================== STUDENT SERVICES ====================
+export const getOrCreateMySubmission = async (
+  studentId: string,
+  classId: string,
+  workId: string
+): Promise<SubmissionDto> => {
+  
+  // Verify enrollment
+  const enrolled = await prismaClient.class.findFirst({
+    where: {
+      id: classId,
+      students: { some: { id: studentId } },
+      works: { some: { id: workId } },
+    },
+    select: { id: true },
+  });
+
+  if (!enrolled) {
+    throw new CustomError(404, "Work not found or not enrolled");
+  }
+
+  // Upsert submission
+  const submission = await prismaClient.submission.upsert({
+    where: {
+      studentId_workId: {
+        studentId,
+        workId,
+      },
+    },
+    create: {
+      studentId,
+      workId,
+    },
+    update: {},
+    include: {
+      student: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      files: {
+        include: { file: true },
+      },
+      work: {
+        select: { dueDate: true },
+      },
+    },
+  });
+
+  // Generate presigned URLs dynamically
+  const filesWithUrls = await Promise.all(
+    submission.files.map(async (f) => ({
+      ...f,
+      file: {
+        ...f.file,
+        url: await s3Service.generatePresignedUrl(f.file.path),
+      },
+    }))
+  );
+
+  const submissionWithUrls = {
+    ...submission,
+    files: filesWithUrls,
+  };
+
+  return mapToSubmissionDto(submissionWithUrls, submission.work.dueDate);
+};
+
 // export const turnInSubmission = async (
 //   studentId: string,
 //   submissionId: string

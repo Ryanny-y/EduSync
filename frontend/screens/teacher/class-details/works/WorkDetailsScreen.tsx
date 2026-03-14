@@ -1,14 +1,15 @@
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import FileCard from 'components/FileCard';
 import Header from 'components/Header';
+import Pressable from 'components/ui/Pressable';
 import SubmissionStatusBadge from 'components/ui/SubmissionStatusBadge';
 import { Text } from 'components/ui/Text';
 import WorkTypeBadge from 'components/ui/WorkTypeBadge';
 import dayjs from 'dayjs';
 import useFetchData from 'hooks/useFetchData';
-import { Calendar } from 'lucide-react-native';
+import { Calendar, ChevronRight } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { ApiResponse } from 'types/common';
 import { TeacherStackParamList } from 'types/navigation';
 import {
@@ -38,7 +39,7 @@ const WorkDetailsScreen = () => {
       refetchData();
     }, [])
   );
-  
+
   const submissionsData = useMemo(() => {
     return (
       data?.data ?? {
@@ -169,9 +170,17 @@ const WorkDetailsScreen = () => {
                     <SubmissionStatusBadge status={submission.status} />
                   </View>
 
-                  <View className="rounded-xl bg-green-100 px-4 py-2">
-                    <Text className="text-sm font-semibold text-green-600">88/100</Text>
-                  </View>
+                  {submission?.grade ? (
+                    <View className="rounded-xl bg-green-100 px-4 py-2">
+                      <Text className="text-sm font-semibold text-green-600">
+                        {submission.grade}/100
+                      </Text>
+                    </View>
+                  ) : (
+                    <View>
+                      <ChevronRight color="#cbd5e1" className='text-slate-300'/>
+                    </View>
+                  )}
                 </Pressable>
               ))}
             </View>
