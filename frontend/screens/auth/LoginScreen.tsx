@@ -123,7 +123,7 @@ const LoginScreen = () => {
                 placeholder="Email Address"
                 value={email}
                 onChangeText={handleEmailChange}
-                className="flex-1"
+                className="flex-1 text-slate-700"
               />
             </View>
             {emailError && <Text className="text-sm text-red-500">{emailError}</Text>}
@@ -136,7 +136,7 @@ const LoginScreen = () => {
                 value={password}
                 onChangeText={handlePasswordChange}
                 secureTextEntry={!showPassword}
-                className="flex-1"
+                className="flex-1 text-slate-700"
               />
               <Pressable onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? (

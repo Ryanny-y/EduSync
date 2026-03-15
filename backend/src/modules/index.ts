@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import authRoute from "./auth/auth.route";
 import departmentRoute from "./department/department.route";
 import classRoute from "./class/class.route";
@@ -10,11 +10,17 @@ const router = Router();
 router.use("/auth", authRoute);
 
 // PUBLIC
+router.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+
 router.use("/department", departmentRoute);
 // router.use("/booking", bookingRoute);
 
 // PROTECTED
 router.use("/class", classRoute);
 router.use("/works", workRoute);
+
 
 export default router;
