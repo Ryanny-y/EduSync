@@ -1,4 +1,5 @@
-import { FileImage, FileText, FileVideo, File, FileChartPie } from "lucide-react-native";
+import { FileImage, FileText, FileVideo, File, FileChartPie } from 'lucide-react-native';
+import dayjs from 'dayjs';
 
 export const getFileIcon = (fileName: string) => {
   const ext = fileName?.split('.').pop()?.toLowerCase();
@@ -25,7 +26,6 @@ export const getFileIcon = (fileName: string) => {
       return File;
   }
 };
-
 
 export const getMimeType = (fileName: string) => {
   const ext = fileName.split('.').pop()?.toLowerCase();
@@ -70,4 +70,18 @@ export const getUniqueFileName = (fileName: string, existingFiles: string[]) => 
   }
 
   return newName;
+};
+
+export const getGreeting = (): string => {
+  const hour = dayjs().hour();
+
+  if (hour >= 5 && hour < 12) {
+    return 'Good Morning';
+  }
+
+  if (hour >= 12 && hour < 18) {
+    return 'Good Afternoon';
+  }
+
+  return 'Good Evening';
 };

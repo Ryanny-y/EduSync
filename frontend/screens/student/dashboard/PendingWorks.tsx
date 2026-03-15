@@ -5,7 +5,7 @@ import { Text } from 'components/ui/Text';
 import { workStatusStyle } from 'components/ui/WorkTypeBadge';
 import dayjs from 'dayjs';
 import useFetchData from 'hooks/useFetchData';
-import { ChevronRight, CircleAlert, Clock } from 'lucide-react-native';
+import { ChevronRight, CircleAlert, Clock, Flame } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import { ApiResponse } from 'types/common';
@@ -48,54 +48,67 @@ const PendingWorks = () => {
         </Pressable>
       </View>
 
-      {/* Works Container */}
-      {pendingWorks.map((work) => {
-        const isOverdue = work.submissionStatus === 'MISSING';
+      {/* Empty State */}
+      {!loading && pendingWorks.length === 0 ? (
+        <View className="items-center px-10 py-12">
+          <Clock size={48} color="#cbd5f5" />
 
-        let dueText = '';
+          <Text className="mt-6 text-lg font-bold text-slate-700">No Pending Works</Text>
 
-        if (!isOverdue) {
-          if (!work.dueDate) {
-            dueText = 'No Due Date';
-          } else {
-            const due = dayjs(work.dueDate);
+          <Text className="mt-2 text-center text-sm text-slate-500">You're all caught up 🎉</Text>
+        </View>
+      ) : (
+        /* Works List */
+        <View className="gap-3">
+          {pendingWorks.map((work) => {
+            const isOverdue = work.submissionStatus === 'MISSING';
 
-            dueText = due.isSame(dayjs(), 'day')
-              ? `Today, ${due.format('hh:mm A')}`
-              : due.format('MMM DD, hh:mm A');
-          }
-        }
+            let dueText = '';
 
-        const typeStyle = workStatusStyle[work.type as keyof typeof workStatusStyle];
+            if (!isOverdue) {
+              if (!work.dueDate) {
+                dueText = 'No Due Date';
+              } else {
+                const due = dayjs(work.dueDate);
 
-        return (
-          <View key={work.id} className="flex-row items-center gap-3 rounded-xl bg-white p-5">
-            <View className={`rounded-xl p-4 ${isOverdue ? 'bg-red-50' : 'bg-green-100'}`}>
-              {isOverdue ? (
-                <CircleAlert size={28} color="#dc2626" />
-              ) : (
-                <Clock size={28} color="#16a34a" />
-              )}
-            </View>
+                dueText = due.isSame(dayjs(), 'day')
+                  ? `Today, ${due.format('hh:mm A')}`
+                  : due.format('MMM DD, hh:mm A');
+              }
+            }
 
-            <View className="gap-0.5">
-              <Text className={`text-xs font-bold ${typeStyle?.text ?? 'text-slate-500'}`}>
-                {work.type}
-              </Text>
+            const typeStyle = workStatusStyle[work.type as keyof typeof workStatusStyle];
 
-              <Text className="text-xl font-bold">{work.title}</Text>
+            return (
+              <View key={work.id} className="flex-row items-center gap-3 rounded-xl bg-white p-5">
+                <View className={`rounded-xl p-4 ${isOverdue ? 'bg-red-50' : 'bg-green-100'}`}>
+                  {isOverdue ? (
+                    <CircleAlert size={28} color="#dc2626" />
+                  ) : (
+                    <Clock size={28} color="#16a34a" />
+                  )}
+                </View>
 
-              <Text className="text-xs font-medium text-slate-500">
-                {isOverdue ? 'Overdue' : dueText}
-              </Text>
-            </View>
+                <View className="gap-0.5">
+                  <Text className={`text-xs font-bold ${typeStyle?.text ?? 'text-slate-500'}`}>
+                    {work.type}
+                  </Text>
 
-            <View className="ml-auto">
-              <ChevronRight color="#64748b" />
-            </View>
-          </View>
-        );
-      })}
+                  <Text className="text-xl font-bold">{work.title}</Text>
+
+                  <Text className="text-xs font-medium text-slate-500">
+                    {isOverdue ? 'Overdue' : dueText}
+                  </Text>
+                </View>
+
+                <View className="ml-auto">
+                  <ChevronRight color="#64748b" />
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 };
