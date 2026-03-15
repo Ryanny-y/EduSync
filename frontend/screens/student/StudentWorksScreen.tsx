@@ -1,119 +1,115 @@
 import Header from 'components/Header';
 import { Text } from 'components/ui/Text';
 import { ScrollView, View } from 'react-native';
-import { useState } from 'react';
-import {
-  Calendar,
-  Clock,
-  ChevronRight,
-  CheckCircle2,
-  AlertCircle,
-  Plus,
-} from 'lucide-react-native';
-import StatusBadge from 'components/ui/StatusBadge';
+import { useCallback, useState } from 'react';
+import { Calendar, ChevronRight, CheckCircle2, AlertCircle, Clock } from 'lucide-react-native';
 import Pressable from 'components/ui/Pressable';
+import useFetchData from 'hooks/useFetchData';
+import { ApiResponse } from 'types/common';
+import { IStudentWork, WorkType } from 'types/work';
+import { useFocusEffect } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import { SubmissionStatus } from 'types/submission';
+import SubmissionStatusBadge from 'components/ui/SubmissionStatusBadge';
 
-type WorkItem = {
-  id: string;
-  subject: string;
-  title: string;
-  description: string;
-  deadline: string;
-  status: 'Submitted' | 'Late' | 'Pending';
-};
-
-const SUBJECTS = ['All', 'Math', 'Science', 'English', 'Politics', 'Chemistry'];
-
-const ALL_WORKS: WorkItem[] = [
-  {
-    id: '1',
-    subject: 'Math',
-    title: 'Algebra Assignment',
-    description: 'Solve the equations from chapter 4.',
-    deadline: 'Mar 10, 11:59',
-    status: 'Pending',
-  },
-  {
-    id: '2',
-    subject: 'Science',
-    title: 'Photosynthesis Report',
-    description: 'Create a short report about plant energy.',
-    deadline: 'Mar 5, 11:59',
-    status: 'Late',
-  },
-  {
-    id: '3',
-    subject: 'English',
-    title: 'Essay Writing',
-    description: 'Write a 500-word essay about climate change.',
-    deadline: 'Mar 2: 11:59',
-    status: 'Submitted',
-  },
-];
-
-const STATUS_CONFIG = {
-  Submitted: {
+const STATUS_CONFIG: Record<SubmissionStatus, any> = {
+  SUBMITTED: {
     label: 'Submitted',
     icon: <CheckCircle2 size={12} color="#10b981" />,
     bgColor: '#ecfdf5',
     borderColor: '#a7f3d0',
     textColor: '#10b981',
   },
-  Late: {
+  LATE: {
     label: 'Late',
     icon: <AlertCircle size={12} color="#ef4444" />,
     bgColor: '#fef2f2',
     borderColor: '#fecaca',
     textColor: '#ef4444',
   },
-  Pending: {
+  PENDING: {
     label: 'Pending',
     icon: <Clock size={12} color="#64748b" />,
     bgColor: '#f1f5f9',
     borderColor: '#e2e8f0',
     textColor: '#64748b',
   },
+  MISSING: {
+    label: 'Missing',
+    icon: <AlertCircle size={12} color="#ef4444" />,
+    bgColor: '#fef2f2',
+    borderColor: '#fecaca',
+    textColor: '#ef4444',
+  },
+  GRADED: {
+    label: 'Graded',
+    icon: <CheckCircle2 size={12} color="#3b82f6" />,
+    bgColor: '#eff6ff',
+    borderColor: '#bfdbfe',
+    textColor: '#3b82f6',
+  },
 };
 
+const TYPE_LABELS: Record<WorkType, string> = {
+  ASSIGNMENT: 'Assignments',
+  TASK: 'Tasks',
+  QUIZ: 'Quizzes',
+  PROJECT: 'Projects',
+};
+
+const TYPES: (WorkType | 'All')[] = ['All', 'ASSIGNMENT', 'TASK', 'QUIZ', 'PROJECT'];
+
 const StudentWorksScreen = () => {
-  const [selectedSubject, setSelectedSubject] = useState('All');
+  const [selectedType, setSelectedType] = useState<'All' | WorkType>('All');
+
+  // TODO: HANDLE LOADING AND ERROR STATE
+  const { data, loading, error, refetchData } =
+    useFetchData<ApiResponse<IStudentWork[]>>('works/my/all');
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchData();
+    }, [refetchData])
+  );
+
+  const works = data?.data ?? [];
 
   const filteredWorks =
-    selectedSubject === 'All'
-      ? ALL_WORKS
-      : ALL_WORKS.filter((work) => work.subject === selectedSubject);
+    selectedType === 'All' ? works : works.filter((work) => work.type === selectedType);
 
   return (
     <View className="flex-1 bg-slate-50">
       <Header title="My Works" />
 
-      {/* Subject Filter */}
       <ScrollView
         horizontal
-        showsHorizontalScrollIndicator={true}
-        className="grow-0 border-b border-slate-100 py-5 px-4">
-        {SUBJECTS.map((subject) => {
-          const active = subject === selectedSubject;
+        showsHorizontalScrollIndicator={false}
+        className="grow-0 border-b border-slate-100 px-4 py-5">
+        {TYPES.map((type) => {
+          const active = type === selectedType;
 
           return (
             <Pressable
-              key={subject}
-              onPress={() => setSelectedSubject(subject)}
-              className={`mr-2 rounded-full px-5 py-2 ${
-                active ? 'bg-green-500' : 'bg-slate-100'
-              }`}>
+              key={type}
+              onPress={() => setSelectedType(type)}
+              className={`mr-2 rounded-full px-5 py-2 ${active ? 'bg-green-500' : 'bg-slate-100'}`}>
               <Text className={`text-sm font-semibold ${active ? 'text-white' : 'text-slate-500'}`}>
-                {subject}
+                {type === 'All' ? 'All' : TYPE_LABELS[type]}
               </Text>
             </Pressable>
           );
         })}
       </ScrollView>
 
-      {/* Works List */}
       <ScrollView className="flex-1 px-4 pt-4">
         {filteredWorks.map((work) => {
-          const badge = STATUS_CONFIG[work.status];
+          const badge = STATUS_CONFIG[work.submissionStatus];
+
+          const formattedDate = work.dueDate
+            ? dayjs(work.dueDate).isSame(dayjs(), 'day')
+              ? `Today, ${dayjs(work.dueDate).format('hh:mm A')}`
+              : dayjs(work.dueDate).format('MMM DD, hh:mm A')
+            : 'No Due Date';
 
           return (
             <Pressable
@@ -123,17 +119,11 @@ const StudentWorksScreen = () => {
               <View className="mb-3 flex-row items-start justify-between">
                 <View className="rounded-lg bg-green-50 px-3 py-1">
                   <Text className="text-[10px] font-bold uppercase text-green-600">
-                    {work.subject}
+                    {work.type}
                   </Text>
                 </View>
 
-                <StatusBadge
-                  label={badge.label}
-                  icon={badge.icon}
-                  bgColor={badge.bgColor}
-                  borderColor={badge.borderColor}
-                  textColor={badge.textColor}
-                />
+                <SubmissionStatusBadge status={work.submissionStatus} />
               </View>
 
               {/* Title */}
@@ -141,16 +131,14 @@ const StudentWorksScreen = () => {
 
               {/* Description */}
               <Text className="mb-4 text-sm text-slate-500" numberOfLines={2}>
-                {work.description}
+                {work.description ?? 'No description'}
               </Text>
 
               {/* Bottom Row */}
               <View className="flex-row items-center justify-between border-t border-slate-100 pt-4">
-                <View className="flex-row items-center space-x-4">
-                  <View className="flex-row items-center space-x-1 gap-2">
-                    <Calendar size={16} color="#94a3b8" />
-                    <Text className="text-xs text-slate-400">{work.deadline}</Text>
-                  </View>
+                <View className="flex-row items-center gap-2">
+                  <Calendar size={16} color="#94a3b8" />
+                  <Text className="text-xs text-slate-400">{formattedDate}</Text>
                 </View>
 
                 <ChevronRight size={18} color="#cbd5f5" />
@@ -158,22 +146,17 @@ const StudentWorksScreen = () => {
             </Pressable>
           );
         })}
+
         {filteredWorks.length === 0 && (
           <View className="items-center py-20">
             <Calendar size={40} color="#cbd5f5" />
             <Text className="mt-4 font-bold">No works found</Text>
             <Text className="text-sm text-slate-500">
-              There are no assignments for this subject.
+              There are no assignments for this filter.
             </Text>
           </View>
         )}
       </ScrollView>
-
-      {/* Floating Add Button */}
-      <Pressable
-        className="absolute bottom-8 right-6 h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg">
-        <Plus color="white" size={26} />
-      </Pressable>
     </View>
   );
 };
