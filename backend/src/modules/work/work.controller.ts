@@ -3,6 +3,27 @@ import * as workService from './work.service';
 import { GetStudentWorksResponse, GetWorkResponse, GetWorksResponse, WorkDto, WorkParams } from "./work.types";
 import { ApiResponse } from "../../common/types/api";
 
+// ========================== STUDENT =========================================
+export const getAllStudentWorks = async (
+  req: Request,
+  res: Response<GetStudentWorksResponse>,
+  next: NextFunction
+) => {
+  try {
+    const works = await workService.getAllStudentWorks(
+      req.userId!,
+      req.role
+    );
+
+    res.json({
+      success: true,
+      message: "Works retrieved",
+      data: works,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getStudentWorks = async (
   req: Request<WorkParams>,

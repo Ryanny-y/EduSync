@@ -25,6 +25,12 @@ const WorksScreen = () => {
     `class/${classId}/works/my`
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      refetchData();
+    }, [data])
+  );
+
   const works = useMemo(() => {
     return data?.data ?? [];
   }, [data]);

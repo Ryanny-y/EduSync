@@ -2,7 +2,7 @@ import { Router } from "express";
 import authRoute from "./auth/auth.route";
 import departmentRoute from "./department/department.route";
 import classRoute from "./class/class.route";
-import lessonRoute from "./lesson/lesson.route";
+import workRoute from './work/work.route';
 
 const router = Router();
 
@@ -15,5 +15,6 @@ router.use("/department", departmentRoute);
 
 // PROTECTED
 router.use("/class", classRoute);
+router.use("/works", workRoute);
 
 export default router;

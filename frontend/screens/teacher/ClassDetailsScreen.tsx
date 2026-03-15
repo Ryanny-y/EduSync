@@ -14,13 +14,13 @@ import LessonTab from './class-details/LessonTab';
 import ClassDetailHeader from './class-details/ClassDetailHeader';
 import WorksTab from './class-details/WorksTab';
 
-const TABS = ['Stream', 'Students', 'Lessons', 'Works'] as const;
+const TABS = ['Students', 'Lessons', 'Works'] as const;
 type Tab = (typeof TABS)[number];
 
 type EditClassProp = RouteProp<TeacherStackParamList, 'ClassDetailsScreen'>;
 
 const ClassDetailsScreen = () => {
-  const [selectedTab, setSelectedTab] = useState<Tab>('Stream');
+  const [selectedTab, setSelectedTab] = useState<Tab>('Students');
   const route = useRoute<EditClassProp>();
   const { classId } = route.params;
 
@@ -44,7 +44,7 @@ const ClassDetailsScreen = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12 }}
-        className="grow-0 border-b border-slate-100 py-3">
+        className="grow-0 border-b border-slate-100 py-3 w-full">
         {TABS.map((tab, index) => {
           const active = tab === selectedTab;
           return (
@@ -73,22 +73,22 @@ const ClassDetailsScreen = () => {
         ref={pagerRef}
         onPageSelected={onPageSelected}>
         {/* Stream */}
-        <View key="0" className="w-full flex-1 px-4 py-5">
+        {/* <View key="0" className="w-full flex-1 px-4 py-5">
           <StreamTab />
-        </View>
+        </View> */}
 
         {/* Students */}
-        <View key="1" className="w-full flex-1 px-4 py-5">
+        <View key="0" className="w-full flex-1 px-4 py-5">
           {selectedTab === 'Students' && <StudentTab classId={classId} />}
         </View>
 
         {/* Lessons */}
-        <View key="2" className="w-full flex-1 px-4 py-5">
+        <View key="1" className="w-full flex-1 px-4 py-5">
           {selectedTab === 'Lessons' && <LessonTab classId={classId} />}
         </View>
 
         {/* Works */}
-        <View key="3" className="w-full flex-1 px-4 py-5">
+        <View key="2" className="w-full flex-1 px-4 py-5">
           {selectedTab === 'Works' && <WorksTab classId={classId} />}
         </View>
       </PagerView>

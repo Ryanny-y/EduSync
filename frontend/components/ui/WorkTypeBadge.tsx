@@ -6,10 +6,7 @@ interface Props {
   type: WorkType;
 }
 
-const WorkTypeBadge = ({ type }: Props) => {
-  const normalized = type?.toUpperCase();
-
-  const styles = {
+export const workStatusStyle = {
     ASSIGNMENT: {
       bg: 'bg-indigo-50',
       text: 'text-indigo-500',
@@ -28,7 +25,12 @@ const WorkTypeBadge = ({ type }: Props) => {
     },
   };
 
-  const badge = styles[normalized as keyof typeof styles] ?? styles.ASSIGNMENT;
+const WorkTypeBadge = ({ type }: Props) => {
+  const normalized = type?.toUpperCase();
+
+  
+
+  const badge = workStatusStyle[normalized as keyof typeof workStatusStyle] ?? workStatusStyle.ASSIGNMENT;
 
   return (
     <View className={`rounded-full px-2 py-1 ${badge.bg}`}>

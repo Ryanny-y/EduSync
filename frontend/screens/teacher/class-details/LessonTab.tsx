@@ -101,7 +101,8 @@ const LessonTab = ({ classId }: { classId: string }) => {
         ) : (
           <View className="gap-3">
             {lessons.map((lesson) => (
-              <View
+              <Pressable 
+                onPress={() => navigation.navigate('LessonDetailsScreen', { lesson })}
                 key={lesson.id}
                 className="flex-row items-center justify-between rounded-xl border border-slate-300 px-5 py-3">
                 {/* LEFT SIDE */}
@@ -121,10 +122,6 @@ const LessonTab = ({ classId }: { classId: string }) => {
 
                 {/* ACTIONS */}
                 <View className="flex-row items-center gap-5">
-                  <Pressable onPress={() => navigation.navigate('LessonDetailsScreen', { lesson })}>
-                    <Eye size={20} strokeWidth={2.5} color="#64748b" />
-                  </Pressable>
-
                   <Pressable
                     onPress={() => {
                       setSelectedLesson(lesson);
@@ -133,7 +130,7 @@ const LessonTab = ({ classId }: { classId: string }) => {
                     <Trash2 size={20} color="#ef4444" />
                   </Pressable>
                 </View>
-              </View>
+              </Pressable>
             ))}
           </View>
         )}

@@ -58,9 +58,9 @@ const ClassDetailHeader = ({ item }: { item: IClass }) => {
             <Video color="#ffffff" size={20} />
           </Pressable>
 
-          <Pressable className="rounded-full border border-white/40 bg-white/20 p-3">
+          {/* <Pressable className="rounded-full border border-white/40 bg-white/20 p-3">
             <MoreVertical color="#ffffff" size={20} />
-          </Pressable>
+          </Pressable> */}
         </View>
       </View>
 

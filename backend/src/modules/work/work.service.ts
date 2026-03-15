@@ -9,6 +9,55 @@ import { mapToSubmissionDto } from "../submission/submission.mapper";
 import { Role } from "../../generated/prisma";
 
 // =========================== STUDENT ===============================
+export const getAllStudentWorks = async (
+  studentId: string,
+  role: Role,
+): Promise<StudentWorkDto[]> => {
+  const works = await prismaClient.work.findMany({
+    where: {
+      class: {
+        students: {
+          some: { id: studentId },
+        },
+      },
+    },
+    include: {
+      submissions: {
+        where: { studentId },
+        include: {
+          student: true,
+          files: { include: { file: true } },
+          work: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const worksWithStatus = works.map((work) => {
+    const submission = work.submissions[0];
+
+    const status = submission
+      ? mapToSubmissionDto(submission, work.dueDate)
+      : {
+          status:
+            work.dueDate && new Date() > work.dueDate ? "MISSING" : "PENDING",
+        };
+
+    return {
+      id: work.id,
+      title: work.title,
+      type: work.type,
+      description: work.description || null,
+      dueDate: work.dueDate,
+      classId: work.classId,
+      submissionStatus: status.status,
+    };
+  });
+
+  return worksWithStatus;
+};
+
 export const getStudentWorks = async (
   studentId: string,
   role: Role,
@@ -22,7 +71,11 @@ export const getStudentWorks = async (
     include: {
       submissions: {
         where: { studentId },
-        include: { student: true, files: { include: { file: true } }, work: true },
+        include: {
+          student: true,
+          files: { include: { file: true } },
+          work: true,
+        },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -34,7 +87,8 @@ export const getStudentWorks = async (
     const status = submission
       ? mapToSubmissionDto(submission, work.dueDate)
       : {
-          status: work.dueDate && new Date() > work.dueDate ? "MISSING" : "PENDING",
+          status:
+            work.dueDate && new Date() > work.dueDate ? "MISSING" : "PENDING",
         };
 
     return {
@@ -118,7 +172,9 @@ export const getWorkById = async (
   // Refresh URLs
   work.materials = await Promise.all(
     work.materials.map(async (material) => {
-      material.file = await s3Service.refreshPresignedUrlIfExpired(material.file);
+      material.file = await s3Service.refreshPresignedUrlIfExpired(
+        material.file,
+      );
       return material;
     }),
   );
@@ -315,6 +371,14 @@ export const deleteWork = async (
         where: { id: material.file.id },
       });
     }
+
+    await tx.submissionFile.deleteMany({
+      where: {
+        submission: {
+          workId,
+        },
+      },
+    });
 
     // delete submissions first
     await tx.submission.deleteMany({

@@ -10,6 +10,12 @@ const router = Router({ mergeParams: true });
 
 // GET /classes/:classId/works - List all works of logged in student
 router.get(
+  "/my/all",
+  verifyJwt,
+  workController.getAllStudentWorks
+);
+
+router.get(
   "/my",
   verifyJwt,
   validate(workParamsSchema),
