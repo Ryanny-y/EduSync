@@ -1,10 +1,10 @@
+import { Role } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import jwt, {
   JsonWebTokenError,
   JwtPayload,
   TokenExpiredError,
 } from "jsonwebtoken";
-import { Role } from "../../generated/prisma";
 
 interface AccessTokenPayload extends JwtPayload {
   sub: string;

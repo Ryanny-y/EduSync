@@ -30,6 +30,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.ryanny.edusync"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e6b006d9-5152-4421-9862-ab88fdda7960"
       }
     }
   }

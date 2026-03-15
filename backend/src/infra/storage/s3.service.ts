@@ -9,8 +9,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CustomError } from "../../common/utils/Errors";
-import { File } from '../../generated/prisma';
 import prismaClient from '../../config/client';
+import { File } from '@prisma/client';
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION!,

@@ -4,7 +4,7 @@ import * as s3Service from "../../infra/storage/s3.service";
 import { CreateLessonDto, LessonDto } from "./lesson.types";
 import { mapLessonToDto } from "./lesson.mapper";
 import { verifyClassAccess } from "../class/class.helpers";
-import { Role } from "../../generated/prisma";
+import { Role } from "@prisma/client";
 import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 
 export const getLessonsByClassId = async (

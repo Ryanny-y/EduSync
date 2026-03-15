@@ -1,7 +1,7 @@
 import prismaClient from "../../config/client";
 import { CustomError } from "../../common/utils/Errors";
 import { CreateClassDto, UpdateClassDto, ClassDto } from "./class.types";
-import { Prisma, Role } from "../../generated/prisma";
+import { Prisma, Role } from "@prisma/client";
 import { mapClassToDto } from "./class.mapper";
 import {
   generateBgColor,

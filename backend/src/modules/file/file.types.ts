@@ -1,4 +1,4 @@
-import { FileType } from "../../generated/prisma";
+import { FileType } from "@prisma/client";
 
 export interface FileDto {
   id: string;

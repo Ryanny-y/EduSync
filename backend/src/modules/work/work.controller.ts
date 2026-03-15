@@ -12,7 +12,7 @@ export const getAllStudentWorks = async (
   try {
     const works = await workService.getAllStudentWorks(
       req.userId!,
-      req.role
+      req.role!
     );
 
     res.json({
@@ -33,7 +33,7 @@ export const getStudentWorks = async (
   try {
     const works = await workService.getStudentWorks(
       req.userId!,
-      req.role,
+      req.role!,
       req.params.classId!
     );
 

@@ -1,4 +1,4 @@
-import { FileType } from "../../generated/prisma";
+import { FileType } from "@prisma/client";
 
 export const mapMimeTypeToFileType = (mimeType: string): FileType => {
   if (mimeType.includes("pdf")) return FileType.PDF;

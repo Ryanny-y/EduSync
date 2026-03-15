@@ -6,7 +6,7 @@ import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 import { mapToWorkDto } from "./work.mapper";
 import { CustomError } from "../../common/utils/Errors";
 import { mapToSubmissionDto } from "../submission/submission.mapper";
-import { Role } from "../../generated/prisma";
+import { Role } from "@prisma/client";
 
 // =========================== STUDENT ===============================
 export const getAllStudentWorks = async (

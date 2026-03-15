@@ -1,5 +1,5 @@
 import z from "zod";
-import { FileType } from "../../generated/prisma";
+import { FileType } from "@prisma/client";
 
 export const fileSchema = z.object({
   id: z.string(),

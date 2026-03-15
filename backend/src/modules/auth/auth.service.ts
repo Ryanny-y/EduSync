@@ -6,7 +6,7 @@ import {
   LoginUserDto,
   UserDto,
 } from "./auth.types";
-import { Role } from "../../generated/prisma";
+import { Role } from "@prisma/client";
 import { CustomError } from "../../common/utils/Errors";
 import jwt from "jsonwebtoken";
 import { addDays } from "date-fns";

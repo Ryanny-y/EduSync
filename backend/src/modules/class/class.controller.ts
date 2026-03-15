@@ -25,7 +25,7 @@ export const createClass = async (
 
     const created = await classService.createClass(
       teacherId,
-      req.role,
+      req.role!,
       req.body,
     );
 
@@ -69,7 +69,7 @@ export const getClassById = async (
 
     const cls = await classService.getClassById(
       req.userId,
-      req.role,
+      req.role!,
       req.params.id,
     );
 

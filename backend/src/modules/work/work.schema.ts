@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { WorkType } from "../../generated/prisma";
+import { WorkType } from "@prisma/client";
 import { fileSchema, uploadedFileSchema } from "../file/file.schema";
 
 export const workSchema = z.object({

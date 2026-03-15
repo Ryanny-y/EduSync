@@ -1,7 +1,7 @@
 import z from "zod";
 import { createWorkSchema, updateWorkSchema, workSchema } from "./work.schema";
 import { ApiResponse } from "../../common/types/api";
-import { WorkType } from "../../generated/prisma";
+import { WorkType } from "@prisma/client";
 
 export interface StudentWorkDto {
   id: string;
