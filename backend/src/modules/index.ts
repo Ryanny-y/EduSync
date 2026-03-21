@@ -3,6 +3,7 @@ import authRoute from "./auth/auth.route";
 import departmentRoute from "./department/department.route";
 import classRoute from "./class/class.route";
 import workRoute from './work/work.route';
+import chatRoute from './chat/chat.route';
 
 const router = Router();
 
@@ -21,6 +22,8 @@ router.use("/department", departmentRoute);
 // PROTECTED
 router.use("/class", classRoute);
 router.use("/works", workRoute);
+
+router.use("/chat", chatRoute);
 
 
 export default router;

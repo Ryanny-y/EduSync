@@ -8,4 +8,5 @@ export type CreateLessonDto = z.infer<typeof createLessonSchema>["body"];
 export type DeleteLessonResponse = ApiResponse<void>;
 
 export type GetLessonsResponse = ApiResponse<LessonDto[]>;
+export type GetLessonResponse = ApiResponse<LessonDto>;
 export type CreateLessonResponse = ApiResponse<LessonDto>;

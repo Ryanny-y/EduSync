@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as lessonService from './lesson.service';
 import { ApiResponse } from "../../common/types/api";
-import { CreateLessonResponse, GetLessonsResponse } from "./lesson.types";
+import { CreateLessonResponse, GetLessonResponse, GetLessonsResponse } from "./lesson.types";
 
 export const getLessons = async (
   req: Request<{ classId: string }>,
@@ -20,6 +20,25 @@ export const getLessons = async (
       message: "Lessons fetched",
       data: lessons,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLesson = async (
+  req: Request<{ classId: string; lessonId: string }>,
+  res: Response<GetLessonResponse>,
+  next: NextFunction,
+) => {
+  try {
+    const lesson = await lessonService.getLessonById(
+      req.userId!,
+      req.role!,
+      req.params.classId,
+      req.params.lessonId,
+    );
+
+    res.json({ success: true, message: "Lesson fetched", data: lesson });
   } catch (error) {
     next(error);
   }

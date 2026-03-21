@@ -22,6 +22,13 @@ router.get(
   lessonController.getLessons,
 );
 
+router.get(
+  "/:lessonId",
+  verifyJwt,
+  validate(lessonParamsSchema),
+  lessonController.getLesson,
+);
+
 router.delete(
   "/:lessonId",
   verifyJwt,

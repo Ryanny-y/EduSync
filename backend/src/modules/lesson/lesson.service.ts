@@ -125,6 +125,30 @@ export const createLesson = async (
   return mapLessonToDto(lesson);
 };
 
+export const getLessonById = async (
+  userId: string,
+  role: Role,
+  classId: string,
+  lessonId: string,
+): Promise<LessonDto> => {
+  await verifyClassAccess(userId, role, classId);
+
+  const lesson = await prismaClient.lesson.findUnique({
+    where: { id: lessonId },
+    include: { materials: { include: { file: true } } },
+  });
+
+  if (!lesson) throw new CustomError(404, "Lesson not found");
+
+  const materials = [];
+  for (const material of lesson.materials) {
+    const url = await s3Service.generatePresignedUrl(material.file.path);
+    materials.push({ ...material, file: { ...material.file, url } });
+  }
+
+  return mapLessonToDto({ ...lesson, materials });
+};
+
 // Delete lesson and materials
 export const deleteLesson = async (
   teacherId: string,
