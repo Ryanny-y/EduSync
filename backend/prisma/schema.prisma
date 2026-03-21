@@ -260,8 +260,6 @@ model SyncLog {
 }
 
 
-
-
 // Chats
 model Conversation {
   id        String   @id @default(uuid())

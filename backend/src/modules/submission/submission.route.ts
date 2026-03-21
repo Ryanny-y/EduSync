@@ -16,7 +16,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // ==================== TEACHER ROUTES ====================
 
-// GET /classes/:classId/works/:workId/submissions?status=ALL|PENDING|SUBMITTED|GRADED|LATE|MISSING
+// GET /class/:classId/works/:workId/submissions?status=ALL|PENDING|SUBMITTED|GRADED|LATE|MISSING
 router.get(
   "/",
   verifyJwt,
@@ -24,7 +24,15 @@ router.get(
   submissionController.getSubmissions
 );
 
-// POST /classes/:classId/works/:workId/submissions/:submissionId/grade
+// GET /class/:classId/works/:workId/submissions/:submissionId
+router.get(
+  "/:submissionId",
+  verifyJwt,
+  validate(singleSubmissionParamsSchema),
+  submissionController.getSubmission
+);
+
+// POST /class/:classId/works/:workId/submissions/:submissionId/grade
 router.post(
   "/:submissionId/grade",
   verifyJwt,
@@ -34,14 +42,14 @@ router.post(
 
 // ==================== STUDENT ROUTES ====================
 
-// // GET /classes/:classId/works/:workId/submissions/my
+// GET /class/:classId/works/:workId/submissions/my
 router.get(
   "/my",
   verifyJwt,
   submissionController.getMySubmission
 );
 
-// POST /classes/:classId/works/:workId/submissions/:submissionId/turn-in
+// POST /class/:classId/works/:workId/submissions/:submissionId/turn-in
 router.post(
   "/:submissionId/turn-in",
   verifyJwt,
@@ -49,7 +57,7 @@ router.post(
   submissionController.turnIn
 );
 
-// POST /classes/:classId/works/:workId/submissions/:submissionId/unsubmit
+// POST /class/:classId/works/:workId/submissions/:submissionId/unsubmit
 router.post(
   "/:submissionId/unsubmit",
   verifyJwt,
@@ -57,7 +65,7 @@ router.post(
   submissionController.unsubmit
 );
 
-// POST /classes/:classId/works/:workId/submissions/:submissionId/files
+// POST /class/:classId/works/:workId/submissions/:submissionId/files
 router.post(
   "/:submissionId/files",
   verifyJwt,
@@ -65,7 +73,7 @@ router.post(
   submissionController.addFiles
 );
 
-// DELETE /classes/:classId/works/:workId/submissions/:submissionId/files
+// DELETE /class/:classId/works/:workId/submissions/:submissionId/files
 router.delete(
   "/:submissionId/files",
   verifyJwt,
@@ -73,7 +81,7 @@ router.delete(
   submissionController.deleteFiles
 );
 
-// DELETE /classes/:classId/works/:workId/submissions/:submissionId
+// DELETE /class/:classId/works/:workId/submissions/:submissionId
 // router.delete(
 //   "/:submissionId",
 //   verifyJwt,

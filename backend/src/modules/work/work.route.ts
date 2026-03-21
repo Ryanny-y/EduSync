@@ -72,7 +72,7 @@ router.delete(
 // );
 
 
-// 
+// submission routes
 router.use("/:workId/submissions", submissionRoutes);
 
 export default router;

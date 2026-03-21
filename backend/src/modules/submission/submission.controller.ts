@@ -37,6 +37,25 @@ export const getSubmissions = async (
   }
 };
 
+export const getSubmission = async (
+  req: Request<SubmissionParams>,
+  res: Response<GetSubmissionResponse>,
+  next: NextFunction
+) => {
+  try {
+    const result = await submissionService.getSubmissionById(
+      req.userId!,
+      req.params.classId!,
+      req.params.workId!,
+      req.params.submissionId!,
+    );
+
+    res.json({ success: true, message: "Submission retrieved", data: result });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const gradeSubmission = async (
   req: Request<SubmissionParams, {}, GradeSubmissionInput>,
   res: Response<GetSubmissionResponse>,

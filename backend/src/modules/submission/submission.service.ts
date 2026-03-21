@@ -92,6 +92,52 @@ export const getSubmissionsForWork = async (
   return mapToSubmissionListDto(filtered, studentCount, work.dueDate);
 };
 
+export const getSubmissionById = async (
+  teacherId: string,
+  classId: string,
+  workId: string,
+  submissionId: string,
+): Promise<SubmissionDto> => {
+  await verifyClassAccess(teacherId, "TEACHER", classId, true);
+
+  const work = await prismaClient.work.findFirst({
+    where: { id: workId, classId, class: { teacherId } },
+    select: { dueDate: true },
+  });
+
+  if (!work) throw new CustomError(404, "Work not found or access denied");
+
+  const submission = await prismaClient.submission.findFirst({
+    where: { id: submissionId, workId },
+    include: {
+      student: { select: { id: true, firstName: true, lastName: true } },
+      files: { include: { file: true } },
+      work: {
+        select: {
+          title: true,
+        },
+      },
+    },
+  });
+
+  if (!submission) throw new CustomError(404, "Submission not found");
+
+  const filesWithUrls = await Promise.all(
+    submission.files.map(async (f) => ({
+      ...f,
+      file: {
+        ...f.file,
+        url: await s3Service.generatePresignedUrl(f.file.path),
+      },
+    })),
+  );
+
+  return mapToSubmissionDto(
+    { ...submission, files: filesWithUrls },
+    work.dueDate,
+  );
+};
+
 export const gradeSubmission = async (
   teacherId: string,
   classId: string,
