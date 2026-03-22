@@ -21,15 +21,17 @@ router.get(
   "/",
   verifyJwt,
   validate(getSubmissionsQuerySchema),
-  submissionController.getSubmissions
+  submissionController.getSubmissions,
 );
+
+router.get("/my", verifyJwt, submissionController.getMySubmission);
 
 // GET /class/:classId/works/:workId/submissions/:submissionId
 router.get(
   "/:submissionId",
   verifyJwt,
   validate(singleSubmissionParamsSchema),
-  submissionController.getSubmission
+  submissionController.getSubmission,
 );
 
 // POST /class/:classId/works/:workId/submissions/:submissionId/grade
@@ -37,24 +39,19 @@ router.post(
   "/:submissionId/grade",
   verifyJwt,
   validate(gradeSubmissionSchema),
-  submissionController.gradeSubmission
+  submissionController.gradeSubmission,
 );
 
 // ==================== STUDENT ROUTES ====================
 
 // GET /class/:classId/works/:workId/submissions/my
-router.get(
-  "/my",
-  verifyJwt,
-  submissionController.getMySubmission
-);
 
 // POST /class/:classId/works/:workId/submissions/:submissionId/turn-in
 router.post(
   "/:submissionId/turn-in",
   verifyJwt,
   validate(singleSubmissionParamsSchema),
-  submissionController.turnIn
+  submissionController.turnIn,
 );
 
 // POST /class/:classId/works/:workId/submissions/:submissionId/unsubmit
@@ -62,7 +59,7 @@ router.post(
   "/:submissionId/unsubmit",
   verifyJwt,
   validate(singleSubmissionParamsSchema),
-  submissionController.unsubmit
+  submissionController.unsubmit,
 );
 
 // POST /class/:classId/works/:workId/submissions/:submissionId/files
@@ -70,7 +67,7 @@ router.post(
   "/:submissionId/files",
   verifyJwt,
   upload.array("files", 10),
-  submissionController.addFiles
+  submissionController.addFiles,
 );
 
 // DELETE /class/:classId/works/:workId/submissions/:submissionId/files
@@ -78,7 +75,7 @@ router.delete(
   "/:submissionId/files",
   verifyJwt,
   validate(updateSubmissionFilesSchema),
-  submissionController.deleteFiles
+  submissionController.deleteFiles,
 );
 
 // DELETE /class/:classId/works/:workId/submissions/:submissionId

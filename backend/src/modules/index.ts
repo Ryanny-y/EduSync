@@ -23,6 +23,7 @@ router.use("/department", departmentRoute);
 router.use("/class", classRoute);
 router.use("/works", workRoute);
 
+// chat
 router.use("/chat", chatRoute);
 
 

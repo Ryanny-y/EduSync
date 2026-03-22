@@ -9,6 +9,7 @@ export const mapClassToDto = (cls: any): ClassDto => ({
   room: cls.room,
   gmeetLink: cls.gmeetLink,
   code: cls.code,
+  teacherId: cls.teacherId,
   teacher: cls.teacher
     ? `${cls.teacher.lastName}, ${cls.teacher.firstName}`
     : '',

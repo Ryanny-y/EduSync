@@ -1,12 +1,9 @@
-import { useAuth } from 'context/AuthContext';
 import { ScrollView, View } from 'react-native';
 import StudentDashboardHeader from './dashboard/StudentDashboardHeader';
 import PendingWorks from './dashboard/PendingWorks';
 import QuickActionCards from './dashboard/QuickActionCards';
 
 const StudentDashboardScreen = () => {
-  const { user, logout } = useAuth();
-
   return (
     <View className="w-full flex-1 items-center justify-start px-4 pt-14 bg-background">
       <StudentDashboardHeader />
