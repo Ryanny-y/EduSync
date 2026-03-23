@@ -1,18 +1,20 @@
 import { Role } from "@prisma/client";
 import { format } from "date-fns";
 
-export const mapConversationToDto = (conv: any, role: Role) => {
+export const mapConversationToDto = (conv: any, role: Role, currentUserId: string) => {
   const otherUser = role === "TEACHER" ? conv.student : conv.teacher;
 
   const lastMessage = conv.messages[0];
 
   const unreadCount = conv.messages.filter(
-    (msg: any) => msg.senderId !== otherUser.id && !msg.read,
+    (msg: any) => msg.senderId !== currentUserId && !msg.read,
   ).length;
 
   return {
     id: conv.id,
     name: `${otherUser.firstName} ${otherUser.lastName}`,
+    teacherId: conv.teacherId || conv.teacher.id,
+    studentId: conv.studentId || conv.student.id,
     subject: conv.class?.subject ?? "",
     section: conv.class?.section ?? "",
     lastMessage: lastMessage?.content ?? null,

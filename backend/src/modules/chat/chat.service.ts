@@ -56,9 +56,24 @@ export const getUserConversations = async (userId: string, role: Role) => {
             lastSeenAt: true,
           },
         },
+        teacher: {
+          select: {
+            id: true,
+          },
+        },
         messages: {
           take: 1,
           orderBy: { createdAt: "desc" },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                read: false,
+                senderId: { not: userId },
+              },
+            },
+          },
         },
         class: {
           select: {
@@ -84,9 +99,21 @@ export const getUserConversations = async (userId: string, role: Role) => {
             lastSeenAt: true,
           },
         },
+        student: {
+          select: {
+            id: true,
+          },
+        },
         messages: {
           take: 1,
           orderBy: { createdAt: "desc" },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: { read: false, senderId: { not: userId } },
+            },
+          },
         },
         class: {
           select: {

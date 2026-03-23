@@ -7,11 +7,10 @@ import {
 } from "./chat.service";
 import { mapConversationToDto } from "./chat.mapper";
 
-
 // GET MESSAGES (SECURE)
 export const getMessages = async (
   req: Request<{ conversationId: string }>,
-  res: Response
+  res: Response,
 ) => {
   const { conversationId } = req.params;
   const userId = req.userId!;
@@ -19,10 +18,7 @@ export const getMessages = async (
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
-      OR: [
-        { teacherId: userId },
-        { studentId: userId },
-      ],
+      OR: [{ teacherId: userId }, { studentId: userId }],
     },
   });
 
@@ -43,7 +39,6 @@ export const getMessages = async (
   res.json(messages);
 };
 
-
 // GET MY CONVERSATIONS
 export const getMyConversations = async (req: Request, res: Response) => {
   const userId = req.userId!;
@@ -51,13 +46,10 @@ export const getMyConversations = async (req: Request, res: Response) => {
 
   const conversations = await getUserConversations(userId, role);
 
-  const result = conversations.map((conv) =>
-    mapConversationToDto(conv, role)
-  );
+  const result = conversations.map((conv) => mapConversationToDto(conv, role, userId));
 
   res.json(result);
 };
-
 
 // CREATE OR GET CONVERSATION
 export const createOrGetConversation = async (req: Request, res: Response) => {
@@ -79,17 +71,16 @@ export const createOrGetConversation = async (req: Request, res: Response) => {
   const conversation = await getOrCreateConversation(
     teacherId,
     studentId,
-    classId
+    classId,
   );
 
   res.json(conversation);
 };
 
-
 // SEND MESSAGE (REST FALLBACK)
 export const sendMessage = async (
   req: Request<{ conversationId: string }>,
-  res: Response
+  res: Response,
 ) => {
   const { conversationId } = req.params;
   const userId = req.userId!;
@@ -98,10 +89,7 @@ export const sendMessage = async (
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
-      OR: [
-        { teacherId: userId },
-        { studentId: userId },
-      ],
+      OR: [{ teacherId: userId }, { studentId: userId }],
     },
   });
 
@@ -109,36 +97,39 @@ export const sendMessage = async (
     return res.status(403).json({ message: "Forbidden" });
   }
 
-  const message = await createMessage(
-    conversationId,
-    userId,
-    content
-  );
+  const message = await createMessage(conversationId, userId, content);
 
   res.json(message);
 };
 
-
 // GET SINGLE CONVERSATION (SECURE)
 export const getConversationById = async (
   req: Request<{ conversationId: string }>,
-  res: Response
+  res: Response,
 ) => {
   const { conversationId } = req.params;
+
   const userId = req.userId!;
   const role = req.role!;
 
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
-      OR: [
-        { teacherId: userId },
-        { studentId: userId },
-      ],
+      OR: [{ teacherId: userId }, { studentId: userId }],
     },
     include: {
       teacher: true,
       student: true,
+      class: {
+        select: {
+          subject: true,
+          section: true,
+        },
+      },
+      messages: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 
@@ -146,7 +137,7 @@ export const getConversationById = async (
     return res.status(403).json({ message: "Forbidden" });
   }
 
-  const dto = mapConversationToDto(conversation, role);
+  const dto = mapConversationToDto(conversation, role, userId);
 
   res.json(dto);
 };
