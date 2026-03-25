@@ -5,6 +5,6 @@ import verifyJwt from "../../common/middlewares/verifyJwt";
 
 const router = Router();
 
-router.post("/reviewer", upload.array("files", 5), generateReviewer);
+router.post("/reviewer", verifyJwt, upload.array("files", 5), generateReviewer);
 
 export default router;
