@@ -4,6 +4,7 @@ import departmentRoute from "./department/department.route";
 import classRoute from "./class/class.route";
 import workRoute from './work/work.route';
 import chatRoute from './chat/chat.route';
+import aiRoute from './ai/ai.route';
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.use("/works", workRoute);
 
 // chat
 router.use("/chat", chatRoute);
+router.use("/ai", aiRoute);
 
 
 export default router;
