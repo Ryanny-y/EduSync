@@ -7,7 +7,7 @@ export const createClassBodySchema = z.object({
     section: z.string().min(1),
     time: z.string().min(1),
     room: z.string().min(1),
-    gmeetLink: z.string().optional(),
+    gmeetLink: z.url().optional(),
   }),
 });
 
@@ -18,7 +18,7 @@ export const updateClassBodySchema = z.object({
     section: z.string().min(1).optional(),
     time: z.string().min(1).optional(),
     room: z.string().min(1).optional(),
-    gmeetLink: z.string().url().optional(),
+    gmeetLink: z.url().optional(),
   }),
   params: z.object({
     id: z.uuid(),
