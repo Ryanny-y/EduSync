@@ -41,6 +41,7 @@ export const updateWorkSchema = z.object({
     description: z.string().optional(),
     type: z.enum(WorkType).optional(),
     dueDate: z.iso.datetime().optional(),
+    removedMaterialIds: z.string().optional(),
   }),
   files: z.array(uploadedFileSchema).optional(),
 });

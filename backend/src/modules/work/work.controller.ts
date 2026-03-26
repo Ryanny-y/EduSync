@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as workService from './work.service';
-import { GetStudentWorksResponse, GetWorkResponse, GetWorksResponse, WorkDto, WorkParams } from "./work.types";
+import { GetStudentWorksResponse, GetWorkResponse, GetWorksResponse, UpdateWorkInput, WorkDto, WorkParams } from "./work.types";
 import { ApiResponse } from "../../common/types/api";
 
 // ========================== STUDENT =========================================
@@ -118,31 +118,31 @@ export const createWork = async (
   }
 };
 
-// export const updateWork = async (
-//   req: Request<WorkParams>,
-//   res: Response<ApiResponse<WorkDto>>,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const files = (req.files as Express.Multer.File[]) || [];
+export const updateWork = async (
+  req: Request<WorkParams>,
+  res: Response<ApiResponse<WorkDto>>,
+  next: NextFunction
+) => {
+  try {
+    const files = (req.files as Express.Multer.File[]) || [];
 
-//     const work = await workService.updateWork(
-//       req.userId!,
-//       req.params.classId,
-//       req.params.workId!,
-//       req.body,
-//       files
-//     );
+    const work = await workService.updateWork(
+      req.userId!,
+      req.params.classId!,
+      req.params.workId!,
+      req.body,
+      files,
+    );
 
-//     res.json({
-//       success: true,
-//       message: "Work updated",
-//       data: work,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.json({
+      success: true,
+      message: "Work updated",
+      data: work,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const deleteWork = async (
   req: Request<WorkParams>,

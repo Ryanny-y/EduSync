@@ -1,12 +1,18 @@
 import prismaClient from "../../config/client";
 import * as s3Service from "../../infra/storage/s3.service";
-import { CreateWorkInput, StudentWorkDto, WorkDto } from "./work.types";
+import {
+  CreateWorkInput,
+  StudentWorkDto,
+  UpdateWorkInput,
+  WorkDto,
+} from "./work.types";
 import { verifyClassAccess } from "../class/class.helpers";
 import { mapMimeTypeToFileType } from "../../common/utils/file-utils";
 import { mapToWorkDto } from "./work.mapper";
 import { CustomError } from "../../common/utils/Errors";
 import { mapToSubmissionDto } from "../submission/submission.mapper";
 import { Role } from "@prisma/client";
+import { log } from "console";
 
 // =========================== STUDENT ===============================
 export const getAllStudentWorks = async (
@@ -269,78 +275,109 @@ export const createWork = async (
 };
 
 // Update work
-// export const updateWork = async (
-//   teacherId: string,
-//   classId: string,
-//   workId: string,
-//   data: UpdateWorkInput,
-//   files: Express.Multer.File[]
-// ): Promise<WorkDto> => {
-//   await verifyClassAccess(teacherId, "TEACHER", classId, true);
+export const updateWork = async (
+  teacherId: string,
+  classId: string,
+  workId: string,
+  data: UpdateWorkInput,
+  files: Express.Multer.File[],
+): Promise<WorkDto> => {
+  await verifyClassAccess(teacherId, "TEACHER", classId, true);
 
-//   const existing = await prismaClient.work.findFirst({
-//     where: { id: workId, classId },
-//     include: { materials: { include: { file: true } } },
-//   });
+  const existing = await prismaClient.work.findFirst({
+    where: { id: workId, classId },
+  });
 
-//   if (!existing) {
-//     throw new CustomError(404, "Work not found");
-//   }
+  if (!existing) {
+    throw new CustomError(404, "Work not found");
+  }
 
-//   const work = await prismaClient.$transaction(async (tx) => {
-//     // Update work fields
-//     const updated = await tx.work.update({
-//       where: { id: workId },
-//       data: {
-//         ...(data.title && { title: data.title }),
-//         ...(data.description !== undefined && { description: data.description || null }),
-//         ...(data.type && { type: data.type }),
-//         ...(data.dueDate && { dueDate: new Date(data.dueDate) }),
-//       },
-//     });
+  const work = await prismaClient.$transaction(async (tx) => {
+    const updated = await tx.work.update({
+      where: { id: workId },
+      data: {
+        ...(data.title && { title: data.title }),
+        ...(data.description !== undefined && {
+          description: data.description || null,
+        }),
+        ...(data.type && { type: data.type }),
+        ...(data.dueDate !== undefined && {
+          dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        }),
+      },
+    });
 
-//     // Add new files if any
-//     if (files.length > 0) {
-//       for (const file of files) {
-//         const s3Result = await s3Service.uploadFile(
-//           file.buffer,
-//           file.originalname,
-//           file.mimetype,
-//           `classes/${classId}/works`
-//         );
+    let removedMaterialIds: string[] = [];
 
-//         const fileRecord = await tx.file.create({
-//           data: {
-//             fileName: file.originalname,
-//             fileType: mapMimeTypeToEnum(file.mimetype),
-//             path: s3Result.key,
-//             bucket: s3Result.bucket,
-//             url: s3Result.url,
-//             urlExpiresAt: new Date(Date.now() + 3600 * 1000),
-//             size: file.size,
-//           },
-//         });
+    if (data.removedMaterialIds) {
+      try {
+        removedMaterialIds = JSON.parse(
+          data.removedMaterialIds as string,
+        ) as string[];
+      } catch (err) {
+        removedMaterialIds = [];
+      }
+    }
 
-//         await tx.workMaterial.create({
-//           data: {
-//             workId: updated.id,
-//             fileId: fileRecord.id,
-//           },
-//         });
-//       }
-//     }
+    for (const materialId of removedMaterialIds) {
+      const material = await tx.workMaterial.findUnique({
+        where: { id: materialId },
+        include: { file: true },
+      });
 
-//     return tx.work.findUnique({
-//       where: { id: workId },
-//       include: {
-//         materials: { include: { file: true } },
-//         _count: { select: { submissions: true } },
-//       },
-//     });
-//   });
+      if (!material) continue;
 
-//   return mapToWorkDto(work!);
-// };
+      // Delete S3 file
+      await s3Service.deleteFile(material.file.path);
+
+      // Delete workMaterial record
+      await tx.workMaterial.delete({ where: { id: materialId } });
+
+      // Optionally delete file record if not referenced elsewhere
+      const refCount = await tx.workMaterial.count({
+        where: { fileId: material.file.id },
+      });
+      if (refCount === 0) {
+        await tx.file.delete({ where: { id: material.file.id } });
+      }
+    }
+
+    for (const file of files) {
+      const s3Result = await s3Service.uploadFile(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+        `classes/${classId}/works`,
+      );
+
+      const fileRecord = await tx.file.create({
+        data: {
+          fileName: file.originalname,
+          fileType: mapMimeTypeToFileType(file.mimetype),
+          path: s3Result.key,
+          bucket: s3Result.bucket,
+          url: s3Result.url,
+          urlExpiresAt: new Date(Date.now() + 3600 * 1000),
+          size: file.size,
+        },
+      });
+
+      await tx.workMaterial.create({
+        data: { workId: updated.id, fileId: fileRecord.id },
+      });
+    }
+
+    return tx.work.findUnique({
+      where: { id: workId },
+      include: {
+        materials: { include: { file: true } },
+        _count: { select: { submissions: true } },
+      },
+    });
+  });
+
+  return mapToWorkDto(work!);
+};
 
 // Delete work
 export const deleteWork = async (
