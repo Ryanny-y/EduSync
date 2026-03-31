@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as classService from "./class.service";
+import * as masterlistService from "./masterlist.service";
 import {
   CreateClassDto,
   CreateClassResponse,
@@ -201,6 +202,55 @@ export const getClassStudents = async (
       req.params.id,
     );
     res.json({ success: true, message: "Students fetched", data: students });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStudentMasterlist = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await masterlistService.getMasterlist(
+      req.userId!,
+      req.params.id,
+    );
+
+    res.json({
+      success: true,
+      message: "Masterlist fetched",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadStudentMasterlist = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const file = req.file as Express.Multer.File;
+
+    if (!file) {
+      throw new Error("No file uploaded");
+    }
+
+    const result = await masterlistService.uploadMasterlist(
+      req.userId!,
+      req.params.id,
+      file,
+    );
+
+    res.json({
+      success: true,
+      message: `Masterlist uploaded. ${result.imported} students imported.`,
+      data: result,
+    });
   } catch (error) {
     next(error);
   }

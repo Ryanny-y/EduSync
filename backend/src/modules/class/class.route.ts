@@ -11,6 +11,7 @@ import {
 import verifyJwt from "../../common/middlewares/verifyJwt";
 import lessonRoute from '../lesson/lesson.route';
 import workRoute from '../work/work.route';
+import { upload } from "../../common/middlewares/upload";
 
 const router = Router();
 
@@ -63,6 +64,19 @@ router.post(
 // Nested Routes
 router.use("/:classId/lessons", lessonRoute)
 router.use("/:classId/works", workRoute);
+
+router.get(
+  "/:id/student-masterlist",
+  verifyJwt,
+  classController.getStudentMasterlist,
+);
+
+router.post(
+  "/:id/student-masterlist",
+  verifyJwt,
+  upload.single("file"),
+  classController.uploadStudentMasterlist,
+);
 
 router.get(
   "/:id/stream",

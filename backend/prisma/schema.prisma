@@ -88,6 +88,18 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model StudentMasterlist {
+  id      String @id @default(uuid())
+  class   Class  @relation(fields: [classId], references: [id])
+  classId String
+
+  studentId String
+  email     String
+  fullName  String
+
+  createdAt DateTime @default(now())
+}
+
 // Class
 model Class {
   id        String  @id @default(uuid())
@@ -102,6 +114,8 @@ model Class {
 
   teacher   User   @relation("TeacherClasses", fields: [teacherId], references: [id])
   teacherId String
+
+  masterlist StudentMasterlist[]
 
   announcements Announcement[]
   students      User[]         @relation("StudentClasses")
