@@ -1,30 +1,60 @@
 import { z } from "zod";
 import { Role } from "@prisma/client";
 
+const nameRegex = /^[A-Za-z\s'-]+$/;
+
 export const createUserBodySchema = z.object({
-  body: z.object({
-    id: z.string().regex(/^\d{11}$/, "ID must be exactly 11 digits").optional(),
-    firstName: z.string().min(1, "First name is required"),
-    middleName: z.string().optional().default(""),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.email("Invalid email address").min(1, "Email is required"),
+  body: z
+    .object({
+      id: z
+        .string()
+        .regex(/^\d{11}$/, "ID must be exactly 11 digits")
+        .optional(),
 
-    password: z
-      .string()
-      .min(6, "Password must be at least 6 characters long")
-      .regex(/[A-Z]/, "Must contain an uppercase letter")
-      .regex(/[0-9]/, "Must contain a number"),
+      firstName: z
+        .string()
+        .min(1, "First name is required")
+        .regex(
+          nameRegex,
+          "First name can only contain letters, spaces, hyphens, and apostrophes",
+        ),
 
-    confirmPassword: z
-      .string()
-      .min(6, "Password must be at least 6 characters long")
-      .regex(/[A-Z]/, "Must contain an uppercase letter")
-      .regex(/[0-9]/, "Must contain a number"),
+      middleName: z
+        .string()
+        .regex(
+          nameRegex,
+          "Middle name can only contain letters, spaces, hyphens, and apostrophes",
+        )
+        .optional()
+        .default(""),
 
-    role: z.enum(Role),
+      lastName: z
+        .string()
+        .min(1, "Last name is required")
+        .regex(
+          nameRegex,
+          "Last name can only contain letters, spaces, hyphens, and apostrophes",
+        ),
 
-    departmentId: z.uuid().optional(),
-  }).refine(
+      email: z.email("Invalid email address").min(1, "Email is required"),
+
+      password: z
+        .string()
+        .min(6, "Password must be at least 6 characters long")
+        .regex(/[A-Z]/, "Must contain an uppercase letter")
+        .regex(/[0-9]/, "Must contain a number"),
+
+      confirmPassword: z
+        .string()
+        .min(6, "Password must be at least 6 characters long")
+        .regex(/[A-Z]/, "Must contain an uppercase letter")
+        .regex(/[0-9]/, "Must contain a number"),
+
+      role: z.enum(Role),
+
+      departmentId: z.uuid().optional(),
+    })
+    .refine(
       (data) => {
         if (data.role === "TEACHER") {
           return !!data.departmentId;
@@ -34,17 +64,17 @@ export const createUserBodySchema = z.object({
       {
         message: "department is required for teachers",
         path: ["department"],
-      }
-    )
+      },
+    ),
 });
 
 export const loginUserBodySchema = z.object({
   body: z.object({
     email: z.email().min(1, "Email is required."),
     password: z.string().min(1, "Password is required."),
-    role: z.enum(Role)
-  })
-})
+    role: z.enum(Role),
+  }),
+});
 
 export const refreshTokenCookieSchema = z.object({
   cookies: z.object({
@@ -65,5 +95,5 @@ export const userDtoSchema = z.object({
 export const authResponseSchema = z.object({
   userData: userDtoSchema,
   accessToken: z.string(),
-  refreshToken: z.string().optional()
-})
+  refreshToken: z.string().optional(),
+});
