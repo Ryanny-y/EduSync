@@ -10,6 +10,9 @@ import { Role } from "@prisma/client";
 import { CustomError } from "../../common/utils/Errors";
 import jwt from "jsonwebtoken";
 import { addDays } from "date-fns";
+import { generateVerificationCode } from "../../utils/generateVerificationCode";
+import { addMinutes } from "date-fns";
+import { sendVerificationEmail } from "../../infra/email/email.service";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const {
@@ -39,12 +42,15 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
     throw new CustomError(400, "Passwords do not match.");
   }
 
-  if(role === "STUDENT" && !id) {
+  if (role === "STUDENT" && !id) {
     throw new CustomError(400, "Student Number is required");
   }
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
+
+  const code = generateVerificationCode();
+  const hashedCode = await bcrypt.hash(code, 10);
 
   // Create user
   const createdUser = await prismaClient.user.create({
@@ -54,6 +60,9 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
       middleName,
       lastName,
       email: normalizedEmail,
+      verificationCodeHash: hashedCode,
+      verificationCodeExpires: addMinutes(new Date(), 10),
+      isVerified: false,
       passwordHash: hashedPassword,
       role: role as Role,
       ...(departmentId ? { departmentId } : {}),
@@ -62,6 +71,8 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
       department: true,
     },
   });
+
+  await sendVerificationEmail(createdUser.email, code);
 
   return {
     id: createdUser.id,
@@ -92,6 +103,12 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
       `You are not registered as ${data.role.toLowerCase()}`,
     );
   }
+
+  if (!foundUser?.isVerified)
+    throw new CustomError(
+      403,
+      "User is not yet verified. Please verify your account first.",
+    );
 
   // CREATE JWTS
   const accessToken = jwt.sign(
@@ -228,4 +245,72 @@ export const logout = async (refreshToken: string): Promise<void> => {
       refreshTokenExpiresAt: null,
     },
   });
+};
+
+// VERIFICATION CODE
+export const sendVerificationCode = async (email: string) => {
+  const normalizedEmail = email.toLowerCase();
+
+  const user = await prismaClient.user.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (!user) {
+    throw new CustomError(404, "User not found");
+  }
+
+  const code = generateVerificationCode();
+
+  const hashedCode = await bcrypt.hash(code, 10);
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: {
+      verificationCodeHash: hashedCode,
+      verificationCodeExpires: addMinutes(new Date(), 10),
+    },
+  });
+
+  await sendVerificationEmail(user.email, code);
+
+  return {
+    message: "Verification code sent to email",
+  };
+};
+
+export const verifyEmailCode = async (email: string, code: string) => {
+  const user = await prismaClient.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (user?.isVerified) {
+    throw new CustomError(409, "User is already verified.");
+  }
+
+  if (!user || !user.verificationCodeHash) {
+    throw new CustomError(400, "Invalid code");
+  }
+
+  const isValid = await bcrypt.compare(code, user.verificationCodeHash);
+
+  if (
+    !isValid ||
+    !user.verificationCodeExpires ||
+    user.verificationCodeExpires.getTime() < Date.now()
+  ) {
+    throw new CustomError(400, "Code expired or invalid");
+  }
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: {
+      isVerified: true,
+      verificationCodeHash: null,
+      verificationCodeExpires: null,
+    },
+  });
+
+  return {
+    message: "Email verified successfully",
+  };
 };

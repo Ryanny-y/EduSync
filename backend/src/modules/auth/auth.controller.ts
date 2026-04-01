@@ -1,9 +1,20 @@
 import { NextFunction, Request, Response } from "express";
 import * as authService from "./auth.service";
-import { AuthResponseDto, CreateUserDto, CreateUserResponse, LoginResponse, LoginUserDto, LogoutResponse, RefreshTokenResponse } from "./auth.types";
+import {
+  AuthResponseDto,
+  CreateUserDto,
+  CreateUserResponse,
+  LoginResponse,
+  LoginUserDto,
+  LogoutResponse,
+  RefreshTokenResponse,
+  sendVerificationCodeDto,
+  verifyEmailDto,
+} from "./auth.types";
 import { refreshTokenCookieSchema } from "./auth.schema";
 import { ZodError } from "zod";
 import { CustomError } from "../../common/utils/Errors";
+import { ApiResponse } from "../../common/types/api";
 
 export const createUser = async (
   req: Request<{}, {}, CreateUserDto>,
@@ -102,6 +113,44 @@ export const logout = async (
       path: "/api/v1/auth",
     });
     res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const sendVerificationCode = async (
+  req: Request<{}, {}, sendVerificationCodeDto>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    const { email } = req.body;
+
+    await authService.sendVerificationCode(email);
+
+    return res.status(200).json({
+      success: true,
+      message: "Verification code sent to email.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyEmail = async (
+  req: Request<{}, {}, verifyEmailDto>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    const { email, code } = req.body;
+
+    await authService.verifyEmailCode(email, code);
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully.",
+    });
   } catch (error) {
     next(error);
   }

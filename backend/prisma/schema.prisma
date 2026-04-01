@@ -66,6 +66,11 @@ model User {
   isOnline   Boolean?
   lastSeenAt DateTime?
 
+  // Verification Code
+  isVerified              Boolean   @default(false)
+  verificationCodeHash    String?
+  verificationCodeExpires DateTime?
+
   role         Role
   department   Department? @relation(fields: [departmentId], references: [id])
   departmentId String? // only for teachers

@@ -97,3 +97,16 @@ export const authResponseSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string().optional(),
 });
+
+export const sendVerificationCodeSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+  }),
+});
+
+export const verifyEmailSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+    code: z.string().length(6),
+  }),
+});
