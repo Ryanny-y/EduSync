@@ -110,3 +110,33 @@ export const verifyEmailSchema = z.object({
     code: z.string().length(6),
   }),
 });
+
+export const sendForgotPasswordCodeSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+  }),
+});
+
+export const verifyForgotPasswordCodeSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+    code: z.string().length(6, "Code must be 6 digits"),
+  }),
+});
+
+export const forgotPasswordSchema = z.object({
+  body: z
+    .object({
+      email: z.email().min(1, "Email is required."),
+      newPassword: z
+        .string()
+        .min(6, "Password must be at least 6 characters long")
+        .regex(/[A-Z]/, "Must contain an uppercase letter")
+        .regex(/[0-9]/, "Must contain a number"),
+      confirmNewPassword: z.string(),
+    })
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
+      message: "Passwords do not match",
+      path: ["confirmNewPassword"],
+    }),
+});

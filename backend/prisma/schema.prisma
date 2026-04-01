@@ -61,6 +61,10 @@ model User {
   email        String  @unique
   passwordHash String
 
+  forgotPasswordCode        String?
+  forgotPasswordCodeExpires DateTime?
+  forgotPasswordVerified    Boolean  @default(false)
+
   refreshTokenHash      String?
   refreshTokenExpiresAt DateTime?
 

@@ -4,12 +4,15 @@ import {
   AuthResponseDto,
   CreateUserDto,
   CreateUserResponse,
+  ForgotPasswordDto,
   LoginResponse,
   LoginUserDto,
   LogoutResponse,
   RefreshTokenResponse,
+  SendForgotPasswordCodeDto,
   sendVerificationCodeDto,
   verifyEmailDto,
+  VerifyForgotPasswordCodeDto,
 } from "./auth.types";
 import { refreshTokenCookieSchema } from "./auth.schema";
 import { ZodError } from "zod";
@@ -150,6 +153,59 @@ export const verifyEmail = async (
     return res.status(200).json({
       success: true,
       message: "Email verified successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const sendForgotPasswordCode = async (
+  req: Request<{}, {}, SendForgotPasswordCodeDto>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    await authService.sendForgotPasswordCode(req.body.email);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset code sent to email.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyForgotPasswordCode = async (
+  req: Request<{}, {}, VerifyForgotPasswordCodeDto>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    await authService.verifyForgotPasswordCode(req.body.email, req.body.code);
+
+    return res.status(200).json({
+      success: true,
+      message: "Code verified successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword = async (
+  req: Request<{}, {}, ForgotPasswordDto>,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    await authService.resetForgotPassword(email, newPassword);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully.",
     });
   } catch (error) {
     next(error);

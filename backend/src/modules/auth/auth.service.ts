@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 import { addDays } from "date-fns";
 import { generateVerificationCode } from "../../utils/generateVerificationCode";
 import { addMinutes } from "date-fns";
-import { sendVerificationEmail } from "../../infra/email/email.service";
+import { sendVerificationEmail, sendForgotPasswordEmail } from "../../infra/email/email.service";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const {
@@ -313,4 +313,78 @@ export const verifyEmailCode = async (email: string, code: string) => {
   return {
     message: "Email verified successfully",
   };
+};
+
+export const sendForgotPasswordCode = async (email: string): Promise<void> => {
+  const user = await prismaClient.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (!user) throw new CustomError(404, "User not found");
+
+  const code = generateVerificationCode();
+  const hashedCode = await bcrypt.hash(code, 10);
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: {
+      forgotPasswordCode: hashedCode,
+      forgotPasswordCodeExpires: addMinutes(new Date(), 10),
+    },
+  });
+
+  await sendForgotPasswordEmail(user.email, code);
+};
+
+export const verifyForgotPasswordCode = async (
+  email: string,
+  code: string,
+): Promise<void> => {
+  const user = await prismaClient.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (!user || !user.forgotPasswordCode) {
+    throw new CustomError(400, "Invalid or expired code");
+  }
+
+  const isValid = await bcrypt.compare(code, user.forgotPasswordCode);
+
+  if (
+    !isValid ||
+    !user.forgotPasswordCodeExpires ||
+    user.forgotPasswordCodeExpires.getTime() < Date.now()
+  ) {
+    throw new CustomError(400, "Code expired or invalid");
+  }
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: { forgotPasswordVerified: true },
+  });
+};
+
+export const resetForgotPassword = async (
+  email: string,
+  newPassword: string,
+): Promise<void> => {
+  const user = await prismaClient.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (!user || !user.forgotPasswordVerified) {
+    throw new CustomError(403, "Please verify your reset code first");
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: {
+      passwordHash: hashedPassword,
+      forgotPasswordCode: null,
+      forgotPasswordCodeExpires: null,
+      forgotPasswordVerified: false,
+    },
+  });
 };

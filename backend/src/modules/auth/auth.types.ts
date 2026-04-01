@@ -3,11 +3,14 @@ import { ApiResponse } from "../../common/types/api";
 import {
   authResponseSchema,
   createUserBodySchema,
+  forgotPasswordSchema,
   loginUserBodySchema,
   refreshTokenCookieSchema,
+  sendForgotPasswordCodeSchema,
   sendVerificationCodeSchema,
   userDtoSchema,
   verifyEmailSchema,
+  verifyForgotPasswordCodeSchema,
 } from "./auth.schema";
 
 export type UserDto = z.infer<typeof userDtoSchema>;
@@ -25,7 +28,8 @@ export type RefreshTokenResponse = ApiResponse<AuthResponseDto>;
 export type LogoutResponse = ApiResponse<void>;
 
 //
-export type sendVerificationCodeDto = z.infer<
-  typeof sendVerificationCodeSchema
->["body"];
+export type sendVerificationCodeDto = z.infer<typeof sendVerificationCodeSchema>["body"];
 export type verifyEmailDto = z.infer<typeof verifyEmailSchema>["body"];
+export type SendForgotPasswordCodeDto = z.infer<typeof sendForgotPasswordCodeSchema>["body"];
+export type VerifyForgotPasswordCodeDto = z.infer<typeof verifyForgotPasswordCodeSchema>["body"];
+export type ForgotPasswordDto = z.infer<typeof forgotPasswordSchema>["body"];

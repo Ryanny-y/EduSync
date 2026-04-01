@@ -1,12 +1,15 @@
   import { Router } from "express";
-import { createUser, login, logout, refreshToken, sendVerificationCode, verifyEmail } from "./auth.controller";
+import { createUser, login, logout, refreshToken, sendVerificationCode, verifyEmail, sendForgotPasswordCode, verifyForgotPasswordCode, forgotPassword } from "./auth.controller";
 import { validate } from "../../common/middlewares/validate";
 import {
   createUserBodySchema,
+  forgotPasswordSchema,
   loginUserBodySchema,
   refreshTokenCookieSchema,
+  sendForgotPasswordCodeSchema,
   sendVerificationCodeSchema,
   verifyEmailSchema,
+  verifyForgotPasswordCodeSchema,
 } from "./auth.schema";
 
 const router = Router();
@@ -19,5 +22,9 @@ router.post("/logout", logout)
 
 router.post("/send-verification", validate(sendVerificationCodeSchema), sendVerificationCode);
 router.post("/verify-email", validate(verifyEmailSchema), verifyEmail);
+
+router.post("/send-forgot-password-code", validate(sendForgotPasswordCodeSchema), sendForgotPasswordCode);
+router.post("/verify-forgot-password-code", validate(verifyForgotPasswordCodeSchema), verifyForgotPasswordCode);
+router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 
 export default router;
