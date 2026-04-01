@@ -6,15 +6,19 @@ import { createWorkSchema, updateWorkSchema, workParamsSchema } from "./work.sch
 import { upload } from "../../common/middlewares/upload";
 import submissionRoutes from "../submission/submission.route";
 
-const router = Router({ mergeParams: true });
+// Standalone router for routes NOT nested under /class/:classId
+export const workStandaloneRouter = Router();
 
-// GET /classes/:classId/works - List all works of logged in student
-router.get(
+workStandaloneRouter.get(
   "/my/all",
   verifyJwt,
-  workController.getAllStudentWorks
+  workController.getAllStudentWorks,
 );
 
+// Nested router under /class/:classId/works
+const router = Router({ mergeParams: true });
+
+// GET /classes/:classId/works/my - List all works of logged in student
 router.get(
   "/my",
   verifyJwt,
@@ -63,14 +67,6 @@ router.delete(
   validate(workParamsSchema),
   workController.deleteWork
 );
-
-// DELETE /classes/:classId/works/:workId/materials/:materialId - Delete specific material
-// router.delete(
-//   "/:workId/materials/:materialId",
-//   verifyJwt,
-//   workController.deleteMaterial
-// );
-
 
 // submission routes
 router.use("/:workId/submissions", submissionRoutes);
