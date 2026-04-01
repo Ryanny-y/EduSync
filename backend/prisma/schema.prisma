@@ -27,9 +27,10 @@ enum FileType {
 
 enum NotificationType {
   LESSON
+  WORK
+  SYSTEM
   RECITATION
   ASSIGNMENT
-  SYSTEM
 }
 
 enum WorkType {
@@ -89,6 +90,10 @@ model User {
 
   sentMessages Message[]
 
+  // notifications
+  receivedNotifications Notification[] @relation("NotificationReceiver")
+  sentNotifications     Notification[] @relation("NotificationSender")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -128,8 +133,9 @@ model Class {
   works         Work[]
   conversation  Conversation[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[]
 }
 
 // Work
@@ -146,8 +152,9 @@ model Work {
   materials   WorkMaterial[]
   submissions Submission[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[]
 }
 
 model WorkMaterial {
@@ -312,6 +319,27 @@ model Message {
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId String
   read           Boolean      @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  type    NotificationType
+  message String?
+  isRead  Boolean          @default(false)
+
+  userId String
+  user   User   @relation("NotificationReceiver", fields: [userId], references: [id])
+
+  senderId String?
+  sender   User?   @relation("NotificationSender", fields: [senderId], references: [id])
+
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  workId String?
+  work   Work?   @relation(fields: [workId], references: [id])
 
   createdAt DateTime @default(now())
 }

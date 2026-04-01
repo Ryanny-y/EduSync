@@ -1,12 +1,23 @@
-import http from "http";
+import { createServer } from "http";
 import app from "./app";
 import { PORT } from "./config/env";
 import { initSocket } from "./socket";
+import { setSocketIO } from "./socket/socketInstance";
+import { Server } from "socket.io";
 
-const server = http.createServer(app);
+const httpServer = createServer(app);
 
-initSocket(server);
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-server.listen(PORT as number, "0.0.0.0", () => {
+initSocket(io);
+
+setSocketIO(io);
+
+httpServer.listen(PORT as number, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

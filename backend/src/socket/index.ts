@@ -3,16 +3,9 @@ import { socketAuthMiddleware } from "./socketAuth";
 import { registerChatHandlers } from "./chat.socket";
 import { setOffline, setOnline, onlineUsers, isUserOnline } from "./presence";
 import prisma from "../config/client";
+import registerNotificationSocket from "./notification.socket";
 
-export const initSocket = (server: any) => {
-  const io = new Server(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
-    transports: ["websocket"],
-  });
-
+export const initSocket = (io: Server) => {
   io.use(socketAuthMiddleware);
 
   io.on("connection", async (socket) => {
@@ -49,6 +42,7 @@ export const initSocket = (server: any) => {
 
     // Register chat handlers
     registerChatHandlers(io, socket);
+    registerNotificationSocket(io, socket);
 
     // Handle disconnect
     socket.on("disconnect", async () => {

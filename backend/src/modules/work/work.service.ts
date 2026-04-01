@@ -13,6 +13,7 @@ import { CustomError } from "../../common/utils/Errors";
 import { mapToSubmissionDto } from "../submission/submission.mapper";
 import { Role } from "@prisma/client";
 import { log } from "console";
+import { sendNotification } from "../notification/notification.service";
 
 // =========================== STUDENT ===============================
 export const getAllStudentWorks = async (
@@ -270,6 +271,22 @@ export const createWork = async (
       },
     });
   });
+
+  if(!work) {
+    throw new CustomError(404, "Work not found after creating")
+  }
+
+  await Promise.all(
+    studentIds.map((studentId) =>
+      sendNotification({
+        receiverId: studentId,
+        senderId: classWithStudents.teacherId,
+        type: "WORK",
+        classId: classWithStudents.id,
+        workId: work.id,
+      }),
+    ),
+  );
 
   return mapToWorkDto(work!);
 };

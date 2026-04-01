@@ -4,6 +4,7 @@ import departmentRoute from "./department/department.route";
 import classRoute from "./class/class.route";
 import workRoute from './work/work.route';
 import chatRoute from './chat/chat.route';
+import notificationRoute from './notification/notification.route';
 import aiRoute from './ai/ai.route';
 
 const router = Router();
@@ -23,6 +24,8 @@ router.use("/department", departmentRoute);
 // PROTECTED
 router.use("/class", classRoute);
 router.use("/works", workRoute);
+
+router.use("/notifications", notificationRoute);
 
 // chat
 router.use("/chat", chatRoute);

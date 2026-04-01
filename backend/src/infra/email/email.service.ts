@@ -19,7 +19,7 @@ export const sendVerificationEmail = async (email: string, code: string) => {
                 
                 <!-- Header -->
                 <tr>
-                  <td style="background:#4f46e5;color:#ffffff;padding:20px;text-align:center;">
+                  <td style="background:#90CF8E;color:#ffffff;padding:20px;text-align:center;">
                     <h2 style="margin:0;font-size:20px;">Verify Your Email</h2>
                   </td>
                 </tr>
@@ -33,7 +33,7 @@ export const sendVerificationEmail = async (email: string, code: string) => {
 
                     <!-- Code Box -->
                     <div style="margin:25px 0;">
-                      <span style="display:inline-block;padding:15px 25px;font-size:28px;letter-spacing:6px;font-weight:bold;color:#4f46e5;background:#eef2ff;border-radius:8px;">
+                      <span style="display:inline-block;padding:15px 25px;font-size:28px;letter-spacing:6px;font-weight:bold;color:#90CF8E;background:#e8f5e9;border-radius:8px;">
                         ${code}
                       </span>
                     </div>
