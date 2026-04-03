@@ -63,7 +63,7 @@ model User {
 
   forgotPasswordCode        String?
   forgotPasswordCodeExpires DateTime?
-  forgotPasswordVerified    Boolean  @default(false)
+  forgotPasswordVerified    Boolean   @default(false)
 
   refreshTokenHash      String?
   refreshTokenExpiresAt DateTime?
@@ -152,6 +152,8 @@ model Work {
 
   class   Class  @relation(fields: [classId], references: [id])
   classId String
+
+  workLinks String[]
 
   materials   WorkMaterial[]
   submissions Submission[]

@@ -10,6 +10,7 @@ export function mapToWorkDto(work: any): WorkDto {
     type: work.type,
     dueDate: work.dueDate,
     classId: work.classId,
+    workLinks: work.workLinks || [],
     createdAt: work.createdAt,
     updatedAt: work.updatedAt,
     materials:

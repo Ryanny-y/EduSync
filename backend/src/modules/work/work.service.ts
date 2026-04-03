@@ -218,6 +218,7 @@ export const createWork = async (
         description: data.description || null,
         type: data.type,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        workLinks: data.workLinks ?? [],
         classId,
       },
     });
@@ -304,7 +305,7 @@ export const updateWork = async (
   const existing = await prismaClient.work.findFirst({
     where: { id: workId, classId },
   });
-
+  
   if (!existing) {
     throw new CustomError(404, "Work not found");
   }
@@ -321,6 +322,7 @@ export const updateWork = async (
         ...(data.dueDate !== undefined && {
           dueDate: data.dueDate ? new Date(data.dueDate) : null,
         }),
+        ...(data.workLinks !== undefined && { workLinks: data.workLinks }),
       },
     });
 
